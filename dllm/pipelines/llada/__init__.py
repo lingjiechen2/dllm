@@ -5,3 +5,4 @@ from .models.modeling_lladamoe import LLaDAMoEModelLM
 from .models.configuration_lladamoe import LLaDAMoEConfig
 from .generator import LLaDAGeneratorConfig, LLaDAGenerator
 from .trainer import LLaDATrainer
+from .eval import LLaDAEvalHarness

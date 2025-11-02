@@ -38,7 +38,7 @@ eval_logger = logging.getLogger(__name__)
 T = TypeVar("T", bound="LM")
 
 @register_model("dream")
-class Dream(LM):
+class DreamEvalHarness(LM):
     def __init__(
         self,
         pretrained: Union[str, transformers.PreTrainedModel],
