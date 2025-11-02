@@ -164,11 +164,15 @@ python examples/llada/chat.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct"
 ```
 
 ## Evaluation
-> [!NOTE] 
-> Use `model_args` to adjust the generation arguments for evalution. 
+> [!IMPORTANT]  
+> If you find missing files inside the `lm-evaluation-harness/` submodule, reinitialize it properly with:
+> ```bash
+> git submodule update --init --recursive
+> ```
 
 For example, to evaluate [LLaDA-8B-Instruct](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) on [MMLU-Pro](https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro) using 4 GPUs, run:
 ```shell
+# Use model_args to adjust the generation arguments for evalution.
 accelerate launch  --num_processes 4 \
     dllm/pipelines/llada/eval.py \
     --tasks mmlu_pro \

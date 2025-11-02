@@ -151,11 +151,15 @@ python examples/dream/chat.py --model_name_or_path "Dream-org/Dream-v0-Instruct-
 ```
 
 ## Evaluation
-> [!NOTE] 
-> Use `model_args` to adjust the generation arguments for evalution. 
+> [!IMPORTANT]  
+> If you find missing files inside the `lm-evaluation-harness/` submodule, reinitialize it properly with:
+> ```bash
+> git submodule update --init --recursive
+> ```
 
 For example, to evaluate [Dream-v0-Instruct-7B](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B) on [MMLU-Pro](https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro) using 4 GPUs, run:
 ```shell
+# Use model_args to adjust the generation arguments for evalution.
 accelerate launch  --num_processes 4 \
     dllm/pipelines/dream/eval.py \
     --tasks mmlu_pro \

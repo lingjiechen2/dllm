@@ -1,6 +1,6 @@
 # Evaluation
 
-We provide a **unified evaluation framework** built on top of **[lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness)**, serving as the standardized backbone for evaluating the [LLaDA series,](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) [Dream series](https://huggingface.co/collections/Dream-org/dream-7b), and BERT-diffusion models.
+We provide a **unified evaluation framework** built on top of **[lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness)**, serving as the standardized backbone for evaluating the [LLaDA series,](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) [Dream series](https://huggingface.co/collections/Dream-org/dream-7b), and [BERT-diffusion series](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v1).
 It supports diverse model architectures and evaluation paradigms through a **configuration-driven**, **modular**, and **extensible** design.
 
 
@@ -22,9 +22,9 @@ It supports diverse model architectures and evaluation paradigms through a **con
 ## Setup
 
 > [!IMPORTANT]
-> Before running evaluations, you **must** export the required environment variables to specify dataset and model paths.  
-> These paths tell the evaluation framework where to locate model checkpoints and datasets, and where to cache evaluation results for **lm-eval**.  
+> Before running evaluations, you **must** make sure all files are fetched from github repo, check whether `/lm-evaluation-harness/lm-eval/tasks` exists. 
 
+<!-- The following part is only for eval.slurm.sh
 ### Environment Variables
 
 Before running evaluations, export the following environment variables to specify where datasets, pretrained models, and caches are stored:
@@ -35,7 +35,7 @@ export BASE_MODELS_DIR=<path_to_local_or_shared_models>
 export HF_DATASETS_CACHE=<path_to_hf_dataset_cache>
 export HF_EVALUATE_CACHE=<path_to_hf_evaluate_cache>
 export PYTHONPATH=.:$PYTHONPATH
-```
+``` -->
 
 
 ### Dependencies
@@ -59,21 +59,26 @@ git submodule update --init --recursive
 ### Run Command
 
 > [!NOTE]
-> All configuration parameters (few-shot, max length, temperature, etc.) are aligned with model's original repo.
-> You can now directly execute task-specific shell scripts under `scripts/` for one-line evaluation.
+> All configuration parameters (e.g., few-shot settings, max length, temperature, etc.) are aligned with the model’s original repository.
 
 **Example commands:**
-
+For example, to evaluate [LLaDA-8B-Instruct](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) on [MMLU-Pro](https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro) using 4 GPUs, run:
 ```shell
-bash scripts/eval_dream_instruct.sh
-bash scripts/eval_dream_base.sh
-bash scripts/eval_llada_base.sh
-bash scripts/eval_llada_instruct.sh
-bash scripts/eval_bert.sh
+# Use model_args to adjust the generation arguments for evalution.
+accelerate launch  --num_processes 4 \
+    dllm/pipelines/llada/eval.py \
+    --tasks mmlu_pro \
+    --batch_size 1 \
+    --model llada \
+    --seed 1234 \
+    --device cuda \
+    --apply_chat_template \
+    --num_fewshot 0 \
+    --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,is_check_greedy=False,mc_num=1,max_new_tokens=256,steps=256,block_length=256,cfg=0.0"
 ```
-
-Each script loads its corresponding configurations and launches evaluation automatically.
-You no longer need to manually specify `model_class`, `task_name`, or `model_path` arguments.
+You can also run one-line evaluations using model-specific scripts under the [examples/](examples) directory.
+Each script automatically loads its corresponding configurations and launches evaluation — no need to manually specify `model_class`, `task_name`, `model_path` or `model_args`.
+Detailed instructions are provided in the [examples/](examples)'s README.md.
 
 ### Plausible Tasks
 
@@ -87,8 +92,6 @@ You no longer need to manually specify `model_class`, `task_name`, or `model_pat
 
 
 ### Example Evaluation Results
-
-
 
 <details>
 <summary><strong>LLaDA-Base results</strong></summary>

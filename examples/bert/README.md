@@ -75,11 +75,15 @@ accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_proc
 
 
 ## Evaluation
-> [!NOTE] 
-> Use `model_args` to adjust the generation arguments for evalution. 
+> [!IMPORTANT]  
+> If you find missing files inside the `lm-evaluation-harness/` submodule, reinitialize it properly with:
+> ```bash
+> git submodule update --init --recursive
+> ```
 
 For example, to evaluate [ModernBERT-large-chat-v1](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v1) on [MMLU-Pro](https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro) using 4 GPUs, run:
 ```shell
+# Use model_args to adjust the generation arguments for evalution.
 accelerate launch  --num_processes 4 \
     dllm/pipelines/bert/eval.py \
     --tasks mmlu_pro \
