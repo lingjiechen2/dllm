@@ -1,27 +1,33 @@
 #!/usr/bin/env bash
 # ===== Input Arguments =====
-model_path=$1      # e.g., Dream-org/Dream-v0-Base-7B or Dream-org/Dream-v0-Instruct-7B
-use_instruct=$2    # True or False
+model_path=$1     
+use_instruct=$2
 
-# =====  Environmental Variables =====
-export PYTHONBREAKPOINT=0
-export NCCL_ASYNC_ERROR_HANDLING=1
-export NCCL_DEBUG=warn
-export TORCH_DISTRIBUTED_DEBUG=DETAIL
-export PYTHONPATH=.:$PYTHONPATH
-export HF_ALLOW_CODE_EVAL=1
-export HF_DATASETS_TRUST_REMOTE_CODE=True
+
+# ===== Mandatory for proper import and evaluation =====
+export PYTHONPATH=.:$PYTHONPATH             
+export HF_ALLOW_CODE_EVAL=1                 # Allow code evaluation
+export HF_DATASETS_TRUST_REMOTE_CODE=True   # For cmmlu dataset
+
+
+# ===== Optional but recommended for stability and debugging =====
+export PYTHONBREAKPOINT=0                   # Disable interactive breakpoints
+export NCCL_ASYNC_ERROR_HANDLING=1          # Enable async error handling for multi-GPU communication to avoid deadlocks
+export NCCL_DEBUG=warn                      # Show NCCL warnings for better diagnosis without flooding logs
+export TORCH_DISTRIBUTED_DEBUG=DETAIL       # Provide detailed logging for PyTorch distributed debugging
+
 
 # ===== Basic Settings =====
 num_gpu=4
 
+
 # ===== Conditional Configurations =====
 if [ "$use_instruct" = "True" ]; then
     echo ">>> Running in INSTRUCT mode"
-    common_args="--model dream --seed 42 --device cuda --batch_size 1 --apply_chat_template"
+    common_args="--model dream --seed 1234 --device cuda --batch_size 1 --apply_chat_template"
 else
     echo ">>> Running in BASE mode"
-    common_args="--model dream --seed 42 --device cuda --batch_size 1"
+    common_args="--model dream --seed 1234 --device cuda --batch_size 1"
 fi
 
 
