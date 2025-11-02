@@ -164,9 +164,10 @@ python examples/llada/chat.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct"
 ```
 
 ## Evaluation
-[!NOTE] Use `model_args` to adjust the generation arguments for evalution. 
+> [!NOTE] 
+> Use `model_args` to adjust the generation arguments for evalution. 
 
-For example, to evaluate [LLaDA-8B-Instruct](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) on [MMLU-Pro](https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro) using 4 GPUs.
+For example, to evaluate [LLaDA-8B-Instruct](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) on [MMLU-Pro](https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro) using 4 GPUs, run:
 ```shell
 accelerate launch  --num_processes 4 \
     dllm/eval/eval_llada.py \
@@ -182,7 +183,6 @@ accelerate launch  --num_processes 4 \
 
 To perform full evaluations on all benchmark datasets with consistent generation parameters for both [LLaDA-8B-Base](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) and [LLaDA-8B-Instruct](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct), use the preconfigured script:
 ```shell
-# Run using preconfigured script
 bash examples/llada/eval.sh <model_path> <use_instruct>
 # <model_path>: Local path or huggingface model ID
 # <use_instruct>: Set to True for Instruct models or False for Base models
