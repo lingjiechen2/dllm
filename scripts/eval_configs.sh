@@ -64,31 +64,31 @@ eval_llada_configs["gpqa_n_shot_gen"]="5|None|32|32|32|1234|1|0.0"
 # ============================================================
 
 # ---------- Base Generation ----------
-eval_dream_configs["humaneval"]="0|None|512|512|512|0.2|0.95|42|1"
-eval_dream_configs["gsm8k_cot"]="8|None|256|256|256|0.0|0.95|42|1"
-eval_dream_configs["mbpp"]="3|None|512|512|512|0.2|0.95|42|1"
-eval_dream_configs["minerva_math"]="4|None|512|512|512|0.0|0.95|42|1"
-eval_dream_configs["bbh"]="3|None|512|512|512|0.0|0.95|42|1"
+eval_dream_configs["humaneval"]="0|None|512|2048|512|0.2|0.95|42|1"
+eval_dream_configs["gsm8k_cot"]="8|None|256|2048|256|0.0|0.95|42|1"
+eval_dream_configs["mbpp"]="3|None|512|2048|512|0.2|0.95|42|1"
+eval_dream_configs["minerva_math"]="4|None|512|2048|512|0.0|0.95|42|1"
+eval_dream_configs["bbh"]="3|None|512|2048|512|0.0|0.95|42|1"
 
 # ---------- Base Likelihood ----------
-eval_dream_configs["mmlu"]="5|None|512|512|512|0.0|0.95|42|1"
-eval_dream_configs["arc_easy"]="0|None|512|512|512|0.0|0.95|42|1"
-eval_dream_configs["arc_challenge"]="0|None|512|512|512|0.0|0.95|42|1"
-eval_dream_configs["hellaswag"]="0|None|512|512|512|0.0|0.95|42|1"
-eval_dream_configs["piqa"]="0|None|512|512|512|0.0|0.95|42|1"
-eval_dream_configs["gpqa_main_n_shot"]="5|None|512|512|512|0.0|0.95|42|1"
-eval_dream_configs["winogrande"]="5|None|512|512|512|0.0|0.95|42|1"
-eval_dream_configs["race"]="0|None|512|512|512|0.0|0.95|42|1"
+eval_dream_configs["mmlu"]="5|None|512|2048|512|0.0|0.95|42|1"
+eval_dream_configs["arc_easy"]="0|None|512|2048|512|0.0|0.95|42|1"
+eval_dream_configs["arc_challenge"]="0|None|512|2048|512|0.0|0.95|42|1"
+eval_dream_configs["hellaswag"]="0|None|512|2048|512|0.0|0.95|42|1"
+eval_dream_configs["piqa"]="0|None|512|2048|512|0.0|0.95|42|1"
+eval_dream_configs["gpqa_main_n_shot"]="5|None|512|2048|512|0.0|0.95|42|1"
+eval_dream_configs["winogrande"]="5|None|512|2048|512|0.0|0.95|42|1"
+eval_dream_configs["race"]="0|None|512|2048|512|0.0|0.95|42|1"
 
 # ---------- Instruct Generation ----------
-eval_dream_configs["mmlu_generative"]="4|None|128|128|128|0.1|0.9|42|1"
-eval_dream_configs["mmlu_pro"]="4|None|128|128|128|0.1|0.9|42|1"
-eval_dream_configs["gsm8k_cot"]="0|None|256|256|256|0.1|0.9|42|1"
-eval_dream_configs["minerva_math"]="0|None|512|512|512|0.1|0.9|42|1"
-eval_dream_configs["gpqa_main_n_shot"]="5|None|128|128|128|0.0|1.0|42|1"
-eval_dream_configs["humaneval_instruct"]="0|None|768|768|768|0.1|0.9|42|1"
-eval_dream_configs["mbpp_instruct"]="0|None|1024|1024|1024|0.1|0.9|42|1"
-eval_dream_configs["ifeval"]="0|None|1280|1280|1280|0.1|0.9|42|1"
+eval_dream_configs["mmlu_generative"]="4|None|128|2048|128|0.1|0.9|42|1"
+eval_dream_configs["mmlu_pro"]="4|None|128|2048|128|0.1|0.9|42|1"
+eval_dream_configs["gsm8k_cot"]="0|None|256|2048|256|0.1|0.9|42|1"
+eval_dream_configs["minerva_math"]="0|None|512|2048|512|0.1|0.9|42|1"
+eval_dream_configs["gpqa_main_n_shot"]="5|None|128|2048|128|0.0|1.0|42|1"
+eval_dream_configs["humaneval_instruct"]="0|None|768|2048|768|0.1|0.9|42|1"
+eval_dream_configs["mbpp_instruct"]="0|None|1024|2048|1024|0.1|0.9|42|1"
+eval_dream_configs["ifeval"]="0|None|1280|2048|1280|0.1|0.9|42|1"
 
 
 # ============================================================
