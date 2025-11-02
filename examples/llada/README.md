@@ -170,7 +170,7 @@ python examples/llada/chat.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct"
 For example, to evaluate [LLaDA-8B-Instruct](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) on [MMLU-Pro](https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro) using 4 GPUs, run:
 ```shell
 accelerate launch  --num_processes 4 \
-    dllm/eval/eval_llada.py \
+    dllm/pipelines/llada/eval.py \
     --tasks mmlu_pro \
     --batch_size 1 \
     --model llada \

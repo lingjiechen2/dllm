@@ -38,7 +38,7 @@ See [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) **Rep
 ## Files overview
 ```
 # example entry points for training / inference
-examples/dream
+examples/bert
 ├── chat.py                         # Interactive inference example
 ├── generate.py                     # Inference example
 ├── pt.py                           # Pretraining example
@@ -75,9 +75,13 @@ accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_proc
 
 
 ## Evaluation
+> [!NOTE] 
+> Use `model_args` to adjust the generation arguments for evalution. 
+
+For example, to evaluate [ModernBERT-large-chat-v1](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v1) on [MMLU-Pro](https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro) using 4 GPUs, run:
 ```shell
-accelerate launch  --num_processes 4 --num_machines 1 --main_process_port 20004 \
-    dllm/eval/eval_bert.py \
+accelerate launch  --num_processes 4 \
+    dllm/pipelines/bert/eval.py \
     --tasks mmlu_pro \
     --batch_size 1 \
     --model bert \
@@ -85,8 +89,12 @@ accelerate launch  --num_processes 4 --num_machines 1 --main_process_port 20004 
     --device cuda \
     --apply_chat_template \
     --num_fewshot 0 \
-    --model_args "pretrained=ModernBERT-base/checkpoint-final,is_check_greedy=False,mc_num=1,max_new_tokens=256,steps=256,block_length=256"
+    --model_args "pretrained=dllm-collection/ModernBERT-large-chat-v1,is_check_greedy=False,mc_num=1,max_new_tokens=256,steps=256,block_length=256"
+```
 
-# Run using preconfigured script
-bash scripts/eval_bert.sh
+To perform full evaluations on all benchmark datasets with consistent generation parameters for both [ModernBERT-base-chat-v1](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v1) and [ModernBERT-large-chat-v1](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v1), use the preconfigured script:
+```shell
+bash examples/bert/eval.sh <model_path>
+# <model_path>: Local path or huggingface model ID
+# BERT model default to use --apply_chat_template argument
 ```
