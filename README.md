@@ -274,11 +274,15 @@ accelerate launch  --num_processes 4 \
     --num_fewshot 0 \
     --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,is_check_greedy=False,mc_num=1,max_new_tokens=256,steps=256,block_length=256,cfg=0.0"
 ```
-> [!NOTE] 
+> [!NOTE]
 > Arguments explanations:
-> `--tasks` pecifies the evaluation benchmark (e.g. mmlu_pro).
-> `--model_args` controls the generation parameters during evaluation.
-> The evalution framework is based on lm-eval, support further extensions.
+> 1. Specify evaluation task:  
+>    `--tasks mmlu_pro`  
+>    Defines which benchmark to evaluate on (e.g., MMLU-Pro, GSM8K, BBH).
+>
+> 2. Control generation behavior:  
+>    `--model_args "max_new_tokens=256,temperature=0.1,top_p=0.9"`  
+>    Adjusts generation parameters such as decoding length, temperature, and sampling strategy.
 
 We also provide preconfigured scripts that automatically perform full evaluations on all benchmark datasets with consistent generation settings for [LLaDA](https://huggingface.co/GSAI-ML/LLaDA-8B-Base), [Dream](https://huggingface.co/collections/Dream-org/dream-7b), and [BERT-diffusion](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v1).
 For example, you can launch them directly using the following commands:
