@@ -178,4 +178,3 @@ bash examples/dream/eval.sh <model_path> <use_instruct>
 # <model_path>: Local path or huggingface model ID
 # <use_instruct>: Set to True for Instruct models or False for Base models
 ```
-

@@ -1,9 +1,7 @@
 """
 accelerate launch \
     --num_processes 2 \
-    --num_machines 1 \
-    --main_process_port 20000 \
-    dllm/eval/eval_dream.py \
+    dllm/pipelines/dream/eval.py \
     --tasks gsm8k \
     --batch_size 1 \
     --model dream \
@@ -13,26 +11,24 @@ accelerate launch \
 """
 
 import logging
-import gc
-from datetime import timedelta
-from typing import List, Optional, Tuple, Type, TypeVar, Union
+from types import SimpleNamespace
+from typing import List, Optional, Tuple, TypeVar, Union
+
+import accelerate
 import torch
 import torch.nn.functional as F
 import transformers
-import accelerate
 from datasets import Dataset
-from packaging import version
 from tqdm import tqdm
-from types import SimpleNamespace
 
-import dllm
-from dllm.pipelines.dream import DreamGenerator
-from lm_eval import utils
+from lm_eval.__main__ import cli_evaluate
 from lm_eval.api.instance import Instance
 from lm_eval.api.model import LM
 from lm_eval.api.registry import register_model
 from lm_eval.models.utils import get_dtype
-from lm_eval.__main__ import cli_evaluate
+
+import dllm
+from dllm.pipelines.dream import DreamGenerator
 
 eval_logger = logging.getLogger(__name__)
 T = TypeVar("T", bound="LM")
@@ -45,24 +41,24 @@ class DreamEvalHarness(LM):
         batch_size: Optional[Union[int, str]] = 1,
         device: Optional[str] = "cuda",
         dtype: Optional[Union[str, torch.dtype]] = "auto",
-        max_new_tokens: Optional[int] = 128,
         max_length: Optional[int] = 2048,
         add_bos_token: Optional[bool] = False,
         nll_type: Optional[str] = "mc",
         log_type: Optional[str] = "ftb",
         mc_num: Optional[int] = 128,
+
+        # ----- Generation Control Parameters -----
+        max_new_tokens: Optional[int] = 128,
         classifier_free_guidance: Optional[float] = 1.0,
         sampling_eps: Optional[float] = 1e-3,
         steps: Optional[int] = 128,
-        trust_remote_code: Optional[bool] = True,
-        parallelize: Optional[bool] = False,
-        autogptq: Optional[Union[bool, str]] = False,
         temperature: Optional[float] = 0.0,
         top_p: Optional[float] = None,
         top_k: Optional[float] = None,
         alg: Optional[str] = "entropy",
         alg_temp: Optional[float] = 0.0,
         escape_until: Optional[bool] = False,
+
         **kwargs,
     ) -> None:
         super().__init__()

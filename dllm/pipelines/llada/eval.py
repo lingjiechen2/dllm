@@ -1,9 +1,7 @@
 """
 accelerate launch \
     --num_processes 2 \
-    --num_machines 1 \
-    --main_process_port 20000 \
-    dllm/eval/eval_llada.py \
+    dllm/pipelines/llada/eval.py \
     --tasks gsm8k \
     --batch_size 1 \
     --model llada \
@@ -12,30 +10,23 @@ accelerate launch \
     --model_args "pretrained=GSAI-ML/LLaDA-8B-Base,is_check_greedy=False,mc_num=1,max_new_tokens=1024,steps=1024,block_length=32,cfg=0.0"
 """
 
-import os
-import dllm
+from types import SimpleNamespace
+from typing import Optional, Union
+
 import accelerate
 import torch
-import re
-from pathlib import Path
-import random
-import numpy as np
 import torch.nn.functional as F
-from typing import List, Optional, Tuple, Type, TypeVar, Union
 from datasets import Dataset
-import lm_eval
+from tqdm import tqdm
+
 from lm_eval.__main__ import cli_evaluate
 from lm_eval.api.instance import Instance
 from lm_eval.api.model import LM
-from lm_eval.models.utils import get_dtype
 from lm_eval.api.registry import register_model
-from transformers.models.modernbert.modeling_modernbert import ModernBertForMaskedLM
-from tqdm import tqdm
+from lm_eval.models.utils import get_dtype
 
-from transformers import AutoTokenizer, AutoModel
+import dllm
 from dllm.pipelines.llada import LLaDAGenerator
-from types import SimpleNamespace
-
 
 @register_model("llada")
 class LLaDAEvalHarness(LM):
@@ -43,23 +34,22 @@ class LLaDAEvalHarness(LM):
         self,
         pretrained='',
         dtype: Optional[Union[str, torch.dtype]] = "auto",
-        mask_id=126336,
-        max_length=4096,
         batch_size=32,
         mc_num=128,
         is_check_greedy=True,
+        device="cuda",
+        # ----- Generation control Parameters -----
         cfg=0.,
         steps=1024,
         max_new_tokens=1024,
         block_length=1024,
+        max_length=4096,
         remasking='low_confidence',
-        device="cuda",
         **kwargs,
     ):
         '''
         Args:
             pretrained: LLaDA-8B-Base model path.
-            mask_id: The token id of [MASK] is 126336.
             max_length: the max sequence length.
             batch_size: mini batch size.
             mc_num: Monte Carlo estimation iterations
@@ -108,25 +98,7 @@ class LLaDAEvalHarness(LM):
             model_name_or_path=pretrained, 
             model=self.model
             ))
-        # Because when we use distributed process, model_types are  <class 'torch.nn.parallel.distributed.DistributedDataParallel'>
-        self.tokenizer.mask_token = "<|mdm_mask|>"
-        self.tokenizer.mask_token_id = self.tokenizer.convert_tokens_to_ids("<|mdm_mask|>")
         self.mask_id = self.tokenizer.mask_token_id
-        # fix bugs in chat template
-        self.tokenizer.chat_template = """
-{% set loop_messages = messages -%}
-{%- for message in loop_messages %}
-{%- if loop.index0 == 0 -%}{{ bos_token }}{%- endif -%}
-<|start_header_id|>{{ message['role'] }}<|end_header_id|>
-
-{{ message['content'] | trim }}<|eot_id|>
-{%- endfor -%}
-{%- if add_generation_prompt and (loop_messages | length == 0 or loop_messages[-1]['role'] != 'assistant') %}
-<|start_header_id|>assistant<|end_header_id|>
-
-{% endif %}
-""".lstrip()
-
 
         self.mc_num = int(mc_num)
         self.batch_size = int(batch_size)
