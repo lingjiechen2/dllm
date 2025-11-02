@@ -131,6 +131,7 @@ dllm
 │   └── trainers
 ├── data
 ├── pipelines            # Application-specific training & inference pipelines
+|   ├── bert
 │   ├── dream
 │   ├── editflow
 │   └── llada
@@ -143,6 +144,7 @@ dllm
 
 # entry points for training / sampling
 examples
+├── bert
 ├── dream
 ├── editflow
 └── llada
@@ -276,13 +278,9 @@ accelerate launch  --num_processes 4 \
 ```
 > [!NOTE]
 > Arguments explanations:
-> 1. Specify evaluation task:  
->    `--tasks mmlu_pro`  
->    Defines which benchmark to evaluate on (e.g., MMLU-Pro, GSM8K, BBH).
+> 1. Specify evaluation task: `--tasks mmlu_pro`  
 >
-> 2. Control generation behavior:  
->    `--model_args "max_new_tokens=256,temperature=0.1,top_p=0.9"`  
->    Adjusts generation parameters such as decoding length, temperature, and sampling strategy.
+> 2. Control generation behavior: `--model_args "max_new_tokens=256,temperature=0.1,top_p=0.9"`
 
 We also provide preconfigured scripts that automatically perform full evaluations on all benchmark datasets with consistent generation settings for [LLaDA](https://huggingface.co/GSAI-ML/LLaDA-8B-Base), [Dream](https://huggingface.co/collections/Dream-org/dream-7b), and [BERT-diffusion](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v1).
 For example, you can launch them directly using the following commands:
@@ -290,7 +288,7 @@ For example, you can launch them directly using the following commands:
 bash examples/llada/eval.sh GSAI-ML/LLaDA-8B-Instruct True
 bash examples/llada/eval.sh GSAI-ML/LLaDA-8B-Base False
 # <model_path>: Local path or huggingface model ID
-# BERT model default to use --apply_chat_template argument
+# <use_instruct>: Set to True for Instruct models or False for Base models
 ```
 
 
