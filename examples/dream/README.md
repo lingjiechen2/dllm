@@ -1,6 +1,5 @@
 # Dream
 
-> **Reference**  
 > 📄 Paper: [Dream 7B: Diffusion Large Language Models](https://arxiv.org/abs/2508.15487)
 > 💻 Code: [github.com/DreamLM/Dream](https://github.com/DreamLM/Dream)
 
@@ -74,7 +73,7 @@ accelerate launch \
 ```
 If you are using slurm and want to train across, for example, 2 nodes (16 GPUs total), run:
 ```shell
-sbatch --nodes=4 --gres=gpu:8 scripts/train.slurm.sh \
+sbatch --nodes=2 --gres=gpu:8 scripts/train.slurm.sh \
     --accelerate_config "fsdp" \
     --script_path "examples/dream/sft.py" \
     --model_name_or_path "Dream-org/Dream-v0-Base-7B" \
@@ -87,7 +86,7 @@ sbatch --nodes=4 --gres=gpu:8 scripts/train.slurm.sh \
 
 <!-- **Reproducing [Dream-v0-Instruct-7B](https://huggingface.co/Dream-org/Dream-v0-Base-7B)**. We tried our best to reproduce Dream-v0-Instruct-7B by finetuning Dream-v0-Base-7B using our training pipeline on the public instruction-following dataset [allenai/tulu-3-sft-mixture](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture): -->
 #### Reproducing [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B)
-We tried our best to reproduce Dream-v0-Instruct-7B by finetuning Dream-v0-Base-7B using our training pipeline on the public instruction-following dataset [allenai/tulu-3-sft-mixture](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture):
+We tried our best to reproduce Dream-v0-Instruct-7B by finetuning Dream-v0-Base-7B using our training pipeline on the public instruction-following dataset [`allenai/tulu-3-sft-mixture`](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture):
 
 ```shell
 # preprocessing SFT data (optional, but can avoid redundant preprocessing for multi-node training)

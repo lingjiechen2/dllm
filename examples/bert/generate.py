@@ -13,7 +13,7 @@ from dllm.pipelines import llada
 
 @dataclass
 class ScriptArguments:
-    model_name_or_path: str = "models/ModernBERT-large/tulu-3-smoltalk/epochs-10-bs-384-len-1024/checkpoint-final" # [TODO]
+    model_name_or_path: str = "dllm-collection/ModernBERT-large-chat-v1"
     seed: int = 42
     visualize: bool = True
     def __post_init__(self):
