@@ -16,7 +16,7 @@ Simple Diffusion Language Modeling
 
  <!-- and [RND1](https://www.radicalnumerics.ai/assets/rnd1_report.pdf) -->
 
-- dLLM provides modular training pipelines (inspired by [🤗 Transformers Trainer](https://github.com/huggingface/transformers/blob/main/src/transformers/trainer.py)), which scales easily with [LoRA](https://github.com/huggingface/peft) and [DeepSpeed](https://github.com/deepspeedai/DeepSpeed) / [FSDP](https://pytorch.org/blog/introducing-pytorch-fully-sharded-data-parallel-api/) and beyond.
+- dLLM provides modular training pipelines (inspired by [Transformers Trainer](https://github.com/huggingface/transformers/blob/main/src/transformers/trainer.py)), which scales easily with [LoRA](https://github.com/huggingface/peft) and [DeepSpeed](https://github.com/deepspeedai/DeepSpeed) / [FSDP](https://pytorch.org/blog/introducing-pytorch-fully-sharded-data-parallel-api/) and beyond.
 
 - dLLM provides unified evaluation pipelines (inspired by [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness)), abstracting away inference details and making customization simple.
 
@@ -27,9 +27,9 @@ Simple Diffusion Language Modeling
 
 
 ## News
-**[2025/10]** We release a collection of BERTs finetuned for instruction-following: [`ModernBERT-{large,base}-chat-v1`](https://huggingface.co/collections/dllm-collection/bert-chat). This proof-of-concept shows that BERT’s internal knowledge can be leveraged for generative tasks via masked instruction tuning. See [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) Report](https://wandb.ai/asap-zzhou/dllm/reports/dLLM-Generative-BERT--VmlldzoxNDg0MzExNg) for experimental results and lessons learned and [`examples/bert`](/examples/bert) for train / inference / evaluation instructions.
+**[2025/11]** We released a collection of BERTs finetuned for instruction-following: [`ModernBERT-{large,base}-chat-v0`](https://huggingface.co/collections/dllm-collection/bert-chat). This proof-of-concept shows that BERT’s internal knowledge can be leveraged for generative tasks via masked instruction tuning. See [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) BERT Chat Report](https://wandb.ai/asap-zzhou/dllm/reports/dLLM-BERT-Chat--VmlldzoxNDg0MzExNg) for detailed recipes, experimental results and lessons learned; See [`examples/bert`](/examples/bert) for train / inference / evaluation instructions.
 
-<details>
+<!-- <details>
 <summary>🎬 Click to show BERT Chat Demo</summary>
 
 <p align="center">
@@ -37,10 +37,10 @@ Simple Diffusion Language Modeling
 </p>
 <p align="center">
 <em>
-    Chat with <a href="[TODO]"><code>ModernBERT-large-chat-v1</code></a>. See <a href="/examples/bert/README.md/#inference">Inference</a> for details.
+    Chat with <a href="https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0"><code>ModernBERT-large-chat-v0</code></a>. See <a href="/examples/bert/README.md/#inference">Inference</a> for details.
 </em>
 </p>
-</details>
+</details> -->
 
 ## Table of Contents
 <!-- - [Overview](#overview) -->
@@ -56,11 +56,23 @@ Simple Diffusion Language Modeling
 
 
 ## Features
-
-- [`examples/llada`](/examples/llada): Finetuning LLaDA [LLaDA](https://arxiv.org/abs/2502.09992) / [LLaDA-MoE](https://arxiv.org/abs/2509.24389), as well as reproducing LLaDA by training from scratch on public data (pretraining & finetuning).
-- [`examples/dream`](/examples/dream): Finetuning Dream [Dream](https://arxiv.org/abs/2508.15487), as well as reproducing Dream by training from scratch on public data (pretraining & finetuning).
 <!-- - [`examples/rnd`](/examples/rnd): (WIP) Finetuning open-weight RND1 [RND1-Base](https://www.radicalnumerics.ai/assets/rnd1_report.pdf). -->
-- [`examples/editflow`](/examples/editflow): Educational reference for training [EditFlow](https://arxiv.org/abs/2506.09018) models, demonstrating how to extend existing DLLMs (e.g., LLaDA and Dream) with *edit operations*—insertion, deletion, and substitution—and how to pretrain or finetune EditFlow models from scratch on public data.
+- [`examples/llada`](/examples/llada): Pretraining, finetuning and evaluating LLaDA [LLaDA](https://arxiv.org/abs/2502.09992) / [LLaDA-MoE](https://arxiv.org/abs/2509.24389).
+- [`examples/dream`](/examples/dream): Pretraining, finetuning and evaluating Dream [Dream](https://arxiv.org/abs/2508.15487).
+- [`examples/bert`](/examples/bert): Finetuning any [BERT](https://arxiv.org/abs/1810.04805) to be lightweight Chatbots.
+    <details>
+    <summary>🎬 Click to show BERT Chat Demo</summary>
+
+    <p align="center">
+        <img src="/examples/bert/assets/chat.gif" alt="chat" width="70%">
+    </p>
+    <p align="center">
+    <em>
+        Chat with <a href="https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0"><code>ModernBERT-large-chat-v0</code></a>. See <a href="/examples/bert/README.md/#inference">Inference</a> for details.
+    </em>
+    </p>
+    </details>
+- [`examples/editflow`](/examples/editflow): Educational reference for training [EditFlow](https://arxiv.org/abs/2506.09018) models, demonstrating how to extend existing DLLMs (e.g., LLaDA, Dream, BERT Chat) with *edit operations*—insertion, deletion, and substitution—and how to pretrain or finetune EditFlow models from scratch on public data.
 
    <details>
    <summary>🎬 Click to show EditFlow Demo</summary>
@@ -71,22 +83,6 @@ Simple Diffusion Language Modeling
    <p align="center"><em>EditFlow performing insertion (blue), substitution from mask tokens (black), substitution from non-mask tokens (red), and deletion (strikethrough → removed) during generation.</em></p>
 
    </details>
-
-- [`examples/bert`](/examples/bert): Finetuning any [BERT](https://arxiv.org/abs/1810.04805) to be lightweight Chatbots.
-
-    <details>
-    <summary>🎬 Click to show BERT Chat Demo</summary>
-
-    <p align="center">
-        <img src="/examples/bert/assets/chat.gif" alt="chat" width="70%">
-    </p>
-    <p align="center">
-    <em>
-        Chat with <a href="[TODO]"><code>ModernBERT-large-chat-v1</code></a>. See <a href="/examples/bert/README.md/#inference">Inference</a> for details.
-    </em>
-    </p>
-    </details>
-
 - More upcoming.
 
 
@@ -125,20 +121,20 @@ This folder will store the log files generated by your sbatch jobs.
 ```
 # modules for training / sampling
 dllm
-├── core                 # Core reusable modules shared across `dllm/pipelines` 
+├── core                   # Core reusable modules shared across `dllm/pipelines` 
 │   ├── generation
 │   ├── schedulers
 │   └── trainers
 ├── data
-├── pipelines            # Application-specific training & inference pipelines
+├── pipelines              # Application-specific training & inference pipelines
 |   ├── bert
 │   ├── dream
 │   ├── editflow
 │   └── llada
-│       ├── models       # Model architecture and configs 
-│       ├── generator.py # Generation utilities
-│       ├── trainer.py   # Core training logic
-│       └── eval.py      # Evaluation entry point
+│       ├── models         # Model architecture and configs 
+│       ├── generator.py   # Generation utilities
+│       ├── trainer.py     # Core training logic
+│       └── eval.py        # Evaluation entry point
 ├── tools
 └── utils
 
@@ -148,11 +144,12 @@ examples
 ├── dream
 ├── editflow
 └── llada
-    ├── generate.py    # Generation example
-    ├── pt.py          # Pretraining example
-    ├── README.md      # Example-level documentations
-    ├── sft.py         # SFT example
-    └── eval.sh        # Preconfigured evalution script
+    ├── chat.py            # Interactive inference example
+    ├── generate.py        # Inference example
+    ├── pt.py              # Pretraining example
+    ├── README.md          # Documentation (you are here)
+    ├── sft.py             # Supervised finetuning example
+    └── eval.sh            # Evalution script
 ```
 
 ## Training
