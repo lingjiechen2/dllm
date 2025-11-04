@@ -130,7 +130,6 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
     --save_steps 0.05
 ```
 Training curves are on Wandb; checkpoints with evaluation results are available on Hugging Face. See the [Evaluation](#evaluation) section below for evaluation instructions.
-[TODO]
 
 
 ### Pretraining
@@ -164,4 +163,30 @@ python examples/llada/chat.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct"
 ```
 
 ## Evaluation
-[TODO]
+> [!IMPORTANT]  
+> If you find missing files inside the `lm-evaluation-harness/` submodule, reinitialize it properly with:
+> ```bash
+> git submodule update --init --recursive
+> ```
+
+For example, to evaluate [LLaDA-8B-Instruct](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) on [MMLU-Pro](https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro) using 4 GPUs, run:
+```shell
+# Use model_args to adjust the generation arguments for evalution.
+accelerate launch  --num_processes 4 \
+    dllm/pipelines/llada/eval.py \
+    --tasks mmlu_pro \
+    --batch_size 1 \
+    --model llada \
+    --seed 1234 \
+    --device cuda \
+    --apply_chat_template \
+    --num_fewshot 0 \
+    --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,is_check_greedy=False,mc_num=1,max_new_tokens=256,steps=256,block_length=256,cfg=0.0"
+```
+
+To perform full evaluations on all benchmark datasets with consistent generation parameters for both [LLaDA-8B-Base](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) and [LLaDA-8B-Instruct](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct), use the preconfigured script:
+```shell
+bash examples/llada/eval.sh <model_path> <use_instruct>
+# <model_path>: Local path or huggingface model ID
+# <use_instruct>: Set to True for Instruct models or False for Base models
+```

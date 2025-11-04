@@ -115,5 +115,31 @@ To chat with the model:
 python -u examples/bert/chat.py --model_name_or_path "[TODO]" --chat True
 ```
 
-### Evaluation
-[TODO]
+## Evaluation
+> [!IMPORTANT]  
+> If you find missing files inside the `lm-evaluation-harness/` submodule, reinitialize it properly with:
+> ```bash
+> git submodule update --init --recursive
+> ```
+
+For example, to evaluate [ModernBERT-large-chat-v1](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v1) on [MMLU-Pro](https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro) using 4 GPUs, run:
+```shell
+# Use model_args to adjust the generation arguments for evalution.
+accelerate launch  --num_processes 4 \
+    dllm/pipelines/bert/eval.py \
+    --tasks mmlu_pro \
+    --batch_size 1 \
+    --model bert \
+    --seed 1234 \
+    --device cuda \
+    --apply_chat_template \
+    --num_fewshot 0 \
+    --model_args "pretrained=dllm-collection/ModernBERT-large-chat-v1,is_check_greedy=False,mc_num=1,max_new_tokens=256,steps=256,block_length=256"
+```
+
+To perform full evaluations on all benchmark datasets with consistent generation parameters for both [ModernBERT-base-chat-v1](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v1) and [ModernBERT-large-chat-v1](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v1), use the preconfigured script:
+```shell
+bash examples/bert/eval.sh <model_path>
+# <model_path>: Local path or huggingface model ID
+# BERT model default to use --apply_chat_template argument
+```

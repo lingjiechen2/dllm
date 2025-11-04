@@ -150,4 +150,30 @@ python examples/dream/chat.py --model_name_or_path "Dream-org/Dream-v0-Instruct-
 ```
 
 ## Evaluation
-[TODO]
+> [!IMPORTANT]  
+> If you find missing files inside the `lm-evaluation-harness/` submodule, reinitialize it properly with:
+> ```bash
+> git submodule update --init --recursive
+> ```
+
+For example, to evaluate [Dream-v0-Instruct-7B](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B) on [MMLU-Pro](https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro) using 4 GPUs, run:
+```shell
+# Use model_args to adjust the generation arguments for evalution.
+accelerate launch  --num_processes 4 \
+    dllm/pipelines/dream/eval.py \
+    --tasks mmlu_pro \
+    --batch_size 1 \
+    --model dream \
+    --seed 1234 \
+    --device cuda \
+    --apply_chat_template \
+    --num_fewshot 0 \
+    --model_args "pretrained=Dream-org/Dream-v0-Instruct-7B,mc_num=1,max_new_tokens=128,max_length=128,steps=128,temperature=0.1,top_p=0.9,add_bos_token=true,escape_until=true"
+```
+
+To perform full evaluations on all benchmark datasets with consistent generation parameters for both [Dream-v0-Base-7B](https://huggingface.co/Dream-org/Dream-v0-Base-7B) and [Dream-v0-Instruct-7B](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B), use the preconfigured script:
+```shell
+bash examples/dream/eval.sh <model_path> <use_instruct>
+# <model_path>: Local path or huggingface model ID
+# <use_instruct>: Set to True for Instruct models or False for Base models
+```
