@@ -259,7 +259,7 @@ You can also try interactive chat script (for example, [`examples/llada/chat.py`
 ## Evaluation
 The evaluation framework is built upon [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness), supporting easy extension to new tasks.
 
-A typical evaluation entry script (for example, [examples/llada/eval.sh](/examples/llada/eval.sh)) looks like this:
+A typical evaluation entry script (for example, [`examples/llada/eval.sh`](/examples/llada/eval.sh)) looks like this:
 
 ```shell
 accelerate launch  --num_processes 4 \
@@ -273,19 +273,12 @@ accelerate launch  --num_processes 4 \
     --num_fewshot 0 \
     --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,is_check_greedy=False,mc_num=1,max_new_tokens=256,steps=256,block_length=256,cfg=0.0"
 ```
-> [!NOTE]
-> Arguments explanations:
-> 1. Specify evaluation task: `--tasks mmlu_pro`  
->
-> 2. Control generation behavior: `--model_args "max_new_tokens=256,temperature=0.1,top_p=0.9"`
 
 We also provide preconfigured scripts that automatically perform full evaluations on all benchmark datasets with consistent generation settings for [LLaDA](https://huggingface.co/GSAI-ML/LLaDA-8B-Base), [Dream](https://huggingface.co/collections/Dream-org/dream-7b), and [BERT-diffusion](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v1).
 For example, you can launch them directly using the following commands:
 ```shell
 bash examples/llada/eval.sh GSAI-ML/LLaDA-8B-Instruct True
 bash examples/llada/eval.sh GSAI-ML/LLaDA-8B-Base False
-# <model_path>: Local path or huggingface model ID
-# <use_instruct>: Set to True for Instruct models or False for Base models
 ```
 
 
