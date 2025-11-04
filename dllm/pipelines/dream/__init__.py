@@ -4,4 +4,3 @@ from .models.configuration_dream import DreamConfig
 from .models.tokenization_dream import DreamTokenizer
 from .generator import DreamGeneratorConfig, DreamGenerator
 from .trainer import DreamTrainer
-from .eval import DreamEvalHarness
