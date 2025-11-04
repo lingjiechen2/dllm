@@ -85,8 +85,8 @@ sbatch --nodes=2 --gres=gpu:8 scripts/train.slurm.sh \
 ```
 
 <!-- **Reproducing [Dream-v0-Instruct-7B](https://huggingface.co/Dream-org/Dream-v0-Base-7B)**. We tried our best to reproduce Dream-v0-Instruct-7B by finetuning Dream-v0-Base-7B using our training pipeline on the public instruction-following dataset [allenai/tulu-3-sft-mixture](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture): -->
-#### Reproducing [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B)
-We tried our best to reproduce Dream-v0-Instruct-7B by finetuning Dream-v0-Base-7B using our training pipeline on the public instruction-following dataset [`allenai/tulu-3-sft-mixture`](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture):
+#### Reproducing [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B)
+We tried our best to reproduce [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B) by finetuning [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) using our training pipeline on the public instruction-following dataset [`allenai/tulu-3-sft-mixture`](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture):
 
 ```shell
 # preprocessing SFT data (optional, but can avoid redundant preprocessing for multi-node training)
@@ -117,8 +117,7 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
     --eval_steps 0.1 \
     --save_steps 0.05
 ```
-Training curves are on Wandb; checkpoints with evaluation results are available on Hugging Face. See the [Evaluation](#evaluation) section below for evaluation instructions.
-[TODO]
+[TODO] Training curves are on Wandb; checkpoints with evaluation results are available on Hugging Face. See the [Evaluation](#evaluation) section below for evaluation instructions.
 
 ### Pretraining
 <!-- > [!NOTE]
@@ -138,42 +137,33 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
 ```
 
 ## Inference
-We support batch inference for standard generation and infilling generation.
-See [`examples/dream/generate.py`](/examples/dream/generate.py) for a full example.
+We support batch inference for standard generation and infilling:
+<!-- See [`examples/dream/generate.py`](/examples/dream/generate.py) for a full example: -->
 ```shell
 python examples/dream/generate.py --model_name_or_path "Dream-org/Dream-v0-Instruct-7B"
 ```
-<!-- We also support interactive multi-turn dialogue with visualization.
-See [`examples/dream/chat.py`](/examples/dream/chat.py) for a full example. -->
+We also support interactive multi-turn dialogue with visualization:
 ```shell
 python examples/dream/chat.py --model_name_or_path "Dream-org/Dream-v0-Instruct-7B"
 ```
 
-## Evaluation
-> [!IMPORTANT]  
-> If you find missing files inside the `lm-evaluation-harness/` submodule, reinitialize it properly with:
-> ```bash
-> git submodule update --init --recursive
-> ```
+## Evaluation  
+> Read [(optional) Evaluation setup](/README.md/#optional-evaluation-setup) before running evaluation. 
 
-For example, to evaluate [Dream-v0-Instruct-7B](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B) on [MMLU-Pro](https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro) using 4 GPUs, run:
+For example, to evaluate [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B) on [`MMLU-Pro`](https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro) using 4 GPUs, run:
 ```shell
 # Use model_args to adjust the generation arguments for evalution.
-accelerate launch  --num_processes 4 \
+accelerate launch --num_processes 4 \
     dllm/pipelines/dream/eval.py \
-    --tasks mmlu_pro \
-    --batch_size 1 \
-    --model dream \
-    --seed 1234 \
-    --device cuda \
+    --tasks "mmlu_pro" \
+    --model "dream" \
     --apply_chat_template \
     --num_fewshot 0 \
     --model_args "pretrained=Dream-org/Dream-v0-Instruct-7B,mc_num=1,max_new_tokens=128,max_length=128,steps=128,temperature=0.1,top_p=0.9,add_bos_token=true,escape_until=true"
 ```
 
-To perform full evaluations on all benchmark datasets with consistent generation parameters for both [Dream-v0-Base-7B](https://huggingface.co/Dream-org/Dream-v0-Base-7B) and [Dream-v0-Instruct-7B](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B), use the preconfigured script:
+To automatically evaluate [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) and [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B) on all benchmarks, run:
 ```shell
-bash examples/dream/eval.sh <model_path> <use_instruct>
-# <model_path>: Local path or huggingface model ID
-# <use_instruct>: Set to True for Instruct models or False for Base models
+bash examples/llada/eval.sh --model_name_or_path "Dream-org/Dream-v0-Instruct-7B" --instruct True
+bash examples/llada/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --instruct False
 ```
