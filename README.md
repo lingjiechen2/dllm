@@ -12,7 +12,7 @@ Simple Diffusion Language Modeling
 
 
 ## Overview
-**dLLM** is a library offering unified implementations for training and evaluating **diffusion language models**. It brings transparency to the entire development pipeline, making **reproduction** of open-weight diffusion language models much easier. Below are some of the key features that make dLLM special:
+**dLLM** is a library offering unified implementations for training and evaluating **diffusion language models**. It brings transparency to the entire development pipeline, making reproduction of open-weight diffusion language models much easier. Below are some of the key features that make dLLM special:
 
  <!-- and [RND1](https://www.radicalnumerics.ai/assets/rnd1_report.pdf) -->
 
@@ -20,7 +20,7 @@ Simple Diffusion Language Modeling
 
 - dLLM provides unified evaluation pipelines (inspired by [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness)), abstracting away inference details and making customization simple.
 
-- With these modules, we provide the minimal pretraining / finetuning / evaluation recipes for a variety of open-weight models (e.g., [LLaDA](https://arxiv.org/abs/2502.09992) and [Dream](https://arxiv.org/abs/2508.15487)), and implementations of various training algorithms (e.g., [Edit Flows](https://arxiv.org/abs/2506.09018)).
+- With these modules, we provide the minimal **pretraining / finetuning / evaluation** recipes for a variety of open-weight models (e.g., [LLaDA](https://arxiv.org/abs/2502.09992) and [Dream](https://arxiv.org/abs/2508.15487)), and implementations of various training algorithms (e.g., [Edit Flows](https://arxiv.org/abs/2506.09018)).
 
 <!-- > [!NOTE]
 > This repository is primarily for educational purposes and does not aim for 100% exact reproduction of official models (which is impossible). We hope it serves as a helpful reference for the community — contributions and improvements are always welcome! -->
@@ -94,6 +94,7 @@ conda create -n dllm python=3.10 -y
 conda activate dllm
 
 # install pytorch with CUDA 12.4 (other pytorch/cuda versions should also work)
+conda install cuda=12.4 -c nvidia
 pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 \
     --index-url https://download.pytorch.org/whl/cu124
 
@@ -103,6 +104,15 @@ pip install -r requirements.txt
 # install dllm package
 pip install -e .
 ```
+### (optional) Evaluation setup
+
+```bash
+[TODO]
+
+# initialize `lm-evaluation-harness`
+git submodule update --init --recursive
+```
+
 ### (optional) Slurm setup
 For [Slurm](https://slurm.schedmd.com/) users, update [`scripts/train.slurm.sh`](/scripts/train.slurm.sh) for your cluster:
 ```diff
@@ -219,7 +229,7 @@ See [Features](#features) for specific training recipes.
 > 3. Train with LoRA and 4bit quantization:
 > `--load_in_4bit True --lora True`
 > 4. Train with different distributed training methods:
-> `--accelerate_config" ddp,zero-{1,2,3},fsdp"`
+> `--accelerate_config "ddp,zero-{1,2,3},fsdp"`
 
 ## Inference
 
@@ -257,37 +267,8 @@ You can also try interactive chat script (for example, [`examples/llada/chat.py`
 <!-- <p align="center"><em>EditFlow performing insertion (blue), substitution from mask tokens (black), substitution from non-mask tokens (red), and deletion (strikethrough → removed) during generation.</em></p> -->
 
 ## Evaluation
-The evaluation framework is built upon [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness), supporting easy extension to new tasks.
 
-A typical evaluation entry script (for example, [examples/llada/eval.sh](/examples/llada/eval.sh)) looks like this:
-
-```shell
-accelerate launch  --num_processes 4 \
-    dllm/pipelines/llada/eval.py \
-    --tasks mmlu_pro \
-    --batch_size 1 \
-    --model llada \
-    --seed 1234 \
-    --device cuda \
-    --apply_chat_template \
-    --num_fewshot 0 \
-    --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,is_check_greedy=False,mc_num=1,max_new_tokens=256,steps=256,block_length=256,cfg=0.0"
-```
-> [!NOTE]
-> Arguments explanations:
-> 1. Specify evaluation task: `--tasks mmlu_pro`  
->
-> 2. Control generation behavior: `--model_args "max_new_tokens=256,temperature=0.1,top_p=0.9"`
-
-We also provide preconfigured scripts that automatically perform full evaluations on all benchmark datasets with consistent generation settings for [LLaDA](https://huggingface.co/GSAI-ML/LLaDA-8B-Base), [Dream](https://huggingface.co/collections/Dream-org/dream-7b), and [BERT-diffusion](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v1).
-For example, you can launch them directly using the following commands:
-```shell
-bash examples/llada/eval.sh GSAI-ML/LLaDA-8B-Instruct True
-bash examples/llada/eval.sh GSAI-ML/LLaDA-8B-Base False
-# <model_path>: Local path or huggingface model ID
-# <use_instruct>: Set to True for Instruct models or False for Base models
-```
-
+[TODO]
 
 ## Citation
 ```

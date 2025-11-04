@@ -99,7 +99,7 @@ sbatch --nodes=2 --gres=gpu:8 scripts/train.slurm.sh \
 <!-- **Reproducing [LLaDA-8B-Instruct](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct)**. Though LLaDA is trained on proprietary data, we tried our best to reproduce LLaDA-8B-Instruct by finetuning LLaDA-8B-Base using our training pipeline on public instruction-following dataset [allenai/tulu-3-sft-mixture](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture): -->
 
 #### Reproducing [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct)
-Though LLaDA is trained on proprietary data, we tried our best to reproduce LLaDA-8B-Instruct by finetuning LLaDA-8B-Base using our training pipeline on public instruction-following dataset [`allenai/tulu-3-sft-mixture`](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture):
+Though LLaDA is trained on proprietary data, we tried our best to reproduce [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) by finetuning [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) using our training pipeline on public instruction-following dataset [`allenai/tulu-3-sft-mixture`](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture):
 
 ```shell
 # preprocessing SFT data (optional, but can avoid redundant preprocessing for multi-node training)
@@ -129,7 +129,7 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
     --eval_steps 0.1 \
     --save_steps 0.05
 ```
-Training curves are on Wandb; checkpoints with evaluation results are available on Hugging Face. See the [Evaluation](#evaluation) section below for evaluation instructions.
+[TODO] Training curves are on Wandb; checkpoints with evaluation results are available on Hugging Face. See the [Evaluation](#evaluation) section below for evaluation instructions.
 
 
 ### Pretraining
@@ -152,7 +152,7 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
 
 ## Inference
 We support batch inference for standard generation and infilling:
-See [`examples/llada/generate.py`](/examples/llada/generate.py) for a full example.
+<!-- See [`examples/llada/generate.py`](/examples/llada/generate.py) for a full example: -->
 ```shell
 python examples/llada/generate.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct"
 ```
@@ -163,30 +163,22 @@ python examples/llada/chat.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct"
 ```
 
 ## Evaluation
-> [!IMPORTANT]  
-> If you find missing files inside the `lm-evaluation-harness/` submodule, reinitialize it properly with:
-> ```bash
-> git submodule update --init --recursive
-> ```
+> Read [(optional) Evaluation setup](/README.md/#optional-evaluation-setup) before running evaluation. 
 
 For example, to evaluate [LLaDA-8B-Instruct](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) on [MMLU-Pro](https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro) using 4 GPUs, run:
 ```shell
 # Use model_args to adjust the generation arguments for evalution.
-accelerate launch  --num_processes 4 \
+accelerate launch --num_processes 4 \
     dllm/pipelines/llada/eval.py \
-    --tasks mmlu_pro \
-    --batch_size 1 \
-    --model llada \
-    --seed 1234 \
-    --device cuda \
+    --tasks "mmlu_pro" \
+    --model "llada" \
     --apply_chat_template \
     --num_fewshot 0 \
     --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,is_check_greedy=False,mc_num=1,max_new_tokens=256,steps=256,block_length=256,cfg=0.0"
 ```
 
-To perform full evaluations on all benchmark datasets with consistent generation parameters for both [LLaDA-8B-Base](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) and [LLaDA-8B-Instruct](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct), use the preconfigured script:
+To automatically evaluate [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) and [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) on all benchmarks, run:
 ```shell
-bash examples/llada/eval.sh <model_path> <use_instruct>
-# <model_path>: Local path or huggingface model ID
-# <use_instruct>: Set to True for Instruct models or False for Base models
+bash examples/llada/eval.sh --model_name_or_path GSAI-ML/LLaDA-8B-Instruct --instruct True
+bash examples/llada/eval.sh --model_name_or_path GSAI-ML/LLaDA-8B-Base --instruct False
 ```

@@ -34,7 +34,7 @@ class LLaDAEvalHarness(LM):
         self,
         pretrained='',
         dtype: Optional[Union[str, torch.dtype]] = "auto",
-        batch_size=32,
+        batch_size=1,
         mc_num=128,
         is_check_greedy=True,
         device="cuda",

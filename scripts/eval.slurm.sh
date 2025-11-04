@@ -6,7 +6,7 @@
 #SBATCH --ntasks-per-node=8
 #SBATCH --gres=gpu:8
 #SBATCH --cpus-per-task=8
-#SBATCH --time=50:00:00
+#SBATCH --time=20:00:00
 #SBATCH --output=logs/%x-%j.out
 #SBATCH --error=logs/%x-%j.err
 #SBATCH --requeue
@@ -35,11 +35,11 @@ declare -A eval_bert_configs
 eval_llada_configs["gsm8k"]="8|None|1024|1024|32|1234|1|0.0"
 eval_llada_configs["bbh"]="3|None|1024|1024|32|1234|1|0.0"
 eval_llada_configs["minerva_math"]="4|None|1024|1024|32|1234|1|0.0"
-eval_llada_configs["humaneval"]="0|20|1024|1024|32|1234|1|0.0"
+eval_llada_configs["humaneval"]="0|None|1024|1024|32|1234|1|0.0"
 eval_llada_configs["mbpp"]="3|None|1024|1024|32|1234|1|0.0"
 
 # ---------- Base Likelihood ----------
-eval_llada_configs["gpqa_main_n_shot"]="5|20|1024|1024|1024|1234|128|0.5"
+eval_llada_configs["gpqa_main_n_shot"]="5|None|1024|1024|1024|1234|128|0.5"
 eval_llada_configs["truthfulqa_mc2"]="0|None|1024|1024|1024|1234|128|2.0"
 eval_llada_configs["arc_challenge"]="0|None|1024|1024|1024|1234|128|0.5"
 eval_llada_configs["hellaswag"]="0|None|1024|1024|1024|1234|128|0.5"
@@ -53,14 +53,14 @@ eval_llada_configs["ceval-valid"]="5|None|1024|1024|1024|1234|1|0.0"
 eval_llada_configs["gsm8k_cot"]="8|None|1024|1024|32|1234|1|0.0"
 eval_llada_configs["bbh"]="3|None|1024|1024|32|1234|1|0.0"
 eval_llada_configs["minerva_math"]="4|None|1024|1024|32|1234|1|0.0"
-eval_llada_configs["humaneval_instruct"]="0|20|1024|1024|32|1234|1|0.0"
+eval_llada_configs["humaneval_instruct"]="0|None|1024|1024|32|1234|1|0.0"
 eval_llada_configs["mbpp_llada_instruct"]="3|None|1024|1024|32|1234|1|0.0"
 
 eval_llada_configs["mmlu_generative"]="0|None|3|3|3|1234|1|0.0"
 eval_llada_configs["mmlu_pro"]="0|None|256|256|256|1234|1|0.0"
 eval_llada_configs["hellaswag_gen"]="0|None|3|3|3|1234|1|0.0"
-eval_llada_configs["arc_challenge_chat"]="0|None|5|5|5|1234|1|0.0"
-eval_llada_configs["gpqa_n_shot_gen"]="5|100|32|32|32|1234|1|0.0"
+eval_llada_configs["arc_challarc_challenge_chatenge"]="0|None|5|5|5|1234|1|0.0"
+eval_llada_configs["gpqa_n_shot_gen"]="5|None|32|32|32|1234|1|0.0"
 
 # ============================================================
 # ====================  DREAM CONFIGS  ========================
@@ -70,31 +70,31 @@ eval_llada_configs["gpqa_n_shot_gen"]="5|100|32|32|32|1234|1|0.0"
 # ============================================================
 
 # ---------- Base Generation ----------
-eval_dream_configs["humaneval"]="0|None|512|2048|512|0.2|0.95|1234|1"
-eval_dream_configs["gsm8k_cot"]="8|None|256|2048|256|0.0|0.95|1234|1"
-eval_dream_configs["mbpp"]="3|None|512|2048|512|0.2|0.95|1234|1"
-eval_dream_configs["minerva_math"]="4|None|512|2048|512|0.0|0.95|1234|1"
-eval_dream_configs["bbh"]="3|None|512|2048|512|0.0|0.95|1234|1"
+eval_dream_configs["humaneval"]="0|None|512|2048|512|0.2|0.95|42|1"
+eval_dream_configs["gsm8k_cot"]="8|None|256|2048|256|0.0|0.95|42|1"
+eval_dream_configs["mbpp"]="3|None|512|2048|512|0.2|0.95|42|1"
+eval_dream_configs["minerva_math"]="4|None|512|2048|512|0.0|0.95|42|1"
+eval_dream_configs["bbh"]="3|None|512|2048|512|0.0|0.95|42|1"
 
 # ---------- Base Likelihood ----------
-eval_dream_configs["mmlu"]="5|None|512|2048|512|0.0|0.95|1234|1"
-eval_dream_configs["arc_easy"]="0|None|512|2048|512|0.0|0.95|1234|1"
-eval_dream_configs["arc_challenge"]="0|None|512|2048|512|0.0|0.95|1234|1"
-eval_dream_configs["hellaswag"]="0|None|512|2048|512|0.0|0.95|1234|1"
-eval_dream_configs["piqa"]="0|None|512|2048|512|0.0|0.95|1234|1"
-eval_dream_configs["gpqa_main_n_shot"]="5|20|512|2048|512|0.0|0.95|1234|1"
-eval_dream_configs["winogrande"]="5|None|512|2048|512|0.0|0.95|1234|1"
-eval_dream_configs["race"]="0|None|512|2048|512|0.0|0.95|1234|1"
+eval_dream_configs["mmlu"]="5|None|512|2048|512|0.0|0.95|42|1"
+eval_dream_configs["arc_easy"]="0|None|512|2048|512|0.0|0.95|42|1"
+eval_dream_configs["arc_challenge"]="0|None|512|2048|512|0.0|0.95|42|1"
+eval_dream_configs["hellaswag"]="0|None|512|2048|512|0.0|0.95|42|1"
+eval_dream_configs["piqa"]="0|None|512|2048|512|0.0|0.95|42|1"
+eval_dream_configs["gpqa_main_n_shot"]="5|None|512|2048|512|0.0|0.95|42|1"
+eval_dream_configs["winogrande"]="5|None|512|2048|512|0.0|0.95|42|1"
+eval_dream_configs["race"]="0|None|512|2048|512|0.0|0.95|42|1"
 
 # ---------- Instruct Generation ----------
-eval_dream_configs["mmlu_generative"]="4|None|128|2048|128|0.1|0.9|1234|1"
-eval_dream_configs["mmlu_pro"]="4|None|128|2048|128|0.1|0.9|1234|1"
-eval_dream_configs["gsm8k_cot"]="0|None|256|2048|256|0.1|0.9|1234|1"
-eval_dream_configs["minerva_math"]="0|None|512|2048|512|0.1|0.9|1234|1"
-eval_dream_configs["gpqa_main_n_shot"]="5|20|128|2048|128|0.0|1.0|1234|1"
-eval_dream_configs["humaneval_instruct_dream"]="0|None|768|2048|768|0.1|0.9|1234|1"
-eval_dream_configs["mbpp_instruct"]="0|None|1024|2048|1024|0.1|0.9|1234|1"
-eval_dream_configs["ifeval"]="0|None|1280|2048|1280|0.1|0.9|1234|1"
+eval_dream_configs["mmlu_generative"]="4|None|128|2048|128|0.1|0.9|42|1"
+eval_dream_configs["mmlu_pro"]="4|None|128|2048|128|0.1|0.9|42|1"
+eval_dream_configs["gsm8k_cot"]="0|None|256|2048|256|0.1|0.9|42|1"
+eval_dream_configs["minerva_math"]="0|None|512|2048|512|0.1|0.9|42|1"
+eval_dream_configs["gpqa_main_n_shot"]="5|None|128|2048|128|0.0|1.0|42|1"
+eval_dream_configs["humaneval_instruct"]="0|None|768|2048|768|0.1|0.9|42|1"
+eval_dream_configs["mbpp_instruct"]="0|None|1024|2048|1024|0.1|0.9|42|1"
+eval_dream_configs["ifeval"]="0|None|1280|2048|1280|0.1|0.9|42|1"
 
 
 # ============================================================
@@ -174,7 +174,7 @@ case "${MODEL_CLASS}" in
     IFS="|" read -r NUM_FEWSHOT LIMIT MAX_NEW_TOKENS STEPS BLOCK_LENGTH SEED MC_NUM CFG <<< "${CONFIG}"
 
     MODEL_TYPE="llada"
-    SCRIPT_PATH="dllm/pipelines/llada/eval.py"
+    SCRIPT_PATH="dllm/eval/eval_llada.py"
     MODEL_ARGS="pretrained=${MODEL_PATH},is_check_greedy=False,mc_num=${MC_NUM},max_new_tokens=${MAX_NEW_TOKENS},steps=${STEPS},block_length=${BLOCK_LENGTH},cfg=${CFG}"
     ;;
 
@@ -189,7 +189,7 @@ case "${MODEL_CLASS}" in
     IFS="|" read -r NUM_FEWSHOT LIMIT MAX_NEW_TOKENS MAX_LENGTH STEPS TEMPERATURE TOP_P SEED MC_NUM <<< "${CONFIG}"
 
     MODEL_TYPE="dream"
-    SCRIPT_PATH="dllm/pipelines/dream/eval.py"
+    SCRIPT_PATH="dllm/eval/eval_dream.py"
     MODEL_ARGS="pretrained=${MODEL_PATH},mc_num=${MC_NUM},max_new_tokens=${MAX_NEW_TOKENS},max_length=${MAX_LENGTH},steps=${STEPS},temperature=${TEMPERATURE},top_p=${TOP_P},add_bos_token=true,escape_until=true"
     ;;
 
@@ -204,7 +204,7 @@ case "${MODEL_CLASS}" in
     IFS="|" read -r NUM_FEWSHOT LIMIT MAX_NEW_TOKENS STEPS BLOCK_LENGTH SEED MC_NUM <<< "${CONFIG}"
 
     MODEL_TYPE="bert"
-    SCRIPT_PATH="dllm/pipelines/bert/eval.py"
+    SCRIPT_PATH="dllm/eval/eval_bert.py"
     MODEL_ARGS="pretrained=${MODEL_PATH},is_check_greedy=False,mc_num=${MC_NUM},max_new_tokens=${MAX_NEW_TOKENS},steps=${STEPS},block_length=${BLOCK_LENGTH}"
     ;;
 
