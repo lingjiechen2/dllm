@@ -27,7 +27,7 @@ Simple Diffusion Language Modeling
 
 
 ## News
-**[2025/11]** We released a collection of BERTs finetuned for instruction-following: [`ModernBERT-{large,base}-chat-v1`](https://huggingface.co/collections/dllm-collection/bert-chat). This proof-of-concept shows that BERT’s internal knowledge can be leveraged for generative tasks via masked instruction tuning. See [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) BERT Chat Report](https://wandb.ai/asap-zzhou/dllm/reports/dLLM-BERT-Chat--VmlldzoxNDg0MzExNg) for experimental results and lessons learned and [`examples/bert`](/examples/bert) for train / inference / evaluation instructions.
+**[2025/11]** We released a collection of BERTs finetuned for instruction-following: [`ModernBERT-{large,base}-chat-v0`](https://huggingface.co/collections/dllm-collection/bert-chat). This proof-of-concept shows that BERT’s internal knowledge can be leveraged for generative tasks via masked instruction tuning. See [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) BERT Chat Report](https://wandb.ai/asap-zzhou/dllm/reports/dLLM-BERT-Chat--VmlldzoxNDg0MzExNg) for detailed recipes, experimental results and lessons learned; See [`examples/bert`](/examples/bert) for train / inference / evaluation instructions.
 
 <!-- <details>
 <summary>🎬 Click to show BERT Chat Demo</summary>
@@ -37,7 +37,7 @@ Simple Diffusion Language Modeling
 </p>
 <p align="center">
 <em>
-    Chat with <a href="https://huggingface.co/dllm-collection/ModernBERT-large-chat-v1"><code>ModernBERT-large-chat-v1</code></a>. See <a href="/examples/bert/README.md/#inference">Inference</a> for details.
+    Chat with <a href="https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0"><code>ModernBERT-large-chat-v0</code></a>. See <a href="/examples/bert/README.md/#inference">Inference</a> for details.
 </em>
 </p>
 </details> -->
@@ -68,7 +68,7 @@ Simple Diffusion Language Modeling
     </p>
     <p align="center">
     <em>
-        Chat with <a href="https://huggingface.co/dllm-collection/ModernBERT-large-chat-v1"><code>ModernBERT-large-chat-v1</code></a>. See <a href="/examples/bert/README.md/#inference">Inference</a> for details.
+        Chat with <a href="https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0"><code>ModernBERT-large-chat-v0</code></a>. See <a href="/examples/bert/README.md/#inference">Inference</a> for details.
     </em>
     </p>
     </details>
