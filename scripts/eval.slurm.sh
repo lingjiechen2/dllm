@@ -6,7 +6,7 @@
 #SBATCH --ntasks-per-node=8
 #SBATCH --gres=gpu:8
 #SBATCH --cpus-per-task=8
-#SBATCH --time=30:00:00
+#SBATCH --time=50:00:00
 #SBATCH --output=logs/%x-%j.out
 #SBATCH --error=logs/%x-%j.err
 #SBATCH --requeue
@@ -33,7 +33,7 @@ declare -A eval_bert_configs
 
 # ---------- Base Generation ----------
 eval_llada_configs["gsm8k"]="8|None|1024|1024|32|1234|1|0.0"
-eval_llada_configs["bbh"]="3|1|1024|1024|32|1234|1|0.0"
+eval_llada_configs["bbh"]="3|None|1024|1024|32|1234|1|0.0"
 eval_llada_configs["minerva_math"]="4|None|1024|1024|32|1234|1|0.0"
 eval_llada_configs["humaneval"]="0|20|1024|1024|32|1234|1|0.0"
 eval_llada_configs["mbpp"]="3|None|1024|1024|32|1234|1|0.0"
@@ -51,7 +51,7 @@ eval_llada_configs["ceval-valid"]="5|None|1024|1024|1024|1234|1|0.0"
 
 # ---------- Instruct Generation ----------
 eval_llada_configs["gsm8k_cot"]="8|None|1024|1024|32|1234|1|0.0"
-eval_llada_configs["bbh"]="3|1|1024|1024|32|1234|1|0.0"
+eval_llada_configs["bbh"]="3|None|1024|1024|32|1234|1|0.0"
 eval_llada_configs["minerva_math"]="4|None|1024|1024|32|1234|1|0.0"
 eval_llada_configs["humaneval_instruct"]="0|20|1024|1024|32|1234|1|0.0"
 eval_llada_configs["mbpp_llada_instruct"]="3|None|1024|1024|32|1234|1|0.0"
@@ -59,7 +59,7 @@ eval_llada_configs["mbpp_llada_instruct"]="3|None|1024|1024|32|1234|1|0.0"
 eval_llada_configs["mmlu_generative"]="0|None|3|3|3|1234|1|0.0"
 eval_llada_configs["mmlu_pro"]="0|None|256|256|256|1234|1|0.0"
 eval_llada_configs["hellaswag_gen"]="0|None|3|3|3|1234|1|0.0"
-eval_llada_configs["arc_challarc_challenge_chatenge"]="0|None|5|5|5|1234|1|0.0"
+eval_llada_configs["arc_challenge_chat"]="0|None|5|5|5|1234|1|0.0"
 eval_llada_configs["gpqa_n_shot_gen"]="5|100|32|32|32|1234|1|0.0"
 
 # ============================================================
@@ -74,7 +74,7 @@ eval_dream_configs["humaneval"]="0|None|512|2048|512|0.2|0.95|1234|1"
 eval_dream_configs["gsm8k_cot"]="8|None|256|2048|256|0.0|0.95|1234|1"
 eval_dream_configs["mbpp"]="3|None|512|2048|512|0.2|0.95|1234|1"
 eval_dream_configs["minerva_math"]="4|None|512|2048|512|0.0|0.95|1234|1"
-eval_dream_configs["bbh"]="3|1|512|2048|512|0.0|0.95|1234|1"
+eval_dream_configs["bbh"]="3|None|512|2048|512|0.0|0.95|1234|1"
 
 # ---------- Base Likelihood ----------
 eval_dream_configs["mmlu"]="5|None|512|2048|512|0.0|0.95|1234|1"
