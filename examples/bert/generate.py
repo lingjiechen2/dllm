@@ -13,7 +13,7 @@ from dllm.pipelines import llada
 
 @dataclass
 class ScriptArguments:
-    model_name_or_path: str = "models/ModernBERT-large/tulu-3-smoltalk/epochs-10-bs-384-len-1024/checkpoint-final"
+    model_name_or_path: str = "ModernBERT-large/tulu-3-smoltalk/epochs-10-bs-384-len-1024/checkpoint-final"
     seed: int = 42
     visualize: bool = True
     def __post_init__(self):
@@ -49,7 +49,7 @@ print("=" * 80)
 
 messages = [
     [{"role": "user", "content": "Lily runs 12 km/h for 4 hours. How far in 8 hours?"}],
-    [{"role": "user", "content": "Please write an educational python function."}],
+    # [{"role": "user", "content": "Please write an educational python function."}],
 ]
 
 inputs = tokenizer.apply_chat_template(
@@ -57,7 +57,6 @@ inputs = tokenizer.apply_chat_template(
     add_generation_prompt=True,
     tokenize=True,
 )
-
 outputs = generator.generate(inputs, gen_config, return_dict_in_generate=True)
 sequences = decode_trim(tokenizer, outputs.sequences.tolist(), inputs)
 

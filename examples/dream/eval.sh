@@ -58,7 +58,7 @@ if [ "$use_instruct" = "True" ]; then
         --model_args "pretrained=${model_path},mc_num=1,max_new_tokens=128,max_length=128,steps=128,temperature=0.0,top_p=1.0,add_bos_token=true,escape_until=true"
 
     accelerate launch --num_processes ${num_gpu} dllm/eval/eval_dream.py \
-        --tasks humaneval_instruct --num_fewshot 0 ${common_args} \
+        --tasks humaneval_instruct_dream --num_fewshot 0 ${common_args} \
         --model_args "pretrained=${model_path},mc_num=1,max_new_tokens=768,max_length=768,steps=768,temperature=0.1,top_p=0.9,add_bos_token=true,escape_until=true"
 
     accelerate launch --num_processes ${num_gpu} dllm/eval/eval_dream.py \
