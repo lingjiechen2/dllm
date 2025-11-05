@@ -151,12 +151,12 @@ bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-larg
 
 <div style="min-width:1500px;">
 
-|  | LAMBADA | CBT-CN | CBT-NE | 
-|:----------------|:----:|:---:|:-----:|
-| [`GPT-2`(reported)](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) | 45.99 | 87.65 | 83.4 |
-| `GPT-2`(evaluated) | – | – | – |
-| [`ModernBERT-base-chat-v0`(evaluated)](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0) | – | – | – | 
-| [`ModernBERT-large-chat-v0`(evaluated)](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0) | – | – | – | 
+|  | LAMBADA | CBT-CN | CBT-NE | GSM8K |
+|:----------------|:----:|:---:|:-----:|:-----:|
+| [`GPT-2`(reported)](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) | 45.99 | 87.65 | 83.4 | – |
+| `GPT-2`(evaluated) | – | – | – |– |
+| [`ModernBERT-base-chat-v0`(evaluated)](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0) | – | – | – |  – |
+| [`ModernBERT-large-chat-v0`(evaluated)](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0) | – | – | – |  – |
 </div>
 
 <p align="center" style="color: #808080; font-size: 0.9em;">
