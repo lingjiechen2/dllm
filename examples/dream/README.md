@@ -176,8 +176,8 @@ bash examples/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --
 
 <div style="min-width:1500px;">
 
-|  | MMLU | BBH | ARC-C | ARC-E | Hellaswag | WinoGrande | PIQA | GSM8K | Math | GPQA | HumanEval | MBPP | RACE | Countdown | Sudoku | Trip planning | 
-|:----------------|:-------:|:-------:|:-----:|:-----:|:-----------:|:------------:|:----:|:-----:|:----:|:----:|:-----------:|:----:|:------:|:-----------:|:----:|:-----------:|
+|  | MMLU | BBH | ARC&#8209;C | ARC&#8209;E | Hellaswag | WinoGrande | PIQA | GSM8K | Math | GPQA | HumanEval | MBPP | RACE | Countdown | Sudoku | Trip&nbsp;planning | 
+|:----------------|:-------:|:---:|:-----:|:-----:|:-----------:|:------------:|:----:|:-----:|:----:|:----:|:-----------:|:----:|:------:|:-----------:|:----:|:------:|
 | [`Dream-v0-Base-7B`(reported)](https://arxiv.org/pdf/2508.15487) | 0.695 | 0.579 | 0.599 | 0.839 | 0.733 | 0.748 | 0.758 | 0.772 | 0.396 | 0.366 | 0.579 | 0.562 | 0.447 | 0.160 | 0.810 | 0.178 |
 | `Dream-v0-Base-7B`(evaluated) | – | – | – | – | – | – | – | 0.696 | – | – | – | – | 0.304 | – | – | – |
 </div>
