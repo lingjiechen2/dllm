@@ -174,10 +174,10 @@ bash examples/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --
 > All evaluation settings follow the configurations in the [Dream](https://github.com/DreamLM/Dream) repository, with minor adjustments for compatibility.  
 > Full evaluation results will be released soon.
 
-<div style="min-width:3000px;">
+<div style="min-width:1500px;">
 
-|  | MMLU | BBH | ARC-C &nbsp;&nbsp;&nbsp;| ARC-E &nbsp;&nbsp;&nbsp;| Hellaswag | WinoGrande | PIQA | GSM8K | Math | GPQA | HumanEval | MBPP | RACE | Countdown | Sudoku | Trip planning&nbsp;&nbsp;&nbsp; | 
-|:----------------|:----:|:---:|:-----:|:-----:|:-----------:|:------------:|:----:|:-----:|:----:|:----:|:-----------:|:----:|:------:|:-----------:|:----:|:----------------:|
+|  | MMLU | BBH | ARC-C | ARC-E | Hellaswag | WinoGrande | PIQA | GSM8K | Math | GPQA | HumanEval | MBPP | RACE | Countdown | Sudoku | Trip planning | 
+|:----------------|:-------:|:-------:|:-----:|:-----:|:-----------:|:------------:|:----:|:-----:|:----:|:----:|:-----------:|:----:|:------:|:-----------:|:----:|:-----------:|
 | [`Dream-v0-Base-7B`(reported)](https://arxiv.org/pdf/2508.15487) | 0.695 | 0.579 | 0.599 | 0.839 | 0.733 | 0.748 | 0.758 | 0.772 | 0.396 | 0.366 | 0.579 | 0.562 | 0.447 | 0.160 | 0.810 | 0.178 |
 | `Dream-v0-Base-7B`(evaluated) | – | – | – | – | – | – | – | 0.696 | – | – | – | – | 0.304 | – | – | – |
 </div>
