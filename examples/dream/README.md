@@ -174,7 +174,7 @@ bash examples/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --
 > All evaluation settings follow the configurations in the [Dream](https://github.com/DreamLM/Dream) repository, with minor adjustments for compatibility.  
 > Full evaluation results will be released soon.
 
-<div style="min-width:1500px;">
+<div style="min-width:3000px;">
 
 |  | MMLU | BBH | ARC-C &nbsp;&nbsp;&nbsp;| ARC-E &nbsp;&nbsp;&nbsp;| Hellaswag | WinoGrande | PIQA | GSM8K | Math | GPQA | HumanEval | MBPP | RACE | Countdown | Sudoku | Trip planning&nbsp;&nbsp;&nbsp; | 
 |:----------------|:----:|:---:|:-----:|:-----:|:-----------:|:------------:|:----:|:-----:|:----:|:----:|:-----------:|:----:|:------:|:-----------:|:----:|:----------------:|
