@@ -196,7 +196,7 @@ bash examples/llada/eval.sh --model_name_or_path GSAI-ML/LLaDA-8B-Base --instruc
 |  | MMLU | BBH | ARC&#8209;C | Hellaswag | TruthfulQA | WinoGrande | PIQA | GSM8K | Math | GPQA | HumanEval | MBPP | CEval | CMMLU |
 |:----------------|:----:|:---:|:-----:|:-----------:|:-----------:|:------------:|:----:|:-----:|:----:|:----:|:-----------:|:----:|:------:|:------:|
 | [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA-8B-Base)(reported)| 0.659 | 0.497 | 0.459 | 0.705 | 0.461 | 0.748 | 0.736 | 0.703 | 0.314 | 0.252 | 0.354 | 0.400 | 0.705 | 0.699 |
-| `LLaDA-8B-Base`(evaluated)| 0.658 | – | 0.457 | 0.693 | 0.456 | 0.707 | 0.706 | 0.704 | – | – | 0.323 | 0.388 | 0.702 | 0.699 |
+| [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA-8B-Base)(evaluated)| 0.658 | – | 0.457 | 0.693 | 0.456 | 0.707 | 0.706 | 0.704 | – | – | 0.323 | 0.388 | 0.702 | 0.699 |
 
 </div>
 
@@ -212,7 +212,7 @@ Table 1. Evaluation Results of
 |  | MMLU | MMLU&#8209;Pro | ARC&#8209;C | Hellaswag | GSM8K | Math | GPQA | HumanEval | MBPP | 
 |:----------------|:----:|:---------:|:-----:|:-----------:|:-----:|:----:|:----:|:-----------:|:----:|
 | [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct)(reported) | 0.655 | 0.370 | 0.885 | 0.746 | 0.694 | 0.319 | 0.333 | 0.494 | 0.410 |
-|`LLaDA-8B-Instruct`(evaluated) | 0.673 | 0.362 | 0.866 | 0.767 | 0.811 | – | – | 0.650 | 0.702 |
+| [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct)(evaluated) | 0.673 | 0.362 | 0.866 | 0.767 | 0.811 | – | – | 0.650 | 0.702 |
 
 </div>
 

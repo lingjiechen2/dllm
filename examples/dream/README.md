@@ -179,7 +179,7 @@ bash examples/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --
 |  | MMLU | BBH | ARC&#8209;C  | ARC&#8209;E | Hellaswag | WinoGrande | PIQA | GSM8K | Math | GPQA | HumanEval | MBPP | RACE | Countdown | Sudoku | Trip&nbsp;planning | 
 |:----------------|:-------:|:-------:|:-----:|:-----:|:-----------:|:------------:|:----:|:-----:|:----:|:----:|:-----------:|:----:|:------:|:-----------:|:----:|:-----------:|
 | [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B)(reported) | 0.695 | 0.579 | 0.599 | 0.839 | 0.733 | 0.748 | 0.758 | 0.772 | 0.396 | 0.366 | 0.579 | 0.562 | 0.447 | 0.160 | 0.810 | 0.178 |
-| `Dream-v0-Base-7B`(evaluated) | – | – | – | – | – | – | – | 0.696 | – | – | – | – | 0.304 | – | – | – |
+| [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B)(evaluated) | – | – | – | – | – | – | – | 0.696 | – | – | – | – | 0.304 | – | – | – |
 </div>
 
 <p align="center" style="color: #808080; font-size: 0.9em;">
@@ -195,7 +195,7 @@ Table 1. Evaluation Results of
 |  | MMLU | MMLU-Pro | GSM8K | Math | GPQA | HumanEval | MBPP | IFEval |
 |:----------------|:----:|:---------:|:-----:|:----:|:----:|:-----------:|:----:|:----:|
 | [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B)(reported) | 0.670 | 0.433 | 0.810 | 0.392 | 0.330 | 0.555 | 0.588 | 0.625 |
-| `Dream-v0-Instruct-7B`(evaluated) | – | – | 0.826 | – | – | 0.591 | – |  – | 
+| [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B)(evaluated) | – | – | 0.826 | – | – | 0.591 | – |  – | 
 
 </div>
 
