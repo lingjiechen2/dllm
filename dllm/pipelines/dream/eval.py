@@ -29,7 +29,29 @@ import dllm
 from dllm.pipelines.dream import DreamGenerator, DreamGeneratorConfig
 
 eval_logger = logging.getLogger(__name__)
-T = TypeVar("T", bound="LM")
+
+@dataclass
+class DreamEvalConfig(DreamGeneratorConfig):
+    top_p: float | None = None
+    top_k: float | None = None
+    max_new_tokens: int = 128
+    max_length: int = 2048
+    steps: int = 128
+    temperature: float = 0.0
+    alg: str = "entropy"
+
+    pretrained: str = ""
+    batch_size: int = 1
+    device: str = "cuda"
+    dtype: str | torch.dtype = "auto"
+    add_bos_token: bool = False
+    nll_type: str = "mc"
+    log_type: str = "ftb"
+    mc_num: int = 128
+    classifier_free_guidance: float = 1.0
+    sampling_eps: float = 1e-3
+    escape_until: bool = False
+
 
 @register_model("dream")
 class DreamEvalHarness(LM):
