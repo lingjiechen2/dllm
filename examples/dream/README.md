@@ -169,10 +169,10 @@ bash examples/llada/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --
 ```
 
 > [!IMPORTANT]  
-> The term *Evaluated* refers to results obtained using our own evaluation framework, while *Reported* corresponds to the official results presented in the original paper.  
-> All results shown here were reproduced using LLaDA’s official repository, with slight modifications to certain task configurations to better reflect the model’s performance potential.  
-> Minor variations from the originally reported results may occur due to these adjustments.  
-> A complete and detailed set of evaluation results will be released soon.
+> 1. *Evaluated* results are obtained from our own evaluation framework, while *Reported* results come from the original paper.  
+> 2. All evaluation settings follow the configurations in the [Dream](https://github.com/DreamLM/Dream) repository, with minor adjustments for compatibility.  
+> 3. Full evaluation results will be released soon.
+
 
 
 ### Evaluation Method of Dream-8B-Base
@@ -180,7 +180,7 @@ bash examples/llada/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --
 | Evaluation Type | MMLU | BBH | ARC-C | ARC-E | Hellaswag | WinoGrande | PIQA | GSM8K | Math | GPQA | HumanEval | MBPP | RACE |
 |:----------------|:----:|:---:|:-----:|:-----:|:-----------:|:------------:|:----:|:-----:|:----:|:----:|:-----------:|:----:|:------:|
 | Reported | 0.695 | 0.579 | 0.599 | 0.839 | 0.733 | 0.748 | 0.758 | 0.772 | 0.396 | 0.366 | 0.579 | 0.562 | 0.447 |
-| Evaluated | - | – | - | - | - | - | - | 0.696 | – | - | - | -0 | 0.304 |
+| Evaluated | - | – | - | - | - | - | - | 0.696 | – | - | - | - | 0.304 |
 
 
 ### Evaluation Method of Dream-8B-Instruct
