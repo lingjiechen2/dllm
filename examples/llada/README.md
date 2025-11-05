@@ -184,10 +184,10 @@ bash examples/llada/eval.sh --model_name_or_path GSAI-ML/LLaDA-8B-Base --instruc
 ```
 
 > [!IMPORTANT]  
-> The term *Evaluated* refers to results obtained using our own evaluation framework, while *Reported* corresponds to the official results presented in the original paper.  
-> All results shown here were reproduced using LLaDA’s official repository, with slight modifications to certain task configurations to better reflect the model’s performance potential.  
-> Minor variations from the originally reported results may occur due to these adjustments.  
-> A complete and detailed set of evaluation results will be released soon.
+> 1. *Evaluated* results are obtained using our own evaluation framework, while *Reported* results refer to those from the original paper.  
+> 2. All evaluation parameters follow the configurations in the [LLaDA](https://github.com/ML-GSAI/LLaDA) repository. Since the original evaluations were conducted with OpenCompass, task settings were adjusted for compatibility with the LLaDA model under `lm-eval`.  
+> 3. Complete evaluation results will be released soon.
+
 
 
 ### Evaluation Method of LLaDA-8B-Base
