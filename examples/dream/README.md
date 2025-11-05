@@ -167,3 +167,27 @@ To automatically evaluate [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/
 bash examples/llada/eval.sh --model_name_or_path "Dream-org/Dream-v0-Instruct-7B" --instruct True
 bash examples/llada/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --instruct False
 ```
+
+> [!IMPORTANT]  
+> The term *Evaluated* refers to results obtained using our own evaluation framework, while *Reported* corresponds to the official results presented in the original paper.  
+> All results shown here were reproduced using LLaDA’s official repository, with slight modifications to certain task configurations to better reflect the model’s performance potential.  
+> Minor variations from the originally reported results may occur due to these adjustments.  
+> A complete and detailed set of evaluation results will be released soon.
+
+
+### Evaluation Method of Dream-8B-Base
+
+| Evaluation Type | MMLU | BBH | ARC-C | ARC-E | Hellaswag | WinoGrande | PIQA | GSM8K | Math | GPQA | HumanEval | MBPP | RACE |
+|:----------------|:----:|:---:|:-----:|:-----:|:-----------:|:------------:|:----:|:-----:|:----:|:----:|:-----------:|:----:|:------:|
+| Reported | 0.695 | 0.579 | 0.599 | 0.839 | 0.733 | 0.748 | 0.758 | 0.772 | 0.396 | 0.366 | 0.579 | 0.562 | 0.447 |
+| Evaluated | - | – | - | - | - | - | - | 0.696 | – | - | - | -0 | 0.304 |
+
+
+### Evaluation Method of Dream-8B-Instruct
+
+| Evaluation Type | MMLU | MMLU-Pro | GSM8K | Math | GPQA | HumanEval | MBPP |
+|:----------------|:----:|:---------:|:-----:|:----:|:----:|:-----------:|:----:|
+| Reported | 0.670 | 0.433 | 0.810 | 0.392 | 0.330 | 0.555 | 0.588 |
+| Evaluated | – | – | 0.826 | – | - | 0.591 | – |
+
+

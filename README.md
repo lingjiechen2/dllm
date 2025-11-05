@@ -107,10 +107,11 @@ pip install -e .
 ### (optional) Evaluation setup
 
 ```bash
-[TODO]
-
-# initialize `lm-evaluation-harness`
+# initialize `lm-evaluation-harness` submodule
 git submodule update --init --recursive
+
+# install submodule in editable mode with IFEval & Math dependencies
+pip install -e "lm-evaluation-harness[ifeval,math]"
 ```
 
 ### (optional) Slurm setup
@@ -267,8 +268,26 @@ You can also try interactive chat script (for example, [`examples/llada/chat.py`
 <!-- <p align="center"><em>EditFlow performing insertion (blue), substitution from mask tokens (black), substitution from non-mask tokens (red), and deletion (strikethrough → removed) during generation.</em></p> -->
 
 ## Evaluation
+> Read [(optional) Evaluation setup](/README.md/#optional-evaluation-setup) before running evaluation. 
 
-[TODO]
+For example, to evaluate [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) on [`MMLU_Pro`](https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro), run:
+```shell
+accelerate launch --num_processes 4 \
+    dllm/pipelines/llada/eval.py \
+    --tasks "mmlu_pro" \
+    --model "llada" \
+    --apply_chat_template \
+    --num_fewshot 0 \
+    --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,is_check_greedy=False,mc_num=1,max_new_tokens=256,steps=256,block_length=256,cfg=0.0"
+```
+
+We also provide scripts to automatically evaluate [LLaDA](https://arxiv.org/abs/2502.09992), [Dream](https://arxiv.org/abs/2508.15487), and [BERT-Chat](https://huggingface.co/collections/dllm-collection/bert-chat) on all benchmarks.
+For example, you can launch [`examples/llada/eval.sh`](/examples/llada/eval.sh) directly using the following commands:
+```shell
+bash examples/llada/eval.sh --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct" --instruct True
+bash examples/llada/eval.sh --model_name_or_path "GSAI-ML/LLaDA-8B-Base" --instruct False
+```
+
 
 ## Citation
 ```
