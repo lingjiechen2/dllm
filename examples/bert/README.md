@@ -140,6 +140,30 @@ accelerate launch  --num_processes 4 \
 To automatically evaluate [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0) and [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0) on all benchmarks, run:
 ```shell
 bash examples/bert/eval.sh <model_path>
-bash examples/llada/eval.sh --model_name_or_path "dllm-collection/ModernBERT-base-chat-v0"
-bash examples/llada/eval.sh --model_name_or_path "dllm-collection/ModernBERT-large-chat-v0"
+bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-base-chat-v0"
+bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-large-chat-v0"
 ```
+
+### Evaluation Results
+
+> Evaluated results are obtained using our own evaluation framework, while Reported results are taken from the original paper.  
+> Full evaluation results will be released soon.
+
+<div style="min-width:1500px;">
+
+|  | LAMBADA | CBT-CN | CBT-NE | 
+|:----------------|:----:|:---:|:-----:|
+| [`GPT-2`(reported)](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) | 45.99 | 87.65 | 83.4 |
+| `GPT-2`(evaluated) | – | – | – |
+| [`ModernBERT-base-chat-v0`(evaluated)](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0) | – | – | – | 
+| [`ModernBERT-large-chat-v0`(evaluated)](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0) | – | – | – | 
+</div>
+
+<p align="center" style="color: #808080; font-size: 0.9em;">
+Table 1. Evaluation Results of 
+<a href="https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0" style="color: #808080; text-decoration: none;">
+<code>ModernBERT-base-chat-v0</code> and
+<a href="https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0" style="color: #808080; text-decoration: none;">
+<code>ModernBERT-large-chat-v0</code>
+</a>
+</p>
