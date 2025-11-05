@@ -11,14 +11,13 @@ accelerate launch \
 """
 
 from types import SimpleNamespace
-from typing import Optional, Union
+from dataclasses import dataclass
 
 import accelerate
 import torch
 import torch.nn.functional as F
 from datasets import Dataset
 from tqdm import tqdm
-
 from lm_eval.__main__ import cli_evaluate
 from lm_eval.api.instance import Instance
 from lm_eval.api.model import LM
@@ -26,47 +25,50 @@ from lm_eval.api.registry import register_model
 from lm_eval.models.utils import get_dtype
 
 import dllm
-from dllm.pipelines.llada import LLaDAGenerator
+from dllm.pipelines.llada import LLaDAGenerator, LLaDAGeneratorConfig
+
+@dataclass
+class BERTEvalConfig(LLaDAGeneratorConfig):
+    max_new_tokens: int = 128
+    max_length: int = 512
+    steps: int = 128
+    block_length: int = 128
+
+    pretrained: str = ""
+    dtype: str | torch.dtype = "auto"
+    batch_size: int = 32
+    mc_num: int = 128
+    is_check_greedy: bool = True
+    device: str = "cuda"
+
 
 @register_model("bert")
 class BERTEvalHarness(LM):
     def __init__(
         self,
-        pretrained='',
-        dtype: Optional[Union[str, torch.dtype]] = "auto",
-        mask_id=50284,
-        batch_size=32,
-        mc_num=128,
-        is_check_greedy=True,
-        device="cuda",
-        # ----- Generation control Parameters -----
-        cfg=0.,
-        steps=1024,
-        max_new_tokens=1024,
-        block_length=1024,
-        max_length=4096,
-        remasking='low_confidence',
-        
+        config: BERTEvalConfig | None = None,
         **kwargs,
     ):
-        '''
-        Args:
-            pretrained: LLaDA-8B-Base model path.
-            mask_id: The token id of [MASK] is 126336.
-            max_length: the max sequence length.
-            batch_size: mini batch size.
-            mc_num: Monte Carlo estimation iterations
-            is_check_greedy: For certain metrics like LAMBADA, the evaluation requires the model to verify whether the answer 
-                             is generated through greedy sampling conditioned on the prompt (note that this differs from conditional
-                             generation). We implement this verification through the suffix_greedy_prediction() function, which 
-                             returns a True/False judgment used for accuracy calculation. 
-                             When is_check_greedy is set to True, the lm-evaluation-harness library automatically invokes this function. 
-                             However, since none of the metrics in the LLaDA paper (https://arxiv.org/abs/2502.09992) require this functionality, 
-                             we recommend setting is_check_greedy to False. This configuration causes suffix_greedy_prediction() to return False 
-                             by default, significantly accelerating the evaluation process.
-            cfg_scale: Unsupervised classifier-free guidance scale.
-        '''
         super().__init__()
+        
+        # Initialize config if not provided
+        if config is None:
+            config = BERTEvalConfig()
+        
+        # Pull args from config, allow kwargs to override
+        pretrained = kwargs.get("pretrained", config.pretrained)
+        dtype = kwargs.get("dtype", config.dtype)
+        batch_size = kwargs.get("batch_size", config.batch_size)
+        mc_num = kwargs.get("mc_num", config.mc_num)
+        is_check_greedy = kwargs.get("is_check_greedy", config.is_check_greedy)
+        device = kwargs.get("device", config.device)
+        cfg = kwargs.get("cfg", config.cfg_scale)
+        steps = kwargs.get("steps", config.steps)
+        max_new_tokens = kwargs.get("max_new_tokens", config.max_new_tokens)
+        block_length = kwargs.get("block_length", config.block_length)
+        max_length = kwargs.get("max_length", config.max_length)
+        remasking = kwargs.get("remasking", config.remasking)
+        
         accelerator = accelerate.Accelerator()
 
         # Get GLOBAL rank from torch.distributed (not accelerator)
@@ -95,30 +97,28 @@ class BERTEvalHarness(LM):
             self.device = torch.device(device)
             self.accelerator = None
 
-        # self.mask_id = mask_id
-        # assert self.mask_id == 126336, f"The mask token id should be {126336} for llada model."
         self.tokenizer = dllm.utils.get_tokenizer(SimpleNamespace(
             model_name_or_path=pretrained, 
             model=self.model
             ))
+
+        # generation params
         self.mask_id = self.tokenizer.mask_token_id
-
-        self.mc_num = int(mc_num)
         self.batch_size = int(batch_size)
-        assert mc_num % self.batch_size == 0
-        self.sampling_eps = 0.
         self.max_length = int(max_length)
-        self.is_check_greedy = is_check_greedy
-
-        self.cfg = int(cfg)
-        self.steps = int(steps)
         self.max_new_tokens = int(max_new_tokens)
         self.block_length = int(block_length)
-        self.remasking = remasking    
+        self.steps = int(steps)
+        self.cfg = float(cfg)
+        self.remasking = remasking
+        self.is_check_greedy = is_check_greedy
 
-    def apply_chat_template(
-        self, chat_history, add_generation_prompt: bool = True
-    ) -> str:
+        # loglikelihood params
+        self.mc_num = int(mc_num)
+        assert mc_num % self.batch_size == 0
+        self.sampling_eps = 0. 
+
+    def apply_chat_template(self, chat_history: list[dict[str, str]],add_generation_prompt: bool = True) -> str:
         """
         Method to apply a chat template to a list of chat history between user and model.
         """
@@ -142,7 +142,7 @@ class BERTEvalHarness(LM):
     def world_size(self):
         return self._world_size
 
-    def _forward_process(self, batch, prompt_index):
+    def _forward_process(self, batch: torch.Tensor, prompt_index: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         b, l = batch.shape
 
         target_len = (l - prompt_index.sum()).item()
@@ -165,7 +165,7 @@ class BERTEvalHarness(LM):
         return noisy_batch, (x / target_len).unsqueeze(1).repeat(1, l)
 
     @torch.no_grad()
-    def get_logits(self, batch, prompt_index):
+    def get_logits(self, batch: torch.Tensor, prompt_index: torch.Tensor) -> torch.Tensor:
         if self.cfg > 0.:
             assert len(prompt_index) == batch.shape[1]
             prompt_index = prompt_index.unsqueeze(0).repeat(batch.shape[0], 1)
@@ -181,7 +181,7 @@ class BERTEvalHarness(LM):
         return logits[:, :batch.shape[1]]
 
     @torch.no_grad()
-    def get_loglikelihood(self, prefix, target):
+    def get_loglikelihood(self, prefix: torch.Tensor, target: torch.Tensor) -> float:
         seq = torch.concatenate([prefix, target])[None, :]
         seq = seq.repeat((self.batch_size, 1)).to(self.device)
         prompt_index = torch.arange(seq.shape[1], device=self.device) < len(prefix)
@@ -194,14 +194,14 @@ class BERTEvalHarness(LM):
 
             logits = self.get_logits(perturbed_seq, prompt_index)
 
-            loss = F.cross_entropy(logits[mask_indices], seq[mask_indices], reduction='none') / p_mask[mask_indices]
+            loss = F.cross_entropy(logits[mask_indices], seq[mask_indices], reduction="none") / p_mask[mask_indices]
             loss = loss.sum() / self.batch_size
             loss_acc.append(loss.item())
 
         return - sum(loss_acc) / len(loss_acc)
 
     @torch.no_grad()
-    def suffix_greedy_prediction(self, prefix, target):
+    def suffix_greedy_prediction(self, prefix: torch.Tensor, target: torch.Tensor) -> bool:
         if not self.is_check_greedy:
             return False
 
@@ -224,7 +224,7 @@ class BERTEvalHarness(LM):
         correct = torch.all(correct)
         return correct
 
-    def _encode_pair(self, context, continuation):
+    def _encode_pair(self, context: str, continuation: str) -> tuple[torch.Tensor, torch.Tensor]:
         n_spaces = len(context) - len(context.rstrip())
         if n_spaces > 0:
             continuation = context[-n_spaces:] + continuation
@@ -238,7 +238,7 @@ class BERTEvalHarness(LM):
 
         return context_enc, continuation_enc
 
-    def loglikelihood(self, requests):
+    def loglikelihood(self, requests: list[Instance]) -> list[tuple[float, bool]]:
         def _tokenize(e):
             prefix, target = self._encode_pair(e["prefix"], e["target"])
             return {
@@ -271,7 +271,7 @@ class BERTEvalHarness(LM):
         torch.cuda.empty_cache()
         return out
 
-    def loglikelihood_rolling(self, requests):
+    def loglikelihood_rolling(self, requests: list[Instance]) -> list[float]:
         raise NotImplementedError
 
     def generate_until(self, requests: list[Instance]):
@@ -282,7 +282,7 @@ class BERTEvalHarness(LM):
                 "until": e["until"],
             }
 
-        ds = [{"question": req.args[0], "until": req.args[1]['until']} for req in requests]
+        ds = [{"question": req.args[0], "until": req.args[1]["until"]} for req in requests]
         ds = Dataset.from_list(ds)
         ds = ds.map(_tokenize)
         ds = ds.with_format("torch")
@@ -319,4 +319,3 @@ class BERTEvalHarness(LM):
 
 if __name__ == "__main__":
     cli_evaluate()
-    
