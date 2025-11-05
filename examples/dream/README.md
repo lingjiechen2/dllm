@@ -164,8 +164,8 @@ accelerate launch --num_processes 4 \
 
 To automatically evaluate [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) and [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B) on all benchmarks, run:
 ```shell
-bash examples/llada/eval.sh --model_name_or_path "Dream-org/Dream-v0-Instruct-7B" --instruct True
-bash examples/llada/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --instruct False
+bash examples/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Instruct-7B" --instruct True
+bash examples/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --instruct False
 ```
 
 ### Evaluation Results
@@ -176,7 +176,7 @@ bash examples/llada/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --
 
 <div style="min-width:1500px;">
 
-|  | MMLU | BBH | ARC-C | ARC-E | Hellaswag | WinoGrande | PIQA | GSM8K | Math | GPQA | HumanEval | MBPP | RACE | Countdown | Sudoku | Trip planning | 
+|  | MMLU | BBH | ARC-C&nbsp;&nbsp;&nbsp; | ARC-E&nbsp;&nbsp;&nbsp; | Hellaswag | WinoGrande | PIQA | GSM8K | Math | GPQA | HumanEval | MBPP | RACE | Countdown | Sudoku | Trip planning | 
 |:----------------|:----:|:---:|:-----:|:-----:|:-----------:|:------------:|:----:|:-----:|:----:|:----:|:-----------:|:----:|:------:|:-----------:|:----:|:------:|
 | [`Dream-v0-Base-7B`(reported)](https://arxiv.org/pdf/2508.15487) | 0.695 | 0.579 | 0.599 | 0.839 | 0.733 | 0.748 | 0.758 | 0.772 | 0.396 | 0.366 | 0.579 | 0.562 | 0.447 | 0.160 | 0.810 | 0.178 |
 | `Dream-v0-Base-7B`(evaluated) | – | – | – | – | – | – | – | 0.696 | – | – | – | – | 0.304 | – | – | – |

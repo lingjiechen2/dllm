@@ -162,7 +162,9 @@ bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-larg
 <p align="center" style="color: #808080; font-size: 0.9em;">
 Table 1. Evaluation Results of 
 <a href="https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0" style="color: #808080; text-decoration: none;">
-<code>ModernBERT-base-chat-v0</code> and
+<code>ModernBERT-base-chat-v0</code>
+</a>
+ and 
 <a href="https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0" style="color: #808080; text-decoration: none;">
 <code>ModernBERT-large-chat-v0</code>
 </a>
