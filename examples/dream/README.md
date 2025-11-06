@@ -196,7 +196,7 @@ Table 1. Evaluation Results of
 |  | MMLU | MMLU-Pro | GSM8K | Math | GPQA | HumanEval | MBPP | IFEval |
 |:----------------|:----:|:---------:|:-----:|:----:|:----:|:-----------:|:----:|:----:|
 | [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B)(reported) | 0.670 | 0.433 | 0.810 | 0.392 | 0.330 | 0.555 | 0.588 | 0.625 |
-| [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B)(evaluated) | – | – | 0.826 | – | – | 0.591 | – |  – | 
+| [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B)(evaluated) | – | 0.430 | 0.826 | 0.399 | 0.324 | 0.591 | – |  0.623 | 
 
 </div>
 
