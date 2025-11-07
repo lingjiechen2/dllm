@@ -146,19 +146,20 @@ bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-larg
 
 ### Evaluation Results
 
-> Evaluated results are obtained using our own evaluation framework, while Reported results are taken from the original paper.  
-> Full evaluation results will be released soon.
+> Evaluated results are obtained using our own evaluation framework, while Reported results are taken from the original paper. 
+> Because some evaluation techniques and tricks are not provided within original eesay or codebase, we try current best implementation fo the eevaluation and close the gap between evlauation and reported result thus out implmentation have a marginal gap.  
+
 
 <div align="center" style="min-width:1500px;">
 
 |  | LAMBADA | GSM8K |
 |:----------------|:----:|:---:|
-| [`GPT-2`](https://huggingface.co/openai-community/gpt2)(reported) | 45.99 |  - |
-| [`GPT-2`](https://huggingface.co/openai-community/gpt2)(evaluated) | 43.76  | 0.020 |
-| [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(reported) | 55.48 |  – |
-| [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(evaluated) |  54.92 | 0.021 |
+| [`GPT-2`](https://huggingface.co/openai-community/gpt2)(reported) | 0.460 |   – |
+| [`GPT-2`](https://huggingface.co/openai-community/gpt2)(evaluated) | 0.438  | 0.020 |
+| [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(reported) | 0.555 |  – |
+| [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(evaluated) |  0.549 | 0.021 |
 | [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0)(evaluated) |  0.493 |  0.059 |
-| [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0)(evaluated) |  46.27 |  0.171 |
+| [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0)(evaluated) |  0.463 |  0.171 |
 </div>
 
 <p align="center" style="color: #808080; font-size: 0.9em;">
