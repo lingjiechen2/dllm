@@ -147,7 +147,7 @@ bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-larg
 ### Evaluation Results
 
 > Evaluated results are obtained using our own evaluation framework, while Reported results are taken from the original paper. 
-> Because some evaluation techniques and tricks are not provided within original eesay or codebase, we try current best implementation fo the eevaluation and close the gap between evlauation and reported result thus out implmentation have a marginal gap.  
+> Because the original work does not fully disclose its evaluation techniques or implementation tricks, we reproduce the setup using the best available methods. As a result, our reproduced scores may show a small residual gap relative to the reported numbers. 
 
 
 <div align="center" style="min-width:1500px;">
