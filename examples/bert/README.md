@@ -151,14 +151,14 @@ bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-larg
 
 <div align="center" style="min-width:1500px;">
 
-|  | LAMBADA | CBT-CN | CBT-NE | GSM8K |
+|  | LAMBADA | GSM8K |
 |:----------------|:----:|:---:|:-----:|:-----:|
-| [`GPT-2`](https://huggingface.co/openai-community/gpt2)(reported) | 45.99 | 87.65 | 83.4 | – |
-| [`GPT-2`](https://huggingface.co/openai-community/gpt2)(evaluated) | – | – | – |– |
-| [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(reported) | 55.48 | 92.35 | 87.1 | – |
-| [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(evaluated) | – | – | – |– |
-| [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0)(evaluated) | – | – | – |  – |
-| [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0)(evaluated) | – | – | – |  – |
+| [`GPT-2`](https://huggingface.co/openai-community/gpt2)(reported) | 45.99 |  - |
+| [`GPT-2`](https://huggingface.co/openai-community/gpt2)(evaluated) | 43.76  | 0.0197 |
+| [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(reported) | 55.48 |  – |
+| [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(evaluated) |  54.92 | 0.0205 |
+| [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0)(evaluated) |  0.493 |  0.059 |
+| [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0)(evaluated) |  46.27 |  0.171 |
 </div>
 
 <p align="center" style="color: #808080; font-size: 0.9em;">
