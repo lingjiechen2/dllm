@@ -154,9 +154,9 @@ bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-larg
 |  | LAMBADA | GSM8K |
 |:----------------|:----:|:---:|
 | [`GPT-2`](https://huggingface.co/openai-community/gpt2)(reported) | 45.99 |  - |
-| [`GPT-2`](https://huggingface.co/openai-community/gpt2)(evaluated) | 43.76  | 0.0197 |
+| [`GPT-2`](https://huggingface.co/openai-community/gpt2)(evaluated) | 43.76  | 0.020 |
 | [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(reported) | 55.48 |  – |
-| [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(evaluated) |  54.92 | 0.0205 |
+| [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(evaluated) |  54.92 | 0.021 |
 | [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0)(evaluated) |  0.493 |  0.059 |
 | [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0)(evaluated) |  46.27 |  0.171 |
 </div>
