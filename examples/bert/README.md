@@ -160,7 +160,7 @@ bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-larg
 | [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(evaluated) | 0.549 | 0.021 |  |  |  |  |  |  |  | -->
 | [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0) | 0.493 | 0.059 | 0.250 | 0.179 | 0.031 | 0.335 | 0.497 | 0.410 | 0.243 |
 | [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0) | 0.463 | 0.171 | 0.246 | 0.251 | 0.038 | 0.335 | 0.531 | 0.450 | – |
-| [`Qwen1.5-0.5B`](https://huggingface.co/Qwen/Qwen1.5-0.5B)(reported) |  | 0.220 | 0.505 | 0.183 | 0.031 | 0.392 |  |  | 0.466 |
+| [`Qwen1.5-0.5B`](https://huggingface.co/Qwen/Qwen1.5-0.5B)(reported) | - | 0.220 | 0.505 | 0.183 | 0.031 | 0.392 | - | - | 0.466 |
 
 </div>
 
