@@ -150,26 +150,14 @@ bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-larg
 > Because the original work does not fully disclose its evaluation techniques or implementation tricks, we reproduce the setup using the best available methods. As a result, our reproduced scores may show a small residual gap relative to the reported numbers. 
 
 
-<!-- <div align="center" style="min-width:1500px;">
-
-|  | LAMBADA | GSM8K |
-|:----------------|:----:|:---:|
-| [`GPT-2`](https://huggingface.co/openai-community/gpt2)(reported) | 0.460 |   – |
-| [`GPT-2`](https://huggingface.co/openai-community/gpt2)(evaluated) | 0.438  | 0.020 |
-| [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(reported) | 0.555 |  – |
-| [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(evaluated) |  0.549 | 0.021 |
-| [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0)(evaluated) |  0.493 |  0.059 |
-| [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0)(evaluated) |  0.463 |  0.171 |
-</div> -->
-
 <div align="center" style="min-width:1500px;">
 
 | Model | LAMBADA | GSM8K | CEVAL-valid | BBH | Minerva-Math | MMLU | Winogrande | HellaSwag | CMMLU |
 |:----------------|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|
-| [`GPT-2`](https://huggingface.co/openai-community/gpt2)(reported) | 0.460 | – |  |  |  |  |  |  |  |
+<!-- | [`GPT-2`](https://huggingface.co/openai-community/gpt2)(reported) | 0.460 | – |  |  |  |  |  |  |  |
 | [`GPT-2`](https://huggingface.co/openai-community/gpt2)(evaluated) | 0.438 | 0.020 |  |  |  |  |  |  |  |
 | [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(reported) | 0.555 | – |  |  |  |  |  |  |  |
-| [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(evaluated) | 0.549 | 0.021 |  |  |  |  |  |  |  |
+| [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(evaluated) | 0.549 | 0.021 |  |  |  |  |  |  |  | -->
 | [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0) | 0.493 | 0.059 | 0.250 | 0.179 | 0.031 | 0.335 | 0.497 | 0.410 | 0.243 |
 | [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0) | 0.463 | 0.171 | 0.246 | 0.251 | 0.038 | 0.335 | 0.531 | 0.450 | – |
 | [`Qwen1.5-0.5B`](https://huggingface.co/Qwen/Qwen1.5-0.5B)(reported) |  | 0.220 | 0.505 | 0.183 | 0.031 | 0.392 |  |  | 0.466 |
