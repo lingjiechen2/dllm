@@ -140,3 +140,4 @@ dataset/
 wandb/
 logs/
 /models*/
+tmp/
