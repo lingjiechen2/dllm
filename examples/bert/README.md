@@ -19,15 +19,15 @@ This directory provides two key sets of resources:
 
 ## Files overview
 ```
-# example entry points for training / inference
+# example entry points for training / inference / evaluation
 examples/bert
 ├── chat.py                         # Interactive inference example
+├── eval.sh                         # Automatic evaluation script
 ├── generate.py                     # Inference example
 ├── pt.py                           # Pretraining example
 ├── README.md                       # Documentation (you are here)
 └── sft.py                          # Supervised finetuning example
 ```
-
 
 ## Warmup
 
@@ -42,6 +42,8 @@ accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_proces
     examples/bert/pt.py \
     --model_name_or_path "answerdotai/ModernBERT-large" \
     --dataset_args "Trelis/tiny-shakespeare" \
+    --text_field "Text" \
+    --insert_eos False \
     --max_length 128 \
     --num_train_epochs 20 \
     --per_device_train_batch_size 64 \
@@ -139,15 +141,14 @@ accelerate launch  --num_processes 4 \
 
 To automatically evaluate [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0) and [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0) on all benchmarks, run:
 ```shell
-bash examples/bert/eval.sh <model_path>
 bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-base-chat-v0"
 bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-large-chat-v0"
 ```
 
-### Evaluation Results
+### Evaluation results
 
-> Evaluated results are obtained using our own evaluation framework, while Reported results are taken from the original paper. 
-> Because the original work does not fully disclose its evaluation techniques or implementation tricks, we reproduce the setup using the best available methods. As a result, our reproduced scores may show a small residual gap relative to the reported numbers. 
+<!-- > Evaluated results are obtained using our own evaluation framework, while Reported results are taken from the original paper. 
+> Because the original work does not fully disclose its evaluation techniques or implementation tricks, we reproduce the setup using the best available methods. As a result, our reproduced scores may show a small residual gap relative to the reported numbers.  -->
 
 <!-- | [`GPT-2`](https://huggingface.co/openai-community/gpt2)(reported) | 0.460 | – |  |  |  |  |  |  |  |
 | [`GPT-2`](https://huggingface.co/openai-community/gpt2)(evaluated) | 0.438 | 0.020 |  |  |  |  |  |  |  |
@@ -155,24 +156,30 @@ bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-larg
 | [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(evaluated) | 0.549 | 0.021 |  |  |  |  |  |  |  | -->
 
 
-<div align="center" style="min-width:1500px;">
+<!-- <div align="center" style="min-width:1500px;"> -->
 
-| Model | LAMBADA | GSM8K | CEVAL&#8209;valid | BBH | Minerva&#8209;Math | MMLU | Winogrande | HellaSwag | CMMLU |
+|                     | LAMBADA | GSM8K | CEVAL&#8209;valid | BBH | Minerva&#8209;Math | MMLU | Winogrande | HellaSwag | CMMLU |
 |:----------------|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|
-| [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0)(evaluated) | 0.493 | 0.059 | 0.250 | 0.179 | 0.031 | 0.261 | 0.497 | 0.410 | 0.243 |
-| [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0)(evaluated) | 0.463 | 0.171 | 0.246 | 0.251 | 0.038 | 0.335 | 0.531 | 0.450 | 0.275 |
-| [`Qwen1.5-0.5B`](https://huggingface.co/Qwen/Qwen1.5-0.5B)(reported) | 0.486 | 0.220 | 0.505 | 0.183 | 0.031 | 0.392 | 0.550 | 0.482 | 0.466 |
+| [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0)(evaluated) | 49.3 | 5.9 | 25.0 | 17.9 | 3.1 | 26.1 | 49.7 | 41.0 | 24.3 |
+| [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0)(evaluated) | 46.3 | 17.1 | 24.6 | 25.1 | 3.8 | 33.5 | 53.1 | 45.0 | 27.5 |
+| [`Qwen1.5-0.5B`](https://huggingface.co/Qwen/Qwen1.5-0.5B)(reported) | 48.6 | 22.0 | 50.5 | 18.3 | 3.1 | 39.2 | 55.0 | 48.2 | 46.6 |
+| [`Qwen1.5-0.5B-chat`](https://huggingface.co/Qwen/Qwen1.5-0.5B-Chat)(reported) | / | 11.3 | 37.2 | / | / | 35.0 | / | / | / |
 
-</div>
+<!-- </div> -->
 
 
-<p align="center" style="color: #808080; font-size: 0.9em;">
-Table 1. Evaluation Results of 
+<p align="left" style="color: #808080; font-size: 0.9em;">
+Table 1. Evaluation results of 
 <a href="https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0" style="color: #808080; text-decoration: none;">
 <code>ModernBERT-base-chat-v0</code>
 </a>
  and 
 <a href="https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0" style="color: #808080; text-decoration: none;">
 <code>ModernBERT-large-chat-v0</code>
-</a>
+</a>.
+Results (evaluated) are evaluated using our framework, while results (reported) come from the original paper.
+<code>Qwen1.5-0.5B</code> results are from the 
+<a href="https://qwenlm.github.io/blog/qwen1.5/" style="color: #808080; text-decoration: none;">Qwen1.5 official blog</a>;
+<code>Qwen1.5-0.5B-chat</code> results are from the 
+<a href="https://huggingface.co/Qwen/Qwen2-0.5B-Instruct" style="color: #808080; text-decoration: none;">Qwen2-0.5B-Instruct model card</a>.
 </p>

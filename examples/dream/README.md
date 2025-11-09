@@ -1,17 +1,13 @@
 # Dream
 
-> 📄 Paper: [Dream 7B: Diffusion Large Language Models](https://arxiv.org/abs/2508.15487)
-> 💻 Code: [github.com/DreamLM/Dream](https://github.com/DreamLM/Dream)
+> 📄 Paper: [Dream 7B: Diffusion Large Language Models](https://arxiv.org/abs/2508.15487) ｜ 💻 Code: [github.com/DreamLM/Dream](https://github.com/DreamLM/Dream)
 
-<!-- This directory provides examples for finetuning open-weight Dream models, reproducing Dream by training from scratch on public data (pretraining & finetuning), and batch sampling for generation tasks. -->
-This directory provides examples for (1) finetuning open-weight Dream models, (2) pretraining from scratch on public data, (3) interactive inference and (4) evaluation.
+Resources and examples for training (finetuning & pretraining) and evaluating diffusion language models **Dream**.
 
 ## Table of Contents
 - [Setup](#setup)
 - [Files overview](#files-overview)
 - [Training](#training)
-    <!-- - [Finetuning Dream-v0-Base-7B](#finetuning-dream-v0-base-7b)
-    - [Pretraining from scratch](#pretraining-from-scratch) -->
 - [Inference](#inference)
 - [Evaluation](#evaluation)
 
@@ -35,9 +31,10 @@ dllm/pipelines/dream
 ├── trainer.py                      # Training logic (pretraining and SFT)
 └── utils.py                        # Auxiliary utilities and helper functions
 
-# example entry points for training / inference
+# example entry points for training / inference / evaluation
 examples/dream
 ├── chat.py                         # Interactive inference example
+├── eval.sh                         # Automatic evaluation script
 ├── generate.py                     # Inference example
 ├── pt.py                           # Pretraining example
 ├── README.md                       # Documentation (you are here)
@@ -49,14 +46,6 @@ examples/dream
 > We fixed bugs in `chat_template` and standardize `mask_token` through `dllm.utils.get_tokenizer`. If you use `AutoTokenizer`, keep in mind to set `chat_template` and `mask_token` appropriately yourselves. -->
 
 ## Training
-
-<!-- > [!NOTE]
-> Here are some useful tips for training.
-> - Use a subset of data: `--dataset_args "allenai/tulu-3-sft-mixture[train:10000,test:1000]"`; 
-> 
-> - Concatenate datasets: `--dataset_args "allenai/tulu-3-sft-mixture|HuggingFaceTB/smoltalk"`;
->
-> - Train with LoRA and 4bit quantization: `--load_in_4bit True --lora True`. -->
 
 ### Finetuning
 For example, to SFT [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) for instruction following on 8 GPUs, run:
@@ -117,11 +106,9 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
     --eval_steps 0.1 \
     --save_steps 0.05
 ```
-[TODO] Training curves are on Wandb; checkpoints with evaluation results are available on Hugging Face. See the [Evaluation](#evaluation) section below for evaluation instructions.
+<!-- [TODO] Training curves are on Wandb; checkpoints with evaluation results are available on Hugging Face. See the [Evaluation](#evaluation) section below for evaluation instructions. -->
 
 ### Pretraining
-<!-- > [!NOTE]
-> This is an educational example demonstrating how to reproduce Dream pretraining and finetuning on public data. We do not guarantee performance comparable to the official Dream models. -->
 
 Pretrain on [`mlfoundations/dclm-baseline-1.0`](https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0) from scratch using 192 GPUs (24x8) and FSDP:
 ```shell
@@ -168,43 +155,33 @@ bash examples/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Instruct-7B
 bash examples/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --instruct False
 ```
 
-### Evaluation Results
+### Evaluation results
 
-> Evaluated results are obtained using our own evaluation framework, while Reported results are taken from the original paper.  
-> All evaluation settings follow the configurations in the [Dream](https://github.com/DreamLM/Dream) repository, with minor adjustments for compatibility.  
-> Full evaluation results will be released soon.
+>  Results (evaluated) are evaluated using our framework, while results (reported) come from the original paper. All evaluation settings follow the configurations in the [Dream](https://github.com/DreamLM/Dream) repository, with minor adjustments. Placeholder entries (“–”) indicate results not yet evaluated; full results will be released soon.
 
-<div align="center" style="min-width:1500px;">
-
-|  | MMLU | BBH | ARC&#8209;C  | ARC&#8209;E | Hellaswag | WinoGrande | PIQA | GSM8K | Math | GPQA | HumanEval | MBPP | RACE | Countdown | Sudoku | Trip&nbsp;planning | 
+|                 | MMLU | BBH | ARC&#8209;C  | ARC&#8209;E | Hellaswag | WinoGrande | PIQA | GSM8K | Math | GPQA | HumanEval | MBPP | RACE | Countdown | Sudoku | Trip&nbsp;planning | 
 |:----------------|:-------:|:-------:|:-----:|:-----:|:-----------:|:------------:|:----:|:-----:|:----:|:----:|:-----------:|:----:|:------:|:-----------:|:----:|:-----------:|
-| [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B)(reported) | 0.695 | 0.579 | 0.599 | 0.839 | 0.733 | 0.748 | 0.758 | 0.772 | 0.396 | 0.366 | 0.579 | 0.562 | 0.447 | 0.160 | 0.810 | 0.178 |
-| [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B)(evaluated) | – | – | 0.597 | 0.833 | 0.731 | 0.729 | 0.720 | 0.696 | – | 0.355 | 0.458 | – | 0.430 | – | – | – |
-</div>
+| [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) (reported) | 69.5 | 57.9 | 59.9 | 83.9 | 73.3 | 74.8 | 75.8 | 77.2 | 39.6 | 36.6 | 57.9 | 56.2 | 44.7 | 16.0 | 81.0 | 17.8 |
+| [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) (evaluated) | – | – | 59.7 | 83.3 | 73.1 | 72.9 | 72.0 | 69.6 | – | 35.5 | 45.8 | – | 43.0 | – | – | – |
 
 
 <p align="center" style="color: #808080; font-size: 0.9em;">
-Table 1. Evaluation Results of 
+Table 1. Evaluation results of 
 <a href="https://huggingface.co/Dream-org/Dream-v0-Base-7B" style="color: #808080; text-decoration: none;">
 <code>Dream-8B-Base</code>
-</a>
+</a>.
 </p>
-
-
-<div align="center" style="min-width:1500px;">
 
 |  | MMLU | MMLU-Pro | GSM8K | Math | GPQA | HumanEval | MBPP | IFEval |
 |:----------------|:----:|:---------:|:-----:|:----:|:----:|:-----------:|:----:|:----:|
-| [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B)(reported) | 0.670 | 0.433 | 0.810 | 0.392 | 0.330 | 0.555 | 0.588 | 0.625 |
-| [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B)(evaluated) | – | 0.430 | 0.826 | 0.399 | 0.324 | 0.591 | – |  0.623 | 
-
-</div>
+| [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B)(reported)  | 67.0 | 43.3 | 81.0 | 39.2 | 33.0 | 55.5 | 58.8 | 62.5 |
+| [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B)(evaluated) | – | 43.0 | 82.6 | 39.9 | 32.4 | 59.1 | – | 62.3 |
 
 <p align="center" style="color: #808080; font-size: 0.9em;">
-Table 2. Evaluation Results of 
+Table 2. Evaluation results of 
 <a href="https://huggingface.co/Dream-org/Dream-v0-Instruct-7B" style="color: #808080; text-decoration: none;">
 <code>Dream-8B-Instruct</code>
-</a>
+</a>.
 </p>
 
 
