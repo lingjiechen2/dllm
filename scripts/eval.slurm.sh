@@ -35,11 +35,11 @@ declare -A eval_bert_configs
 # ============================================================
 
 # ---------- Base Generation ----------
-eval_llada_base_configs["gsm8k"]="8|1024|1024|32|1234|1|0.0"
-eval_llada_base_configs["bbh"]="3|1024|1024|32|1234|1|0.0"
-eval_llada_base_configs["minerva_math"]="4|1024|1024|32|1234|1|0.0"
-eval_llada_base_configs["humaneval"]="0|1024|1024|32|1234|1|0.0"
-eval_llada_base_configs["mbpp"]="3|1024|1024|32|1234|1|0.0"
+eval_llada_base_configs["gsm8k"]="8|1024|1024|32|1234|128|0.0"
+eval_llada_base_configs["bbh"]="3|1024|1024|32|1234|128|0.0"
+eval_llada_base_configs["minerva_math"]="4|1024|1024|32|1234|128|0.0"
+eval_llada_base_configs["humaneval"]="0|1024|1024|32|1234|128|0.0"
+eval_llada_base_configs["mbpp"]="3|1024|1024|32|1234|128|0.0"
 
 # ---------- Base Likelihood ----------
 eval_llada_base_configs["gpqa_main_n_shot"]="5|1024|1024|1024|1234|128|0.5"
@@ -94,7 +94,7 @@ eval_dream_instruct_configs["mmlu_generative_dream"]="4|128|128|0.1|0.9|1234|1"
 eval_dream_instruct_configs["mmlu_pro"]="4|128|128|0.1|0.9|1234|1"
 eval_dream_instruct_configs["gsm8k_cot"]="0|256|256|0.1|0.9|1234|1"
 eval_dream_instruct_configs["minerva_math"]="0|512|512|0.1|0.9|1234|1"
-eval_dream_instruct_configs["gpqa_main_n_n_shot"]="5|128|128|0.0|1.0|1234|1"
+eval_dream_instruct_configs["gpqa_main_n_shot"]="5|128|128|0.0|1.0|1234|1"
 eval_dream_instruct_configs["humaneval_instruct"]="0|768|768|0.1|0.9|1234|1"
 eval_dream_instruct_configs["mbpp_instruct"]="0|1024|1024|0.1|0.9|1234|1"
 eval_dream_instruct_configs["mbpp_instruct_dream"]="0|1024|1024|0.1|0.9|1234|1"
@@ -106,11 +106,22 @@ eval_dream_instruct_configs["ifeval"]="0|1280|1280|0.1|0.9|1234|1"
 #   eval_bert_configs["<dataset>"]="num_fewshot|max_new_tokens|steps|block_length|seed|mc_num"
 # ============================================================
 
+eval_bert_configs["mmlu"]="5|512|512|32|1234|128"
+eval_bert_configs["ceval-valid"]="5|1024|1024|32|1234|128"
+eval_bert_configs["cmmlu"]="5|1024|1024|32|1234|128"
+eval_bert_configs["hellaswag"]="0|1024|1024|1024|1234|128"
+eval_bert_configs["winogrande"]="0|128|128|128|1234|128"
+
+eval_bert_configs["gsm8k_bert"]="8|256|256|32|1234|128"
+eval_bert_configs["minerva_math"]="4|256|256|32|1234|128"
+eval_bert_configs["humaneval"]="0|256|256|32|1234|128"
+eval_bert_configs["bbh"]="3|256|256|32|1234|128"
+
+
 eval_bert_configs["hellaswag_gen"]="0|128|128|128|1234|1"
 eval_bert_configs["mmlu_generative"]="0|128|128|128|1234|1"
 eval_bert_configs["mmlu_pro"]="0|256|256|256|1234|1"
 eval_bert_configs["arc_challenge_chat"]="0|128|128|128|1234|1"
-eval_bert_configs["winogrande"]="0|128|128|128|1234|1"
 
 # ============================================================
 # ======================  END CONFIGS  ========================
@@ -146,7 +157,7 @@ export NCCL_DEBUG=warn
 export TORCH_DISTRIBUTED_DEBUG=DETAIL
 export PYTHONPATH=.:$PYTHONPATH
 export HF_ALLOW_CODE_EVAL=1
-export HF_DATASETS_TRUSTp_REMOTE_CODE=True # For cmmlu dataset
+export HF_DATASETS_TRUST_REMOTE_CODE=1 # For cmmlu dataset
 export MASTER_ADDR MASTER_PORT WORLD_SIZE
 
 
