@@ -128,11 +128,6 @@ eval_bert_configs["arc_challenge_chat"]="0|128|128|128|1234|1"
 # ============================================================
 
 
-# ============================================================
-# ======================  END CONFIGS  ========================
-# ============================================================
-
-
 # ===== Derived variables =====
 NUM_NODES=${SLURM_NNODES}
 GPUS_PER_NODE=$(echo "${SLURM_JOB_GPUS}" | tr ',' '\n' | wc -l)
@@ -187,9 +182,11 @@ case "${MODEL_CLASS}" in
     if [[ "${INSTRUCT,,}" == "true" ]]; then
       CONFIG="${eval_llada_instruct_configs[$TASK]}"
       CONFIG_SET="instruct"
+      CONFIDENCE_EOS_EOT_INF="True"
     else
       CONFIG="${eval_llada_base_configs[$TASK]}"
       CONFIG_SET="base"
+      CONFIDENCE_EOS_EOT_INF="False"
     fi
 
     if [[ -z "${CONFIG}" ]]; then
@@ -203,7 +200,7 @@ case "${MODEL_CLASS}" in
 
     MODEL_TYPE="llada"
     SCRIPT_PATH="dllm/pipelines/llada/eval.py"
-    MODEL_ARGS="pretrained=${MODEL_PATH},is_check_greedy=False,mc_num=${MC_NUM},max_new_tokens=${MAX_NEW_TOKENS},steps=${STEPS},block_length=${BLOCK_LENGTH},cfg=${CFG}"
+    MODEL_ARGS="pretrained=${MODEL_PATH},is_check_greedy=False,mc_num=${MC_NUM},max_new_tokens=${MAX_NEW_TOKENS},steps=${STEPS},block_length=${BLOCK_LENGTH},cfg=${CFG},confidence_eos_eot_inf=${CONFIDENCE_EOS_EOT_INF}"
     ;;
 
   dream)

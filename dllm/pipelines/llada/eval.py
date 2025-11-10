@@ -63,6 +63,7 @@ class LLaDAEvalHarness(LM):
         block_length = kwargs.get("block_length", config.block_length)
         max_length = kwargs.get("max_length", config.max_length)
         remasking = kwargs.get("remasking", config.remasking)
+        confidence_eos_eot_inf = kwargs.get("confidence_eos_eot_inf", config.confidence_eos_eot_inf)
         
         accelerator = accelerate.Accelerator()
 
@@ -107,6 +108,7 @@ class LLaDAEvalHarness(LM):
         self.cfg = float(cfg)
         self.remasking = remasking
         self.is_check_greedy = is_check_greedy
+        self.confidence_eos_eot_inf = confidence_eos_eot_inf
 
         # loglikelihood params
         self.mc_num = int(mc_num)
@@ -295,7 +297,8 @@ class LLaDAEvalHarness(LM):
                 block_length=self.block_length, 
                 temperature=0.0, 
                 cfg_scale=self.cfg, 
-                remasking=self.remasking)
+                remasking=self.remasking,
+                confidence_eos_eot_inf=self.confidence_eos_eot_inf)
             generated_answer = self.tokenizer.decode(generated_ids[0][prompt[0].shape[0]:], skip_special_tokens=False)
             for stop_seq in stop_tokens:
                 if stop_seq in generated_answer:

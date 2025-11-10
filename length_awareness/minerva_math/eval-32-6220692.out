@@ -1,0 +1,41 @@
+============================
+JOB NAME: eval-32
+JOB ID: 6220692
+NUM_NODES: 1
+WORLD_SIZE: 8
+MASTER: SH-IDCA1404-10-140-54-112:20692
+============================
+
+Launching llada on minerva_math using /mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct
+============================
+Few-shot: 4
+Seed: 42
+Batch size: 1
+============================
+Single-node execution
+NCCL version 2.21.5+cuda11.0
+llada (pretrained=/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct,is_check_greedy=False,mc_num=1,max_new_tokens=32,steps=32,block_length=32,cfg=0.0,confidence_eos_eot_inf=True), gen_kwargs: (None), limit: 80.0, num_fewshot: 4, batch_size: 1
+|               Tasks                |Version|Filter|n-shot|  Metric   |   |Value |   |Stderr|
+|------------------------------------|------:|------|-----:|-----------|---|-----:|---|-----:|
+|minerva_math                        |      1|none  |      |exact_match|↑  |0.0571|±  |0.0097|
+|                                    |       |none  |      |math_verify|↑  |0.2018|±  |0.0163|
+| - minerva_math_algebra             |      3|none  |     4|exact_match|↑  |0.0250|±  |0.0176|
+|                                    |       |none  |     4|math_verify|↑  |0.3500|±  |0.0537|
+| - minerva_math_counting_and_prob   |      3|none  |     4|exact_match|↑  |0.0500|±  |0.0245|
+|                                    |       |none  |     4|math_verify|↑  |0.1500|±  |0.0402|
+| - minerva_math_geometry            |      3|none  |     4|exact_match|↑  |0.0250|±  |0.0176|
+|                                    |       |none  |     4|math_verify|↑  |0.0750|±  |0.0296|
+| - minerva_math_intermediate_algebra|      3|none  |     4|exact_match|↑  |0.1000|±  |0.0338|
+|                                    |       |none  |     4|math_verify|↑  |0.1500|±  |0.0402|
+| - minerva_math_num_theory          |      3|none  |     4|exact_match|↑  |0.0375|±  |0.0214|
+|                                    |       |none  |     4|math_verify|↑  |0.1250|±  |0.0372|
+| - minerva_math_prealgebra          |      3|none  |     4|exact_match|↑  |0.1250|±  |0.0372|
+|                                    |       |none  |     4|math_verify|↑  |0.4250|±  |0.0556|
+| - minerva_math_precalc             |      3|none  |     4|exact_match|↑  |0.0375|±  |0.0214|
+|                                    |       |none  |     4|math_verify|↑  |0.1375|±  |0.0387|
+
+|   Groups   |Version|Filter|n-shot|  Metric   |   |Value |   |Stderr|
+|------------|------:|------|------|-----------|---|-----:|---|-----:|
+|minerva_math|      1|none  |      |exact_match|↑  |0.0571|±  |0.0097|
+|            |       |none  |      |math_verify|↑  |0.2018|±  |0.0163|
+

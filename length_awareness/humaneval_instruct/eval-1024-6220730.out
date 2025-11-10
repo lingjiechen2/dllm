@@ -1,0 +1,21 @@
+============================
+JOB NAME: eval-1024
+JOB ID: 6220730
+NUM_NODES: 1
+WORLD_SIZE: 8
+MASTER: SH-IDCA1404-10-140-54-26:20730
+============================
+
+Launching llada on humaneval_instruct using /mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct
+============================
+Few-shot: 0
+Seed: 42
+Batch size: 1
+============================
+Single-node execution
+NCCL version 2.21.5+cuda11.0
+llada (pretrained=/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct,is_check_greedy=False,mc_num=1,max_new_tokens=1024,steps=1024,block_length=1024,cfg=0.0,confidence_eos_eot_inf=True), gen_kwargs: (None), limit: 80.0, num_fewshot: 0, batch_size: 1
+|      Tasks       |Version|  Filter   |n-shot|Metric|   |Value|   |Stderr|
+|------------------|------:|-----------|-----:|------|---|----:|---|-----:|
+|humaneval_instruct|      4|create_test|     0|pass@1|   | 0.55|±  | 0.056|
+

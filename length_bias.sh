@@ -4,8 +4,7 @@ export BASE_MODELS_DIR="/mnt/lustrenew/mllm_aligned/shared/models/huggingface"
 export BASE_DATASETS_DIR="/mnt/lustrenew/mllm_aligned/shared/datasets/huggingface"
 export HF_DATASETS_CACHE="/mnt/lustrenew/mllm_safety-shared/datasets/huggingface"
 
-
-export PYTHONBREAKPOINT=0
+# export PYTHONBREAKPOINT=0
 export NCCL_ASYNC_ERROR_HANDLING=1
 export NCCL_DEBUG=warn
 export TORCH_DISTRIBUTED_DEBUG=DETAIL
@@ -15,18 +14,91 @@ export HF_DATASETS_TRUST_REMOTE_CODE=1 # For cmmlu dataset
 export MASTER_ADDR MASTER_PORT WORLD_SIZE
 
 
-num_gpu=4
+num_gpu=8
 common_args="--model llada --apply_chat_template"
 model_name_or_path="GSAI-ML/LLaDA-8B-Instruct"
+task_name="humaneval_instruct"
+length_list=(32 64 128 256 512 1024)
+seed=42
+limit=80
 
-srun  -p mllm_safety --quotatype=spot --gres=gpu:${num_gpu} --time=04:00:00 \
-accelerate launch --num_processes ${num_gpu} dllm/pipelines/llada/eval.py \
-    --tasks gsm8k_cot --num_fewshot 8 ${common_args} \
-    --model_args "pretrained=${model_name_or_path},is_check_greedy=False,mc_num=1,max_new_tokens=1024,steps=1024,block_length=32,cfg=0.0" \
-    --output_path 
+# mkdir length_awareness/${task_name}
 
+# for length in "${length_list[@]}"; do
+#   echo "Submitting job for length=${length}"
+
+#   sbatch \
+#     --job-name=eval-${length} \
+#     --partition=mllm_safety \
+#     --quotatype=spot \
+#     --gres=gpu:${num_gpu} \
+#     --ntasks-per-node=${num_gpu} \
+#     --cpus-per-task=${num_gpu} \
+#     --time=04:00:00 \
+#     --output=/mnt/petrelfs/fanyuyu/fyy/dllm/length_awareness/${task_name}/%x-%j.out \
+#     --error=/mnt/petrelfs/fanyuyu/fyy/dllm/length_awareness/${task_name}/%x-%j.err \
+#     --requeue \
+#     eval.sh llada ${task_name} ${BASE_MODELS_DIR}/${model_name_or_path} True 1 True ${limit} \
+#       --max_new_tokens ${length} \
+#       --steps ${length} \
+#       --block_length ${length} \
+#       --seed ${seed} \
+#       --output_path "length_awareness/${task_name}/$(basename "$model_name_or_path")_${task_name}_${length}_seed${seed}_samples.json"
+# done
+
+
+
+# sbatch \
+#   --job-name=model-eval \
+#   --partition=mllm_safety \
+#   --quotatype=spot \
+#   --gres=gpu:${num_gpu} \
+#   --ntasks-per-node=${num_gpu} \
+#   --cpus-per-task=${num_gpu} \
+#   --time=04:00:00 \
+#   --output=/mnt/petrelfs/fanyuyu/fyy/dllm/length_awareness/%x-%j.out \
+#   --error=/mnt/petrelfs/fanyuyu/fyy/dllm/length_awareness/%x-%j.err \
+#   --requeue \
+#   eval.sh llada gsm8k_cot ${BASE_MODELS_DIR}/${model_name_or_path} True 1 False 20 \
+#     --max_new_tokens 256 \
+#     --steps 256 \
+#     --block_length 256 \
+#     --seed 42
 
 # srun  -p mllm_safety --quotatype=spot --gres=gpu:${num_gpu} --time=04:00:00 \
 # accelerate launch --num_processes ${num_gpu} dllm/pipelines/llada/eval.py \
-#     --tasks gsm8k_cot --num_fewshot 8 ${common_args} \
-#     --model_args "pretrained=${model_name_or_path},is_check_greedy=False,mc_num=1,max_new_tokens=1024,steps=1024,block_length=32,cfg=0.0"
+#     --tasks "${task_name}" --num_fewshot 8 ${common_args} \
+#     --model_args "pretrained=${BASE_MODELS_DIR}/${model_name_or_path},is_check_greedy=False,mc_num=1,max_new_tokens=256,steps=256,block_length=256,cfg=0.0,confidence_eos_eot_inf=False" \
+#     --output_path "length_awareness/$(basename "$model_name_or_path")_${task_name}_samples.json" \
+#     --log_samples \
+#     --limit 20
+
+
+
+
+model_name_or_path="/mnt/lustrenew/mllm_safety-shared/models/huggingface/meta-llama/Meta-Llama-3.1-8B-Instruct"
+task_name="gsm8k_cot_llama"
+length_list=(32 64 128 256 512)
+# length_list=(1024)
+seed=42
+limit=80
+
+mkdir -p "length_awareness/${task_name}/$(basename "$model_name_or_path")"
+
+for length in "${length_list[@]}"; do
+  echo "Running max_new_tokens=${length}"
+
+  srun  -p mllm_safety --quotatype=spot --gres=gpu:1 --time=04:00:00 lm_eval \
+          --model hf \
+          --model_args pretrained="${model_name_or_path}" \
+          --gen_kwargs max_new_tokens=${length} \
+          --tasks ${task_name} \
+          --batch_size 16 \
+          --limit ${limit} \
+          --apply_chat_template \
+          --output_path "length_awareness/${task_name}/$(basename "$model_name_or_path")/${task_name}_${length}_seed${seed}_samples.json" \
+          --log_samples&
+  sleep 1
+done
+
+
