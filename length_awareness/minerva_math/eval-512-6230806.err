@@ -1,0 +1,374 @@
+The following values were not passed to `accelerate launch` and had defaults used instead:
+		More than one GPU was found, enabling multi-GPU training.
+		If this was unintended please pass in `--num_processes=1`.
+	`--mixed_precision` was set to a value of `'no'`
+	`--dynamo_backend` was set to a value of `'no'`
+To avoid this warning pass in values for each of the problematic parameters or run `accelerate config`.
+2025-11-13:02:56:17 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
+2025-11-13:02:56:17 INFO     [__main__:450] Selected Tasks: ['minerva_math']
+2025-11-13:02:56:17 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
+2025-11-13:02:56:17 INFO     [__main__:450] Selected Tasks: ['minerva_math']
+2025-11-13:02:56:17 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
+2025-11-13:02:56:17 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
+        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 512, 'steps': 512, 'block_length': 512, 'cfg': 0.0,
+        'confidence_eos_eot_inf': True}
+2025-11-13:02:56:17 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
+2025-11-13:02:56:17 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
+        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 512, 'steps': 512, 'block_length': 512, 'cfg': 0.0,
+        'confidence_eos_eot_inf': True}
+[W1113 02:56:17.909588391 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
+[W1113 02:56:17.909606448 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
+2025-11-13:02:56:17 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
+2025-11-13:02:56:17 INFO     [__main__:450] Selected Tasks: ['minerva_math']
+2025-11-13:02:56:17 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
+2025-11-13:02:56:17 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
+        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 512, 'steps': 512, 'block_length': 512, 'cfg': 0.0,
+        'confidence_eos_eot_inf': True}
+[W1113 02:56:17.363452657 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
+2025-11-13:02:56:17 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
+2025-11-13:02:56:17 INFO     [__main__:450] Selected Tasks: ['minerva_math']
+2025-11-13:02:56:17 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
+2025-11-13:02:56:17 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
+        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 512, 'steps': 512, 'block_length': 512, 'cfg': 0.0,
+        'confidence_eos_eot_inf': True}
+[W1113 02:56:17.455553139 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
+2025-11-13:02:56:18 WARNING  [accelerate.utils.other:441] Detected kernel version 3.10.0, which is below the recommended minimum of 5.5.0; this can cause the process to hang. It is recommended to upgrade the kernel to the minimum version or higher.
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 479, in cached_files
+[rank3]:     hf_hub_download(
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+[rank3]:     validate_repo_id(arg_value)
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 154, in validate_repo_id
+[rank3]:     raise HFValidationError(
+[rank3]: huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct'. Use `repo_type` argument if needed.
+
+[rank3]: During handling of the above exception, another exception occurred:
+
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/utils/model_utils.py", line 56, in get_model
+[rank3]:     model = transformers.AutoModelForMaskedLM.from_pretrained(model_name_or_path, **params)
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py", line 508, in from_pretrained
+[rank3]:     resolved_config_file = cached_file(
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 322, in cached_file
+[rank3]:     file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 531, in cached_files
+[rank3]:     resolved_files = [
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 532, in <listcomp>
+[rank3]:     _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision, repo_type)
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 143, in _get_cache_file_to_return
+[rank3]:     resolved_file = try_to_load_from_cache(
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+[rank3]:     validate_repo_id(arg_value)
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 154, in validate_repo_id
+[rank3]:     raise HFValidationError(
+[rank3]: huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct'. Use `repo_type` argument if needed.
+
+[rank3]: During handling of the above exception, another exception occurred:
+
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 479, in cached_files
+[rank3]:     hf_hub_download(
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+[rank3]:     validate_repo_id(arg_value)
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 154, in validate_repo_id
+[rank3]:     raise HFValidationError(
+[rank3]: huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct'. Use `repo_type` argument if needed.
+
+[rank3]: During handling of the above exception, another exception occurred:
+
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/pipelines/llada/eval.py", line 318, in <module>
+[rank3]:     cli_evaluate()
+[rank3]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/__main__.py", line 459, in cli_evaluate
+[rank3]:     results = evaluator.simple_evaluate(
+[rank3]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/utils.py", line 458, in _wrapper
+[rank3]:     return fn(*args, **kwargs)
+[rank3]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/evaluator.py", line 245, in simple_evaluate
+[rank3]:     lm = lm_eval.api.registry.get_model(model).create_from_arg_string(
+[rank3]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/api/model.py", line 155, in create_from_arg_string
+[rank3]:     return cls(**args, **args2)
+[rank3]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/pipelines/llada/eval.py", line 79, in __init__
+[rank3]:     self.model = dllm.utils.get_model(SimpleNamespace(
+[rank3]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/utils/model_utils.py", line 58, in get_model
+[rank3]:     model = transformers.AutoModel.from_pretrained(model_name_or_path, **params)
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py", line 508, in from_pretrained
+[rank3]:     resolved_config_file = cached_file(
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 322, in cached_file
+[rank3]:     file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 531, in cached_files
+[rank3]:     resolved_files = [
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 532, in <listcomp>
+[rank3]:     _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision, repo_type)
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 143, in _get_cache_file_to_return
+[rank3]:     resolved_file = try_to_load_from_cache(
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+[rank3]:     validate_repo_id(arg_value)
+[rank3]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 154, in validate_repo_id
+[rank3]:     raise HFValidationError(
+[rank3]: huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct'. Use `repo_type` argument if needed.
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 479, in cached_files
+[rank1]:     hf_hub_download(
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+[rank1]:     validate_repo_id(arg_value)
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 154, in validate_repo_id
+[rank1]:     raise HFValidationError(
+[rank1]: huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct'. Use `repo_type` argument if needed.
+
+[rank1]: During handling of the above exception, another exception occurred:
+
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/utils/model_utils.py", line 56, in get_model
+[rank1]:     model = transformers.AutoModelForMaskedLM.from_pretrained(model_name_or_path, **params)
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py", line 508, in from_pretrained
+[rank1]:     resolved_config_file = cached_file(
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 322, in cached_file
+[rank1]:     file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 531, in cached_files
+[rank1]:     resolved_files = [
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 532, in <listcomp>
+[rank1]:     _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision, repo_type)
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 143, in _get_cache_file_to_return
+[rank1]:     resolved_file = try_to_load_from_cache(
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+[rank1]:     validate_repo_id(arg_value)
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 154, in validate_repo_id
+[rank1]:     raise HFValidationError(
+[rank1]: huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct'. Use `repo_type` argument if needed.
+
+[rank1]: During handling of the above exception, another exception occurred:
+
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 479, in cached_files
+[rank1]:     hf_hub_download(
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+[rank1]:     validate_repo_id(arg_value)
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 154, in validate_repo_id
+[rank1]:     raise HFValidationError(
+[rank1]: huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct'. Use `repo_type` argument if needed.
+
+[rank1]: During handling of the above exception, another exception occurred:
+
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/pipelines/llada/eval.py", line 318, in <module>
+[rank1]:     cli_evaluate()
+[rank1]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/__main__.py", line 459, in cli_evaluate
+[rank1]:     results = evaluator.simple_evaluate(
+[rank1]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/utils.py", line 458, in _wrapper
+[rank1]:     return fn(*args, **kwargs)
+[rank1]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/evaluator.py", line 245, in simple_evaluate
+[rank1]:     lm = lm_eval.api.registry.get_model(model).create_from_arg_string(
+[rank1]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/api/model.py", line 155, in create_from_arg_string
+[rank1]:     return cls(**args, **args2)
+[rank1]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/pipelines/llada/eval.py", line 79, in __init__
+[rank1]:     self.model = dllm.utils.get_model(SimpleNamespace(
+[rank1]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/utils/model_utils.py", line 58, in get_model
+[rank1]:     model = transformers.AutoModel.from_pretrained(model_name_or_path, **params)
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py", line 508, in from_pretrained
+[rank1]:     resolved_config_file = cached_file(
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 322, in cached_file
+[rank1]:     file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 531, in cached_files
+[rank1]:     resolved_files = [
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 532, in <listcomp>
+[rank1]:     _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision, repo_type)
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 143, in _get_cache_file_to_return
+[rank1]:     resolved_file = try_to_load_from_cache(
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+[rank1]:     validate_repo_id(arg_value)
+[rank1]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 154, in validate_repo_id
+[rank1]:     raise HFValidationError(
+[rank1]: huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct'. Use `repo_type` argument if needed.
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 479, in cached_files
+[rank0]:     hf_hub_download(
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+[rank0]:     validate_repo_id(arg_value)
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 154, in validate_repo_id
+[rank0]:     raise HFValidationError(
+[rank0]: huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct'. Use `repo_type` argument if needed.
+
+[rank0]: During handling of the above exception, another exception occurred:
+
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/utils/model_utils.py", line 56, in get_model
+[rank0]:     model = transformers.AutoModelForMaskedLM.from_pretrained(model_name_or_path, **params)
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py", line 508, in from_pretrained
+[rank0]:     resolved_config_file = cached_file(
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 322, in cached_file
+[rank0]:     file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 531, in cached_files
+[rank0]:     resolved_files = [
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 532, in <listcomp>
+[rank0]:     _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision, repo_type)
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 143, in _get_cache_file_to_return
+[rank0]:     resolved_file = try_to_load_from_cache(
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+[rank0]:     validate_repo_id(arg_value)
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 154, in validate_repo_id
+[rank0]:     raise HFValidationError(
+[rank0]: huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct'. Use `repo_type` argument if needed.
+
+[rank0]: During handling of the above exception, another exception occurred:
+
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 479, in cached_files
+[rank0]:     hf_hub_download(
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+[rank0]:     validate_repo_id(arg_value)
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 154, in validate_repo_id
+[rank0]:     raise HFValidationError(
+[rank0]: huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct'. Use `repo_type` argument if needed.
+
+[rank0]: During handling of the above exception, another exception occurred:
+
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/pipelines/llada/eval.py", line 318, in <module>
+[rank0]:     cli_evaluate()
+[rank0]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/__main__.py", line 459, in cli_evaluate
+[rank0]:     results = evaluator.simple_evaluate(
+[rank0]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/utils.py", line 458, in _wrapper
+[rank0]:     return fn(*args, **kwargs)
+[rank0]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/evaluator.py", line 245, in simple_evaluate
+[rank0]:     lm = lm_eval.api.registry.get_model(model).create_from_arg_string(
+[rank0]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/api/model.py", line 155, in create_from_arg_string
+[rank0]:     return cls(**args, **args2)
+[rank0]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/pipelines/llada/eval.py", line 79, in __init__
+[rank0]:     self.model = dllm.utils.get_model(SimpleNamespace(
+[rank0]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/utils/model_utils.py", line 58, in get_model
+[rank0]:     model = transformers.AutoModel.from_pretrained(model_name_or_path, **params)
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py", line 508, in from_pretrained
+[rank0]:     resolved_config_file = cached_file(
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 322, in cached_file
+[rank0]:     file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 531, in cached_files
+[rank0]:     resolved_files = [
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 532, in <listcomp>
+[rank0]:     _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision, repo_type)
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 143, in _get_cache_file_to_return
+[rank0]:     resolved_file = try_to_load_from_cache(
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+[rank0]:     validate_repo_id(arg_value)
+[rank0]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 154, in validate_repo_id
+[rank0]:     raise HFValidationError(
+[rank0]: huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct'. Use `repo_type` argument if needed.
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 479, in cached_files
+[rank2]:     hf_hub_download(
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+[rank2]:     validate_repo_id(arg_value)
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 154, in validate_repo_id
+[rank2]:     raise HFValidationError(
+[rank2]: huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct'. Use `repo_type` argument if needed.
+
+[rank2]: During handling of the above exception, another exception occurred:
+
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/utils/model_utils.py", line 56, in get_model
+[rank2]:     model = transformers.AutoModelForMaskedLM.from_pretrained(model_name_or_path, **params)
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py", line 508, in from_pretrained
+[rank2]:     resolved_config_file = cached_file(
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 322, in cached_file
+[rank2]:     file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 531, in cached_files
+[rank2]:     resolved_files = [
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 532, in <listcomp>
+[rank2]:     _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision, repo_type)
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 143, in _get_cache_file_to_return
+[rank2]:     resolved_file = try_to_load_from_cache(
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+[rank2]:     validate_repo_id(arg_value)
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 154, in validate_repo_id
+[rank2]:     raise HFValidationError(
+[rank2]: huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct'. Use `repo_type` argument if needed.
+
+[rank2]: During handling of the above exception, another exception occurred:
+
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 479, in cached_files
+[rank2]:     hf_hub_download(
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+[rank2]:     validate_repo_id(arg_value)
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 154, in validate_repo_id
+[rank2]:     raise HFValidationError(
+[rank2]: huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct'. Use `repo_type` argument if needed.
+
+[rank2]: During handling of the above exception, another exception occurred:
+
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/pipelines/llada/eval.py", line 318, in <module>
+[rank2]:     cli_evaluate()
+[rank2]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/__main__.py", line 459, in cli_evaluate
+[rank2]:     results = evaluator.simple_evaluate(
+[rank2]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/utils.py", line 458, in _wrapper
+[rank2]:     return fn(*args, **kwargs)
+[rank2]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/evaluator.py", line 245, in simple_evaluate
+[rank2]:     lm = lm_eval.api.registry.get_model(model).create_from_arg_string(
+[rank2]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/api/model.py", line 155, in create_from_arg_string
+[rank2]:     return cls(**args, **args2)
+[rank2]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/pipelines/llada/eval.py", line 79, in __init__
+[rank2]:     self.model = dllm.utils.get_model(SimpleNamespace(
+[rank2]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/utils/model_utils.py", line 58, in get_model
+[rank2]:     model = transformers.AutoModel.from_pretrained(model_name_or_path, **params)
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py", line 508, in from_pretrained
+[rank2]:     resolved_config_file = cached_file(
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 322, in cached_file
+[rank2]:     file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 531, in cached_files
+[rank2]:     resolved_files = [
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 532, in <listcomp>
+[rank2]:     _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision, repo_type)
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/transformers/utils/hub.py", line 143, in _get_cache_file_to_return
+[rank2]:     resolved_file = try_to_load_from_cache(
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+[rank2]:     validate_repo_id(arg_value)
+[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 154, in validate_repo_id
+[rank2]:     raise HFValidationError(
+[rank2]: huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct'. Use `repo_type` argument if needed.
+[rank0]:[W1113 02:56:18.304314028 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+W1113 02:56:19.640000 71846 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 72580 closing signal SIGTERM
+E1113 02:56:19.675000 71846 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 1 (pid: 72581) of binary: /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10
+Traceback (most recent call last):
+  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/accelerate", line 7, in <module>
+    sys.exit(main())
+  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/accelerate/commands/accelerate_cli.py", line 50, in main
+    args.func(args)
+  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1189, in launch_command
+    multi_gpu_launcher(args)
+  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/accelerate/commands/launch.py", line 815, in multi_gpu_launcher
+    distrib_run.run(args)
+  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/pipelines/llada/eval.py FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2025-11-13_02:56:19
+  host      : SH-IDCA1404-10-140-54-79
+  rank      : 2 (local_rank: 2)
+  exitcode  : 1 (pid: 72582)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2025-11-13_02:56:19
+  host      : SH-IDCA1404-10-140-54-79
+  rank      : 3 (local_rank: 3)
+  exitcode  : 1 (pid: 72583)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2025-11-13_02:56:19
+  host      : SH-IDCA1404-10-140-54-79
+  rank      : 1 (local_rank: 1)
+  exitcode  : 1 (pid: 72581)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

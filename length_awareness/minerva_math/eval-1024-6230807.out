@@ -1,0 +1,16 @@
+============================
+JOB NAME: eval-1024
+JOB ID: 6230807
+NUM_NODES: 1
+WORLD_SIZE: 4
+MASTER: SH-IDCA1404-10-140-54-68:20807
+============================
+
+Launching llada on minerva_math using /mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct
+============================
+Few-shot: 4
+Seed: 42
+Batch size: 1
+============================
+Single-node execution
+NCCL version 2.21.5+cuda11.0
