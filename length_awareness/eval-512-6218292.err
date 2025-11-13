@@ -1,106 +1,0 @@
-The following values were not passed to `accelerate launch` and had defaults used instead:
-		More than one GPU was found, enabling multi-GPU training.
-		If this was unintended please pass in `--num_processes=1`.
-	`--mixed_precision` was set to a value of `'no'`
-	`--dynamo_backend` was set to a value of `'no'`
-To avoid this warning pass in values for each of the problematic parameters or run `accelerate config`.
-2025-11-10:06:14:18 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:06:14:18 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:06:14:18 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:06:14:18 INFO     [__main__:450] Selected Tasks: ['gsm8k_cot']
-2025-11-10:06:14:18 INFO     [__main__:450] Selected Tasks: ['gsm8k_cot']
-2025-11-10:06:14:18 INFO     [__main__:450] Selected Tasks: ['gsm8k_cot']
-2025-11-10:06:14:18 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:06:14:18 INFO     [__main__:450] Selected Tasks: ['gsm8k_cot']
-2025-11-10:06:14:18 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-2025-11-10:06:14:18 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-2025-11-10:06:14:18 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-2025-11-10:06:14:18 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 512, 'steps': 512, 'block_length': 512, 'cfg': 0.0}
-2025-11-10:06:14:18 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 512, 'steps': 512, 'block_length': 512, 'cfg': 0.0}
-2025-11-10:06:14:18 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 512, 'steps': 512, 'block_length': 512, 'cfg': 0.0}
-2025-11-10:06:14:18 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-2025-11-10:06:14:18 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 512, 'steps': 512, 'block_length': 512, 'cfg': 0.0}
-[W1110 06:14:18.558761083 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[W1110 06:14:18.558758297 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[W1110 06:14:18.558758892 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[W1110 06:14:18.559996575 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-2025-11-10:06:14:19 WARNING  [accelerate.utils.other:441] Detected kernel version 3.10.0, which is below the recommended minimum of 5.5.0; this can cause the process to hang. It is recommended to upgrade the kernel to the minimum version or higher.
-Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.22s/it]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.30s/it]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.33s/it]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.30s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:10,  2.69s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:11,  2.78s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:11,  2.80s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:11,  2.79s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:09<00:09,  3.25s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:09<00:09,  3.29s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:09<00:09,  3.30s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:09<00:09,  3.31s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:12<00:06,  3.34s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:12<00:06,  3.37s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:12<00:06,  3.37s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:12<00:06,  3.38s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:15<00:03,  3.23s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:15<00:03,  3.22s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:15<00:03,  3.24s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:15<00:03,  3.23s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:18<00:00,  2.97s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:18<00:00,  3.04s/it]
-Loading checkpoint shards: 100%|██████████| 6/6 [00:18<00:00,  3.03s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:18<00:00,  3.01s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:18<00:00,  3.01s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:18<00:00,  3.06s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:18<00:00,  3.06s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:18<00:00,  3.06s/it]
-
-
-[rank1]:[W1110 06:14:40.347919002 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[rank2]:[W1110 06:14:40.347980111 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[rank0]:[W1110 06:14:40.347985623 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[rank3]:[W1110 06:14:40.348341354 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-2025-11-10:06:14:47 INFO     [evaluator:305] gsm8k_cot: Using gen_kwargs: {'do_sample': False, 'until': ['Q:', '</s>', '<|im_end|>']}
-2025-11-10:06:14:47 WARNING  [evaluator:324] Overwriting default num_fewshot of gsm8k_cot from 8 to 8
-2025-11-10:06:14:47 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:06:14:47 INFO     [api.task:434] Building contexts for gsm8k_cot on rank 1...
-  0%|          | 0/5 [00:00<?, ?it/s]100%|██████████| 5/5 [00:00<00:00, 80.86it/s]
-2025-11-10:06:14:47 INFO     [evaluator:305] gsm8k_cot: Using gen_kwargs: {'do_sample': False, 'until': ['Q:', '</s>', '<|im_end|>']}
-2025-11-10:06:14:47 WARNING  [evaluator:324] Overwriting default num_fewshot of gsm8k_cot from 8 to 8
-2025-11-10:06:14:47 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:06:14:47 INFO     [api.task:434] Building contexts for gsm8k_cot on rank 2...
-  0%|          | 0/5 [00:00<?, ?it/s]2025-11-10:06:14:47 INFO     [evaluator:305] gsm8k_cot: Using gen_kwargs: {'do_sample': False, 'until': ['Q:', '</s>', '<|im_end|>']}
-2025-11-10:06:14:47 WARNING  [evaluator:324] Overwriting default num_fewshot of gsm8k_cot from 8 to 8
-2025-11-10:06:14:47 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:06:14:47 INFO     [api.task:434] Building contexts for gsm8k_cot on rank 0...
-  0%|          | 0/5 [00:00<?, ?it/s]100%|██████████| 5/5 [00:00<00:00, 83.93it/s]
-100%|██████████| 5/5 [00:00<00:00, 83.57it/s]
-2025-11-10:06:14:47 INFO     [evaluator:305] gsm8k_cot: Using gen_kwargs: {'do_sample': False, 'until': ['Q:', '</s>', '<|im_end|>']}
-2025-11-10:06:14:47 WARNING  [evaluator:324] Overwriting default num_fewshot of gsm8k_cot from 8 to 8
-2025-11-10:06:14:47 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:06:14:47 INFO     [api.task:434] Building contexts for gsm8k_cot on rank 3...
-  0%|          | 0/5 [00:00<?, ?it/s]100%|██████████| 5/5 [00:00<00:00, 83.23it/s]
-2025-11-10:06:14:47 INFO     [evaluator:574] Running generate_until requests
-2025-11-10:06:14:47 INFO     [evaluator:574] Running generate_until requests
-2025-11-10:06:14:47 INFO     [evaluator:574] Running generate_until requests
-2025-11-10:06:14:47 INFO     [evaluator:574] Running generate_until requests
-Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7fe3700f3130> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f91100ef130> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f0e140c3130> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-2025-11-10:06:14:50 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7fe3700f3130> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-2025-11-10:06:14:50 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f91100ef130> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-2025-11-10:06:14:50 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f0e140c3130> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Map:   0%|          | 0/5 [00:00<?, ? examples/s]Map:   0%|          | 0/5 [00:00<?, ? examples/s]Map:   0%|          | 0/5 [00:00<?, ? examples/s]Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f577016f130> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-2025-11-10:06:14:50 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f577016f130> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Map:   0%|          | 0/5 [00:00<?, ? examples/s]Map: 100%|██████████| 5/5 [00:00<00:00, 351.15 examples/s]Map: 100%|██████████| 5/5 [00:00<00:00, 337.05 examples/s]
-
-Map: 100%|██████████| 5/5 [00:00<00:00, 335.04 examples/s]Generating...:   0%|          | 0/5 [00:00<?, ?it/s]
-Generating...:   0%|          | 0/5 [00:00<?, ?it/s]Map: 100%|██████████| 5/5 [00:00<00:00, 368.28 examples/s]Generating...:   0%|          | 0/5 [00:00<?, ?it/s]
-Generating...:   0%|          | 0/5 [00:00<?, ?it/s]Generating...:  20%|██        | 1/5 [01:05<04:21, 65.50s/it]Generating...:  20%|██        | 1/5 [01:05<04:22, 65.50s/it]Generating...:  20%|██        | 1/5 [01:05<04:22, 65.50s/it]Generating...:  20%|██        | 1/5 [01:05<04:21, 65.50s/it]Generating...:  40%|████      | 2/5 [02:11<03:16, 65.58s/it]Generating...:  40%|████      | 2/5 [02:11<03:16, 65.58s/it]Generating...:  40%|████      | 2/5 [02:11<03:16, 65.58s/it]Generating...:  40%|████      | 2/5 [02:11<03:16, 65.58s/it]Generating...:  60%|██████    | 3/5 [03:16<02:11, 65.56s/it]Generating...:  60%|██████    | 3/5 [03:16<02:11, 65.56s/it]Generating...:  60%|██████    | 3/5 [03:16<02:11, 65.56s/it]Generating...:  60%|██████    | 3/5 [03:16<02:11, 65.56s/it]Generating...:  80%|████████  | 4/5 [04:21<01:05, 65.24s/it]Generating...:  80%|████████  | 4/5 [04:21<01:05, 65.24s/it]Generating...:  80%|████████  | 4/5 [04:21<01:05, 65.24s/it]Generating...:  80%|████████  | 4/5 [04:21<01:05, 65.24s/it]Generating...: 100%|██████████| 5/5 [05:25<00:00, 64.93s/it]Generating...: 100%|██████████| 5/5 [05:25<00:00, 64.93s/it]Generating...: 100%|██████████| 5/5 [05:25<00:00, 64.93s/it]Generating...: 100%|██████████| 5/5 [05:25<00:00, 64.93s/it]Generating...: 100%|██████████| 5/5 [05:25<00:00, 65.16s/it]Generating...: 100%|██████████| 5/5 [05:25<00:00, 65.16s/it]Generating...: 100%|██████████| 5/5 [05:25<00:00, 65.16s/it]Generating...: 100%|██████████| 5/5 [05:25<00:00, 65.16s/it]
-
-
-
-[rank2]:W1110 06:20:16.392000 25553 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 26598 hash value: 5133674698967241113
-[rank1]:W1110 06:20:16.392000 25552 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 26014 hash value: 14718420098732173838
-[rank3]:W1110 06:20:16.392000 25554 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 28248 hash value: 5784904608011978709
-[rank0]:W1110 06:20:16.392000 25551 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 28272 hash value: 4311373320846489013
-[rank0]:W1110 06:20:16.479000 25551 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 28272 hash value: 3002129707485340297
-[rank0]:W1110 06:20:16.481000 25551 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 28272 hash value: 3002129707485340297
-[rank0]:W1110 06:20:16.482000 25551 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 28272 hash value: 3002129707485340297
-[rank0]:W1110 06:20:16.483000 25551 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 28272 hash value: 3002129707485340297
-[rank0]:W1110 06:20:16.485000 25551 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 196 hash value: 6549878001891756160
-[rank1]:W1110 06:20:16.486000 25552 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 196 hash value: 15438478763161365719
-[rank2]:W1110 06:20:16.486000 25553 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 196 hash value: 8555672146042478781
-[rank3]:W1110 06:20:16.486000 25554 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 196 hash value: 3701776294572064966
-[rank0]:W1110 06:20:16.490000 25551 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 196 hash value: 4502730101598296723
-[rank1]:W1110 06:20:16.491000 25552 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 196 hash value: 7958656267256001611
-[rank2]:W1110 06:20:16.491000 25553 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 196 hash value: 8650332735902452689
-[rank3]:W1110 06:20:16.491000 25554 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 196 hash value: 7488346635574444498
-[rank0]:W1110 06:20:16.492000 25551 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 196 hash value: 4502730101598296723
-[rank0]:W1110 06:20:16.493000 25551 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 196 hash value: 4502730101598296723
-[rank0]:W1110 06:20:16.494000 25551 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 196 hash value: 4502730101598296723
-[rank0]:W1110 06:20:16.495000 25551 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 196 hash value: 5136964242120635838
-[rank0]:W1110 06:20:16.498000 25551 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 196 hash value: 6331232843110785677
-[rank0]:W1110 06:20:16.499000 25551 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 196 hash value: 6331232843110785677
-[rank0]:W1110 06:20:16.500000 25551 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 196 hash value: 6331232843110785677
-[rank0]:W1110 06:20:16.501000 25551 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 196 hash value: 6331232843110785677
-2025-11-10:06:20:23 INFO     [loggers.evaluation_tracker:209] Saving results aggregated
-2025-11-10:06:20:23 INFO     [loggers.evaluation_tracker:298] Saving per-sample results for: gsm8k_cot
-[rank0]:[W1110 06:20:24.361161666 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())

@@ -1,860 +1,0 @@
-The following values were not passed to `accelerate launch` and had defaults used instead:
-		More than one GPU was found, enabling multi-GPU training.
-		If this was unintended please pass in `--num_processes=1`.
-	`--mixed_precision` was set to a value of `'no'`
-	`--dynamo_backend` was set to a value of `'no'`
-To avoid this warning pass in values for each of the problematic parameters or run `accelerate config`.
-2025-11-10:14:04:52 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:14:04:52 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:14:04:52 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:14:04:52 INFO     [__main__:450] Selected Tasks: ['minerva_math']
-2025-11-10:14:04:52 INFO     [__main__:450] Selected Tasks: ['minerva_math']
-2025-11-10:14:04:52 INFO     [__main__:450] Selected Tasks: ['minerva_math']
-2025-11-10:14:04:52 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-2025-11-10:14:04:52 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 512, 'steps': 512, 'block_length': 512, 'cfg': 0.0,
-        'confidence_eos_eot_inf': True}
-2025-11-10:14:04:52 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-2025-11-10:14:04:52 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 512, 'steps': 512, 'block_length': 512, 'cfg': 0.0,
-        'confidence_eos_eot_inf': True}
-2025-11-10:14:04:52 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-2025-11-10:14:04:52 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 512, 'steps': 512, 'block_length': 512, 'cfg': 0.0,
-        'confidence_eos_eot_inf': True}
-[W1110 14:04:52.431553413 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[W1110 14:04:52.431553736 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[W1110 14:04:52.431554045 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-2025-11-10:14:04:53 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:14:04:53 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:14:04:53 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:14:04:53 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:14:04:53 INFO     [__main__:450] Selected Tasks: ['minerva_math']
-2025-11-10:14:04:53 INFO     [__main__:450] Selected Tasks: ['minerva_math']
-2025-11-10:14:04:53 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:14:04:53 INFO     [__main__:450] Selected Tasks: ['minerva_math']
-2025-11-10:14:04:53 INFO     [__main__:450] Selected Tasks: ['minerva_math']
-2025-11-10:14:04:53 INFO     [__main__:450] Selected Tasks: ['minerva_math']
-2025-11-10:14:04:53 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-2025-11-10:14:04:53 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 512, 'steps': 512, 'block_length': 512, 'cfg': 0.0,
-        'confidence_eos_eot_inf': True}
-2025-11-10:14:04:53 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-2025-11-10:14:04:53 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 512, 'steps': 512, 'block_length': 512, 'cfg': 0.0,
-        'confidence_eos_eot_inf': True}
-2025-11-10:14:04:53 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-2025-11-10:14:04:53 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 512, 'steps': 512, 'block_length': 512, 'cfg': 0.0,
-        'confidence_eos_eot_inf': True}
-2025-11-10:14:04:53 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-2025-11-10:14:04:53 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 512, 'steps': 512, 'block_length': 512, 'cfg': 0.0,
-        'confidence_eos_eot_inf': True}
-2025-11-10:14:04:53 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-[W1110 14:04:53.894326614 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-2025-11-10:14:04:53 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 512, 'steps': 512, 'block_length': 512, 'cfg': 0.0,
-        'confidence_eos_eot_inf': True}
-[W1110 14:04:53.895555531 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[W1110 14:04:53.896915751 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[W1110 14:04:53.898339655 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[W1110 14:04:53.899131622 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-2025-11-10:14:04:53 WARNING  [accelerate.utils.other:441] Detected kernel version 3.10.0, which is below the recommended minimum of 5.5.0; this can cause the process to hang. It is recommended to upgrade the kernel to the minimum version or higher.
-Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:10,  2.15s/it]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.29s/it]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.27s/it]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.27s/it]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.30s/it]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.28s/it]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.25s/it]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.26s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:10,  2.61s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:11,  2.81s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:11,  2.82s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:11,  2.81s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:11,  2.80s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:11,  2.82s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:11,  2.81s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:11,  2.80s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:07<00:08,  2.67s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:08<00:08,  2.79s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:08<00:08,  2.78s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:08<00:08,  2.83s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:08<00:08,  2.78s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:08<00:08,  2.78s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:08<00:08,  2.77s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:08<00:08,  2.77s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:10<00:05,  2.75s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:11<00:05,  2.87s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:11<00:05,  2.86s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:11<00:05,  2.86s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:11<00:05,  2.86s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:11<00:05,  2.86s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:11<00:05,  2.86s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:11<00:05,  2.90s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:13<00:02,  2.65s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:13<00:02,  2.81s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:13<00:02,  2.82s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:13<00:02,  2.80s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:13<00:02,  2.80s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:13<00:02,  2.80s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:13<00:02,  2.86s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:13<00:02,  2.80s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.35s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.54s/it]
-Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.34s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.55s/it]
-Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.36s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.36s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.40s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.36s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.56s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.56s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.57s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.56s/it]
-Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.37s/it]
-Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.36s/it]
-
-Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.57s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.56s/it]
-
-[rank2]:[W1110 14:05:13.064184450 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[rank7]:[W1110 14:05:13.077147514 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[rank1]:[W1110 14:05:13.077154778 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[rank4]:[W1110 14:05:13.077426725 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[rank0]:[W1110 14:05:13.077469958 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[rank3]:[W1110 14:05:13.077505834 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[rank6]:[W1110 14:05:13.077566267 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[rank5]:[W1110 14:05:13.077585800 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-2025-11-10:14:05:30 INFO     [evaluator:305] minerva_math_algebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:30 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_algebra from 4 to 4
-2025-11-10:14:05:30 INFO     [evaluator:305] minerva_math_counting_and_prob: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:30 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_counting_and_prob from 4 to 4
-2025-11-10:14:05:30 INFO     [evaluator:305] minerva_math_geometry: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:30 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_geometry from 4 to 4
-2025-11-10:14:05:30 INFO     [evaluator:305] minerva_math_intermediate_algebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:30 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_intermediate_algebra from 4 to 4
-2025-11-10:14:05:30 INFO     [evaluator:305] minerva_math_num_theory: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:30 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_num_theory from 4 to 4
-2025-11-10:14:05:30 INFO     [evaluator:305] minerva_math_prealgebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:30 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_prealgebra from 4 to 4
-2025-11-10:14:05:30 INFO     [evaluator:305] minerva_math_precalc: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:30 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_precalc from 4 to 4
-2025-11-10:14:05:30 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:14:05:30 INFO     [api.task:434] Building contexts for minerva_math_algebra on rank 0...
-  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 364.86it/s]
-2025-11-10:14:05:30 INFO     [evaluator:305] minerva_math_algebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:30 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_algebra from 4 to 4
-2025-11-10:14:05:30 INFO     [evaluator:305] minerva_math_counting_and_prob: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:30 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_counting_and_prob from 4 to 4
-2025-11-10:14:05:30 INFO     [evaluator:305] minerva_math_geometry: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:30 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_geometry from 4 to 4
-2025-11-10:14:05:30 INFO     [evaluator:305] minerva_math_intermediate_algebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:30 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_intermediate_algebra from 4 to 4
-2025-11-10:14:05:30 INFO     [evaluator:305] minerva_math_num_theory: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:30 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_num_theory from 4 to 4
-2025-11-10:14:05:30 INFO     [evaluator:305] minerva_math_prealgebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:30 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_prealgebra from 4 to 4
-2025-11-10:14:05:30 INFO     [evaluator:305] minerva_math_precalc: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:30 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_precalc from 4 to 4
-2025-11-10:14:05:30 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:14:05:30 INFO     [api.task:434] Building contexts for minerva_math_algebra on rank 3...
-  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 366.25it/s]
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_algebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_algebra from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_counting_and_prob: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_counting_and_prob from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_geometry: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_geometry from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_intermediate_algebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_intermediate_algebra from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_num_theory: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_num_theory from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_prealgebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_prealgebra from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_precalc: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_precalc from 4 to 4
-2025-11-10:14:05:31 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:14:05:31 INFO     [api.task:434] Building contexts for minerva_math_algebra on rank 4...
-  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 364.27it/s]
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_algebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_algebra from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_counting_and_prob: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_counting_and_prob from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_geometry: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_geometry from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_intermediate_algebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_intermediate_algebra from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_num_theory: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_num_theory from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_prealgebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_prealgebra from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_precalc: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_precalc from 4 to 4
-2025-11-10:14:05:31 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:14:05:31 INFO     [api.task:434] Building contexts for minerva_math_algebra on rank 7...
-  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 363.50it/s]
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_algebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_algebra from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_counting_and_prob: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_counting_and_prob from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_geometry: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_geometry from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_intermediate_algebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_intermediate_algebra from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_num_theory: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_num_theory from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_prealgebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_prealgebra from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_precalc: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_precalc from 4 to 4
-2025-11-10:14:05:31 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:14:05:31 INFO     [api.task:434] Building contexts for minerva_math_algebra on rank 5...
-  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 364.07it/s]
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_algebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_algebra from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_counting_and_prob: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_counting_and_prob from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_geometry: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_geometry from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_intermediate_algebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_intermediate_algebra from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_num_theory: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_num_theory from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_prealgebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_prealgebra from 4 to 4
-2025-11-10:14:05:31 INFO     [evaluator:305] minerva_math_precalc: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:31 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_precalc from 4 to 4
-2025-11-10:14:05:31 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:14:05:31 INFO     [api.task:434] Building contexts for minerva_math_algebra on rank 1...
-  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 343.91it/s]
-2025-11-10:14:05:32 INFO     [evaluator:305] minerva_math_algebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:32 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_algebra from 4 to 4
-2025-11-10:14:05:32 INFO     [evaluator:305] minerva_math_counting_and_prob: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:32 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_counting_and_prob from 4 to 4
-2025-11-10:14:05:32 INFO     [evaluator:305] minerva_math_geometry: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:32 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_geometry from 4 to 4
-2025-11-10:14:05:32 INFO     [evaluator:305] minerva_math_intermediate_algebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:32 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_intermediate_algebra from 4 to 4
-2025-11-10:14:05:32 INFO     [evaluator:305] minerva_math_num_theory: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:32 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_num_theory from 4 to 4
-2025-11-10:14:05:32 INFO     [evaluator:305] minerva_math_prealgebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:32 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_prealgebra from 4 to 4
-2025-11-10:14:05:32 INFO     [evaluator:305] minerva_math_precalc: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:32 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_precalc from 4 to 4
-2025-11-10:14:05:32 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_algebra on rank 6...
-  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 357.28it/s]
-2025-11-10:14:05:32 INFO     [evaluator:305] minerva_math_algebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:32 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_algebra from 4 to 4
-2025-11-10:14:05:32 INFO     [evaluator:305] minerva_math_counting_and_prob: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:32 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_counting_and_prob from 4 to 4
-2025-11-10:14:05:32 INFO     [evaluator:305] minerva_math_geometry: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:32 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_geometry from 4 to 4
-2025-11-10:14:05:32 INFO     [evaluator:305] minerva_math_intermediate_algebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:32 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_intermediate_algebra from 4 to 4
-2025-11-10:14:05:32 INFO     [evaluator:305] minerva_math_num_theory: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:32 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_num_theory from 4 to 4
-2025-11-10:14:05:32 INFO     [evaluator:305] minerva_math_prealgebra: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:32 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_prealgebra from 4 to 4
-2025-11-10:14:05:32 INFO     [evaluator:305] minerva_math_precalc: Using gen_kwargs: {'until': ['Problem:'], 'do_sample': False, 'temperature': 0.0}
-2025-11-10:14:05:32 WARNING  [evaluator:324] Overwriting default num_fewshot of minerva_math_precalc from 4 to 4
-2025-11-10:14:05:32 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_algebra on rank 2...
-  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 363.36it/s]
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_counting_and_prob on rank 6...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_counting_and_prob on rank 2...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_counting_and_prob on rank 1...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_counting_and_prob on rank 3...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_counting_and_prob on rank 0...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_counting_and_prob on rank 5...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_counting_and_prob on rank 7...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_counting_and_prob on rank 4...
-  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 409.01it/s]
-100%|██████████| 10/10 [00:00<00:00, 404.11it/s]100%|██████████| 10/10 [00:00<00:00, 395.51it/s]100%|██████████| 10/10 [00:00<00:00, 407.23it/s]
-
-100%|██████████| 10/10 [00:00<00:00, 398.15it/s]
-
-100%|██████████| 10/10 [00:00<00:00, 381.81it/s]100%|██████████| 10/10 [00:00<00:00, 373.77it/s]
-
-100%|██████████| 10/10 [00:00<00:00, 345.96it/s]
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_geometry on rank 4...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_geometry on rank 3...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_geometry on rank 2...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_geometry on rank 6...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_geometry on rank 0...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_geometry on rank 1...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_geometry on rank 5...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_geometry on rank 7...
-  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 414.25it/s]
-100%|██████████| 10/10 [00:00<00:00, 390.95it/s]100%|██████████| 10/10 [00:00<00:00, 408.40it/s]
-
-100%|██████████| 10/10 [00:00<00:00, 374.61it/s]100%|██████████| 10/10 [00:00<00:00, 396.05it/s]100%|██████████| 10/10 [00:00<00:00, 387.65it/s]100%|██████████| 10/10 [00:00<00:00, 393.18it/s]100%|██████████| 10/10 [00:00<00:00, 397.31it/s]
-
-
-
-
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_intermediate_algebra on rank 1...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_intermediate_algebra on rank 7...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_intermediate_algebra on rank 0...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_intermediate_algebra on rank 2...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_intermediate_algebra on rank 3...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_intermediate_algebra on rank 6...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_intermediate_algebra on rank 4...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_intermediate_algebra on rank 5...
-  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 416.96it/s]100%|██████████| 10/10 [00:00<00:00, 408.19it/s]
-
-100%|██████████| 10/10 [00:00<00:00, 405.56it/s]
-100%|██████████| 10/10 [00:00<00:00, 390.55it/s]100%|██████████| 10/10 [00:00<00:00, 394.06it/s]100%|██████████| 10/10 [00:00<00:00, 397.69it/s]100%|██████████| 10/10 [00:00<00:00, 401.95it/s]100%|██████████| 10/10 [00:00<00:00, 398.55it/s]
-
-
-
-
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_num_theory on rank 6...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_num_theory on rank 0...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_num_theory on rank 7...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_num_theory on rank 5...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_num_theory on rank 1...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_num_theory on rank 4...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_num_theory on rank 3...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_num_theory on rank 2...
-  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 405.07it/s]
-100%|██████████| 10/10 [00:00<00:00, 399.77it/s]100%|██████████| 10/10 [00:00<00:00, 387.05it/s]100%|██████████| 10/10 [00:00<00:00, 406.89it/s]100%|██████████| 10/10 [00:00<00:00, 392.18it/s]
-
-100%|██████████| 10/10 [00:00<00:00, 389.39it/s]100%|██████████| 10/10 [00:00<00:00, 393.35it/s]
-
-100%|██████████| 10/10 [00:00<00:00, 385.36it/s]
-
-
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_prealgebra on rank 6...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_prealgebra on rank 0...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_prealgebra on rank 7...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_prealgebra on rank 5...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_prealgebra on rank 4...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_prealgebra on rank 1...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_prealgebra on rank 3...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_prealgebra on rank 2...
-  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 405.51it/s]
-100%|██████████| 10/10 [00:00<00:00, 407.40it/s]100%|██████████| 10/10 [00:00<00:00, 399.22it/s]100%|██████████| 10/10 [00:00<00:00, 402.90it/s]100%|██████████| 10/10 [00:00<00:00, 406.61it/s]
-
-100%|██████████| 10/10 [00:00<00:00, 404.36it/s]100%|██████████| 10/10 [00:00<00:00, 396.17it/s]
-
-100%|██████████| 10/10 [00:00<00:00, 387.71it/s]
-
-
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_precalc on rank 3...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_precalc on rank 2...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_precalc on rank 4...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_precalc on rank 1...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_precalc on rank 5...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_precalc on rank 6...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_precalc on rank 0...
-2025-11-10:14:05:32 INFO     [api.task:434] Building contexts for minerva_math_precalc on rank 7...
-  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 401.70it/s]100%|██████████| 10/10 [00:00<00:00, 412.33it/s]100%|██████████| 10/10 [00:00<00:00, 403.58it/s]
-100%|██████████| 10/10 [00:00<00:00, 407.92it/s]
-100%|██████████| 10/10 [00:00<00:00, 404.42it/s]
-
-100%|██████████| 10/10 [00:00<00:00, 389.19it/s]100%|██████████| 10/10 [00:00<00:00, 387.33it/s]
-100%|██████████| 10/10 [00:00<00:00, 378.50it/s]
-
-
-2025-11-10:14:05:32 INFO     [evaluator:574] Running generate_until requests
-2025-11-10:14:05:32 INFO     [evaluator:574] Running generate_until requests
-2025-11-10:14:05:32 INFO     [evaluator:574] Running generate_until requests
-2025-11-10:14:05:32 INFO     [evaluator:574] Running generate_until requests
-2025-11-10:14:05:32 INFO     [evaluator:574] Running generate_until requests
-2025-11-10:14:05:32 INFO     [evaluator:574] Running generate_until requests
-2025-11-10:14:05:32 INFO     [evaluator:574] Running generate_until requests
-2025-11-10:14:05:32 INFO     [evaluator:574] Running generate_until requests
-Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f29940eb400> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-2025-11-10:14:05:35 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f29940eb400> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f36b410f400> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Map:   0%|          | 0/70 [00:00<?, ? examples/s]2025-11-10:14:05:35 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f36b410f400> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Map:   0%|          | 0/70 [00:00<?, ? examples/s]Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7ff3cc14f0a0> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-2025-11-10:14:05:35 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7ff3cc14f0a0> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Map:   0%|          | 0/70 [00:00<?, ? examples/s]Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f88657d3400> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-2025-11-10:14:05:35 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f88657d3400> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Map:   0%|          | 0/70 [00:00<?, ? examples/s]Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f8e75daf400> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-2025-11-10:14:05:35 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f8e75daf400> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Map:   0%|          | 0/70 [00:00<?, ? examples/s]Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7fa8741bb400> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-2025-11-10:14:05:35 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7fa8741bb400> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Map:   0%|          | 0/70 [00:00<?, ? examples/s]Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7ff54b95b490> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-2025-11-10:14:05:35 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7ff54b95b490> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Map:   0%|          | 0/70 [00:00<?, ? examples/s]Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7fbb94117400> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-2025-11-10:14:05:35 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7fbb94117400> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Map:   0%|          | 0/70 [00:00<?, ? examples/s]Map: 100%|██████████| 70/70 [00:00<00:00, 676.13 examples/s]Map: 100%|██████████| 70/70 [00:00<00:00, 676.00 examples/s]Map: 100%|██████████| 70/70 [00:00<00:00, 664.95 examples/s]
-Map: 100%|██████████| 70/70 [00:00<00:00, 665.87 examples/s]
-Generating...:   0%|          | 0/70 [00:00<?, ?it/s]Generating...:   0%|          | 0/70 [00:00<?, ?it/s]Map: 100%|██████████| 70/70 [00:00<00:00, 662.01 examples/s]Map: 100%|██████████| 70/70 [00:00<00:00, 652.47 examples/s]
-Generating...:   0%|          | 0/70 [00:00<?, ?it/s]Map: 100%|██████████| 70/70 [00:00<00:00, 651.21 examples/s]Map: 100%|██████████| 70/70 [00:00<00:00, 641.62 examples/s]
-Generating...:   0%|          | 0/70 [00:00<?, ?it/s]Map: 100%|██████████| 70/70 [00:00<00:00, 691.06 examples/s]Map: 100%|██████████| 70/70 [00:00<00:00, 681.02 examples/s]
-Generating...:   0%|          | 0/70 [00:00<?, ?it/s]Map: 100%|██████████| 70/70 [00:00<00:00, 688.04 examples/s]Map: 100%|██████████| 70/70 [00:00<00:00, 699.37 examples/s]Map: 100%|██████████| 70/70 [00:00<00:00, 677.71 examples/s]
-Map: 100%|██████████| 70/70 [00:00<00:00, 685.60 examples/s]Map: 100%|██████████| 70/70 [00:00<00:00, 693.52 examples/s]
-Generating...:   0%|          | 0/70 [00:00<?, ?it/s]Generating...:   0%|          | 0/70 [00:00<?, ?it/s]Map: 100%|██████████| 70/70 [00:00<00:00, 682.74 examples/s]
-Generating...:   0%|          | 0/70 [00:00<?, ?it/s]Generating...:   1%|▏         | 1/70 [00:59<1:08:32, 59.60s/it]Generating...:   1%|▏         | 1/70 [00:59<1:08:31, 59.59s/it]Generating...:   1%|▏         | 1/70 [00:59<1:08:30, 59.58s/it]Generating...:   1%|▏         | 1/70 [00:59<1:08:31, 59.59s/it]Generating...:   1%|▏         | 1/70 [00:59<1:08:30, 59.58s/it]Generating...:   1%|▏         | 1/70 [00:59<1:08:32, 59.60s/it]Generating...:   1%|▏         | 1/70 [00:59<1:08:32, 59.60s/it]Generating...:   1%|▏         | 1/70 [00:59<1:08:31, 59.58s/it]Generating...:   3%|▎         | 2/70 [02:09<1:14:34, 65.81s/it]Generating...:   3%|▎         | 2/70 [02:09<1:14:34, 65.80s/it]Generating...:   3%|▎         | 2/70 [02:09<1:14:34, 65.80s/it]Generating...:   3%|▎         | 2/70 [02:09<1:14:34, 65.80s/it]Generating...:   3%|▎         | 2/70 [02:09<1:14:34, 65.80s/it]Generating...:   3%|▎         | 2/70 [02:09<1:14:34, 65.81s/it]Generating...:   3%|▎         | 2/70 [02:09<1:14:34, 65.81s/it]Generating...:   3%|▎         | 2/70 [02:09<1:14:34, 65.80s/it]Generating...:   4%|▍         | 3/70 [03:08<1:10:04, 62.76s/it]Generating...:   4%|▍         | 3/70 [03:08<1:10:05, 62.76s/it]Generating...:   4%|▍         | 3/70 [03:08<1:10:04, 62.76s/it]Generating...:   4%|▍         | 3/70 [03:08<1:10:04, 62.76s/it]Generating...:   4%|▍         | 3/70 [03:08<1:10:04, 62.76s/it]Generating...:   4%|▍         | 3/70 [03:08<1:10:05, 62.76s/it]Generating...:   4%|▍         | 3/70 [03:08<1:10:04, 62.76s/it]Generating...:   4%|▍         | 3/70 [03:08<1:10:04, 62.76s/it][E1110 14:09:32.002665377 socket.cpp:1011] [c10d] The client socket has timed out after 600000ms while trying to connect to (127.0.0.1, 20696).
-[W1110 14:09:32.010089461 TCPStore.cpp:358] [c10d] TCP client failed to connect/validate to host 127.0.0.1:20696 - retrying (try=0, timeout=600000ms, delay=67480ms): The client socket has timed out after 600000ms while trying to connect to (127.0.0.1, 20696).
-Exception raised from throwTimeoutError at ../torch/csrc/distributed/c10d/socket.cpp:1013 (most recent call first):
-frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7f716e49e446 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libc10.so)
-frame #1: <unknown function> + 0x15e04c6 (0x7f71a8d704c6 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
-frame #2: <unknown function> + 0x6029d95 (0x7f71ad7b9d95 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
-frame #3: <unknown function> + 0x6029f36 (0x7f71ad7b9f36 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
-frame #4: <unknown function> + 0x602a3a4 (0x7f71ad7ba3a4 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
-frame #5: <unknown function> + 0x5fe8016 (0x7f71ad778016 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
-frame #6: c10d::TCPStore::TCPStore(std::string, c10d::TCPStoreOptions const&) + 0x20c (0x7f71ad77af7c in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
-frame #7: <unknown function> + 0xd9c90d (0x7f71bd19190d in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
-frame #8: <unknown function> + 0x4cb4c4 (0x7f71bc8c04c4 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
-frame #9: <unknown function> + 0x13bc66 (0x565019c69c66 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #10: _PyObject_MakeTpCall + 0x2d3 (0x565019c63023 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #11: <unknown function> + 0x1478fb (0x565019c758fb in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #12: <unknown function> + 0x145482 (0x565019c73482 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #13: <unknown function> + 0x13532b (0x565019c6332b in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #14: <unknown function> + 0x4c9d1b (0x7f71bc8bed1b in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
-frame #15: _PyObject_MakeTpCall + 0x2d3 (0x565019c63023 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #16: _PyEval_EvalFrameDefault + 0x4c16 (0x565019c5ecc6 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #17: _PyFunction_Vectorcall + 0x6c (0x565019c6a0ec in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #18: _PyEval_EvalFrameDefault + 0x30c (0x565019c5a3bc in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #19: <unknown function> + 0x1aa800 (0x565019cd8800 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #20: <unknown function> + 0x13c2b3 (0x565019c6a2b3 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #21: _PyEval_EvalFrameDefault + 0x30c (0x565019c5a3bc in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #22: _PyFunction_Vectorcall + 0x6c (0x565019c6a0ec in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #23: PyObject_Call + 0xbc (0x565019c75e4c in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #24: _PyEval_EvalFrameDefault + 0x2ba5 (0x565019c5cc55 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #25: _PyFunction_Vectorcall + 0x6c (0x565019c6a0ec in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #26: PyObject_Call + 0xbc (0x565019c75e4c in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #27: _PyEval_EvalFrameDefault + 0x2ba5 (0x565019c5cc55 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #28: _PyFunction_Vectorcall + 0x6c (0x565019c6a0ec in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #29: PyObject_Call + 0xbc (0x565019c75e4c in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #30: _PyEval_EvalFrameDefault + 0x2ba5 (0x565019c5cc55 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #31: _PyObject_FastCallDictTstate + 0xd0 (0x565019c624b0 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #32: <unknown function> + 0x144fe9 (0x565019c72fe9 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #33: <unknown function> + 0x13532b (0x565019c6332b in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #34: PyObject_Call + 0x20f (0x565019c75f9f in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #35: _PyEval_EvalFrameDefault + 0x2ba5 (0x565019c5cc55 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #36: _PyFunction_Vectorcall + 0x6c (0x565019c6a0ec in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #37: _PyObject_FastCallDictTstate + 0x187 (0x565019c62567 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #38: <unknown function> + 0x144fe9 (0x565019c72fe9 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #39: <unknown function> + 0x13532b (0x565019c6332b in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #40: PyObject_Call + 0x20f (0x565019c75f9f in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #41: _PyEval_EvalFrameDefault + 0x2ba5 (0x565019c5cc55 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #42: _PyObject_FastCallDictTstate + 0xd0 (0x565019c624b0 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #43: <unknown function> + 0x144fe9 (0x565019c72fe9 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #44: _PyObject_MakeTpCall + 0x2eb (0x565019c6303b in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #45: _PyEval_EvalFrameDefault + 0x51f6 (0x565019c5f2a6 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #46: _PyFunction_Vectorcall + 0x6c (0x565019c6a0ec in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #47: _PyObject_FastCallDictTstate + 0x187 (0x565019c62567 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #48: <unknown function> + 0x144fe9 (0x565019c72fe9 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #49: <unknown function> + 0x13532b (0x565019c6332b in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #50: PyObject_Call + 0x20f (0x565019c75f9f in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #51: _PyEval_EvalFrameDefault + 0x2ba5 (0x565019c5cc55 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #52: <unknown function> + 0x1474b2 (0x565019c754b2 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #53: _PyEval_EvalFrameDefault + 0x49b5 (0x565019c5ea65 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #54: _PyFunction_Vectorcall + 0x6c (0x565019c6a0ec in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #55: PyObject_Call + 0xbc (0x565019c75e4c in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #56: _PyEval_EvalFrameDefault + 0x2ba5 (0x565019c5cc55 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #57: _PyFunction_Vectorcall + 0x6c (0x565019c6a0ec in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #58: PyObject_Call + 0xbc (0x565019c75e4c in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #59: _PyEval_EvalFrameDefault + 0x2ba5 (0x565019c5cc55 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #60: _PyFunction_Vectorcall + 0x6c (0x565019c6a0ec in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #61: _PyEval_EvalFrameDefault + 0x30c (0x565019c5a3bc in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #62: <unknown function> + 0x1cc3bc (0x565019cfa3bc in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-
-Generating...:   6%|▌         | 4/70 [04:07<1:07:22, 61.25s/it]Generating...:   6%|▌         | 4/70 [04:07<1:07:22, 61.25s/it]Generating...:   6%|▌         | 4/70 [04:07<1:07:22, 61.25s/it]Generating...:   6%|▌         | 4/70 [04:07<1:07:22, 61.25s/it]Generating...:   6%|▌         | 4/70 [04:07<1:07:22, 61.25s/it]Generating...:   6%|▌         | 4/70 [04:07<1:07:22, 61.25s/it]Generating...:   6%|▌         | 4/70 [04:07<1:07:22, 61.25s/it]Generating...:   6%|▌         | 4/70 [04:07<1:07:22, 61.25s/it]Generating...:   7%|▋         | 5/70 [05:06<1:05:24, 60.38s/it]Generating...:   7%|▋         | 5/70 [05:06<1:05:24, 60.38s/it]Generating...:   7%|▋         | 5/70 [05:06<1:05:24, 60.37s/it]Generating...:   7%|▋         | 5/70 [05:06<1:05:24, 60.38s/it]Generating...:   7%|▋         | 5/70 [05:06<1:05:24, 60.38s/it]Generating...:   7%|▋         | 5/70 [05:06<1:05:24, 60.38s/it]Generating...:   7%|▋         | 5/70 [05:06<1:05:24, 60.38s/it]Generating...:   7%|▋         | 5/70 [05:06<1:05:24, 60.38s/it]Generating...:   9%|▊         | 6/70 [06:06<1:04:03, 60.06s/it]Generating...:   9%|▊         | 6/70 [06:06<1:04:03, 60.06s/it]Generating...:   9%|▊         | 6/70 [06:06<1:04:03, 60.06s/it]Generating...:   9%|▊         | 6/70 [06:06<1:04:03, 60.06s/it]Generating...:   9%|▊         | 6/70 [06:06<1:04:03, 60.06s/it]Generating...:   9%|▊         | 6/70 [06:06<1:04:03, 60.06s/it]Generating...:   9%|▊         | 6/70 [06:06<1:04:03, 60.06s/it]Generating...:   9%|▊         | 6/70 [06:06<1:04:03, 60.06s/it]Generating...:  10%|█         | 7/70 [07:19<1:07:47, 64.57s/it]Generating...:  10%|█         | 7/70 [07:19<1:07:47, 64.57s/it]Generating...:  10%|█         | 7/70 [07:19<1:07:47, 64.57s/it]Generating...:  10%|█         | 7/70 [07:19<1:07:47, 64.57s/it]Generating...:  10%|█         | 7/70 [07:19<1:07:47, 64.57s/it]Generating...:  10%|█         | 7/70 [07:19<1:07:47, 64.57s/it]Generating...:  10%|█         | 7/70 [07:19<1:07:47, 64.57s/it]Generating...:  10%|█         | 7/70 [07:19<1:07:47, 64.57s/it]Generating...:  11%|█▏        | 8/70 [08:18<1:04:48, 62.73s/it]Generating...:  11%|█▏        | 8/70 [08:18<1:04:48, 62.73s/it]Generating...:  11%|█▏        | 8/70 [08:18<1:04:48, 62.72s/it]Generating...:  11%|█▏        | 8/70 [08:18<1:04:48, 62.73s/it]Generating...:  11%|█▏        | 8/70 [08:18<1:04:48, 62.72s/it]Generating...:  11%|█▏        | 8/70 [08:18<1:04:48, 62.73s/it]Generating...:  11%|█▏        | 8/70 [08:18<1:04:48, 62.72s/it]Generating...:  11%|█▏        | 8/70 [08:18<1:04:48, 62.72s/it]Generating...:  13%|█▎        | 9/70 [09:30<1:06:29, 65.41s/it]Generating...:  13%|█▎        | 9/70 [09:30<1:06:29, 65.41s/it]Generating...:  13%|█▎        | 9/70 [09:29<1:06:29, 65.41s/it]Generating...:  13%|█▎        | 9/70 [09:30<1:06:29, 65.41s/it]Generating...:  13%|█▎        | 9/70 [09:30<1:06:29, 65.41s/it]Generating...:  13%|█▎        | 9/70 [09:30<1:06:29, 65.41s/it]Generating...:  13%|█▎        | 9/70 [09:30<1:06:29, 65.41s/it]Generating...:  13%|█▎        | 9/70 [09:30<1:06:29, 65.41s/it]Generating...:  14%|█▍        | 10/70 [10:29<1:03:26, 63.44s/it]Generating...:  14%|█▍        | 10/70 [10:29<1:03:26, 63.44s/it]Generating...:  14%|█▍        | 10/70 [10:29<1:03:26, 63.44s/it]Generating...:  14%|█▍        | 10/70 [10:29<1:03:26, 63.44s/it]Generating...:  14%|█▍        | 10/70 [10:29<1:03:26, 63.44s/it]Generating...:  14%|█▍        | 10/70 [10:29<1:03:26, 63.44s/it]Generating...:  14%|█▍        | 10/70 [10:29<1:03:26, 63.44s/it]Generating...:  14%|█▍        | 10/70 [10:29<1:03:26, 63.44s/it]Generating...:  16%|█▌        | 11/70 [11:33<1:02:49, 63.90s/it]Generating...:  16%|█▌        | 11/70 [11:33<1:02:49, 63.90s/it]Generating...:  16%|█▌        | 11/70 [11:33<1:02:49, 63.90s/it]Generating...:  16%|█▌        | 11/70 [11:33<1:02:49, 63.90s/it]Generating...:  16%|█▌        | 11/70 [11:33<1:02:49, 63.90s/it]Generating...:  16%|█▌        | 11/70 [11:33<1:02:49, 63.90s/it]Generating...:  16%|█▌        | 11/70 [11:33<1:02:49, 63.90s/it]Generating...:  16%|█▌        | 11/70 [11:33<1:02:49, 63.90s/it]Generating...:  17%|█▋        | 12/70 [12:33<1:00:24, 62.49s/it]Generating...:  17%|█▋        | 12/70 [12:33<1:00:24, 62.49s/it]Generating...:  17%|█▋        | 12/70 [12:33<1:00:24, 62.49s/it]Generating...:  17%|█▋        | 12/70 [12:33<1:00:24, 62.49s/it]Generating...:  17%|█▋        | 12/70 [12:33<1:00:24, 62.49s/it]Generating...:  17%|█▋        | 12/70 [12:33<1:00:24, 62.49s/it]Generating...:  17%|█▋        | 12/70 [12:33<1:00:24, 62.49s/it]Generating...:  17%|█▋        | 12/70 [12:33<1:00:24, 62.49s/it]Generating...:  19%|█▊        | 13/70 [13:32<58:25, 61.50s/it]  Generating...:  19%|█▊        | 13/70 [13:32<58:25, 61.50s/it]  Generating...:  19%|█▊        | 13/70 [13:32<58:25, 61.50s/it]  Generating...:  19%|█▊        | 13/70 [13:32<58:25, 61.50s/it]  Generating...:  19%|█▊        | 13/70 [13:32<58:25, 61.50s/it]  Generating...:  19%|█▊        | 13/70 [13:32<58:25, 61.50s/it]  Generating...:  19%|█▊        | 13/70 [13:32<58:25, 61.50s/it]  Generating...:  19%|█▊        | 13/70 [13:32<58:25, 61.50s/it]  [E1110 14:20:00.899092378 socket.cpp:1011] [c10d] The client socket has timed out after 600000ms while trying to connect to (127.0.0.1, 20696).
-[E1110 14:20:00.899648449 TCPStore.cpp:346] [c10d] TCP client failed to connect/validate to host 127.0.0.1:20696 - timed out (try=1, timeout=600000ms): The client socket has timed out after 600000ms while trying to connect to (127.0.0.1, 20696).
-Exception raised from throwTimeoutError at ../torch/csrc/distributed/c10d/socket.cpp:1013 (most recent call first):
-frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7f716e49e446 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libc10.so)
-frame #1: <unknown function> + 0x15e04c6 (0x7f71a8d704c6 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
-frame #2: <unknown function> + 0x6029d95 (0x7f71ad7b9d95 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
-frame #3: <unknown function> + 0x6029f36 (0x7f71ad7b9f36 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
-frame #4: <unknown function> + 0x602a3a4 (0x7f71ad7ba3a4 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
-frame #5: <unknown function> + 0x5fe8016 (0x7f71ad778016 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
-frame #6: c10d::TCPStore::TCPStore(std::string, c10d::TCPStoreOptions const&) + 0x20c (0x7f71ad77af7c in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
-frame #7: <unknown function> + 0xd9c90d (0x7f71bd19190d in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
-frame #8: <unknown function> + 0x4cb4c4 (0x7f71bc8c04c4 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
-frame #9: <unknown function> + 0x13bc66 (0x565019c69c66 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #10: _PyObject_MakeTpCall + 0x2d3 (0x565019c63023 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #11: <unknown function> + 0x1478fb (0x565019c758fb in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #12: <unknown function> + 0x145482 (0x565019c73482 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #13: <unknown function> + 0x13532b (0x565019c6332b in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #14: <unknown function> + 0x4c9d1b (0x7f71bc8bed1b in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
-frame #15: _PyObject_MakeTpCall + 0x2d3 (0x565019c63023 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #16: _PyEval_EvalFrameDefault + 0x4c16 (0x565019c5ecc6 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #17: _PyFunction_Vectorcall + 0x6c (0x565019c6a0ec in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #18: _PyEval_EvalFrameDefault + 0x30c (0x565019c5a3bc in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #19: <unknown function> + 0x1aa800 (0x565019cd8800 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #20: <unknown function> + 0x13c2b3 (0x565019c6a2b3 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #21: _PyEval_EvalFrameDefault + 0x30c (0x565019c5a3bc in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #22: _PyFunction_Vectorcall + 0x6c (0x565019c6a0ec in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #23: PyObject_Call + 0xbc (0x565019c75e4c in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #24: _PyEval_EvalFrameDefault + 0x2ba5 (0x565019c5cc55 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #25: _PyFunction_Vectorcall + 0x6c (0x565019c6a0ec in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #26: PyObject_Call + 0xbc (0x565019c75e4c in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #27: _PyEval_EvalFrameDefault + 0x2ba5 (0x565019c5cc55 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #28: _PyFunction_Vectorcall + 0x6c (0x565019c6a0ec in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #29: PyObject_Call + 0xbc (0x565019c75e4c in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #30: _PyEval_EvalFrameDefault + 0x2ba5 (0x565019c5cc55 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #31: _PyObject_FastCallDictTstate + 0xd0 (0x565019c624b0 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #32: <unknown function> + 0x144fe9 (0x565019c72fe9 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #33: <unknown function> + 0x13532b (0x565019c6332b in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #34: PyObject_Call + 0x20f (0x565019c75f9f in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #35: _PyEval_EvalFrameDefault + 0x2ba5 (0x565019c5cc55 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #36: _PyFunction_Vectorcall + 0x6c (0x565019c6a0ec in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #37: _PyObject_FastCallDictTstate + 0x187 (0x565019c62567 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #38: <unknown function> + 0x144fe9 (0x565019c72fe9 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #39: <unknown function> + 0x13532b (0x565019c6332b in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #40: PyObject_Call + 0x20f (0x565019c75f9f in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #41: _PyEval_EvalFrameDefault + 0x2ba5 (0x565019c5cc55 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #42: _PyObject_FastCallDictTstate + 0xd0 (0x565019c624b0 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #43: <unknown function> + 0x144fe9 (0x565019c72fe9 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #44: _PyObject_MakeTpCall + 0x2eb (0x565019c6303b in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #45: _PyEval_EvalFrameDefault + 0x51f6 (0x565019c5f2a6 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #46: _PyFunction_Vectorcall + 0x6c (0x565019c6a0ec in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #47: _PyObject_FastCallDictTstate + 0x187 (0x565019c62567 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #48: <unknown function> + 0x144fe9 (0x565019c72fe9 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #49: <unknown function> + 0x13532b (0x565019c6332b in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #50: PyObject_Call + 0x20f (0x565019c75f9f in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #51: _PyEval_EvalFrameDefault + 0x2ba5 (0x565019c5cc55 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #52: <unknown function> + 0x1474b2 (0x565019c754b2 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #53: _PyEval_EvalFrameDefault + 0x49b5 (0x565019c5ea65 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #54: _PyFunction_Vectorcall + 0x6c (0x565019c6a0ec in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #55: PyObject_Call + 0xbc (0x565019c75e4c in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #56: _PyEval_EvalFrameDefault + 0x2ba5 (0x565019c5cc55 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #57: _PyFunction_Vectorcall + 0x6c (0x565019c6a0ec in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #58: PyObject_Call + 0xbc (0x565019c75e4c in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #59: _PyEval_EvalFrameDefault + 0x2ba5 (0x565019c5cc55 in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #60: _PyFunction_Vectorcall + 0x6c (0x565019c6a0ec in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #61: _PyEval_EvalFrameDefault + 0x30c (0x565019c5a3bc in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-frame #62: <unknown function> + 0x1cc3bc (0x565019cfa3bc in /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10)
-
-Traceback (most recent call last):
-  File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/pipelines/llada/eval.py", line 317, in <module>
-    cli_evaluate()
-  File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/__main__.py", line 459, in cli_evaluate
-    results = evaluator.simple_evaluate(
-  File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/utils.py", line 458, in _wrapper
-    return fn(*args, **kwargs)
-  File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/evaluator.py", line 245, in simple_evaluate
-    lm = lm_eval.api.registry.get_model(model).create_from_arg_string(
-  File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/api/model.py", line 155, in create_from_arg_string
-    return cls(**args, **args2)
-  File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/pipelines/llada/eval.py", line 68, in __init__
-    accelerator = accelerate.Accelerator()
-  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/accelerate/accelerator.py", line 453, in __init__
-    self.state = AcceleratorState(
-  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/accelerate/state.py", line 910, in __init__
-    PartialState(cpu, **kwargs)
-  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/accelerate/state.py", line 234, in __init__
-    torch.distributed.init_process_group(backend=self.backend, **kwargs)
-  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/distributed/c10d_logger.py", line 83, in wrapper
-    return func(*args, **kwargs)
-  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/distributed/c10d_logger.py", line 97, in wrapper
-    func_return = func(*args, **kwargs)
-  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py", line 1520, in init_process_group
-    store, rank, world_size = next(rendezvous_iterator)
-  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/distributed/rendezvous.py", line 269, in _env_rendezvous_handler
-    store = _create_c10d_store(
-  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/distributed/rendezvous.py", line 185, in _create_c10d_store
-    tcp_store = TCPStore(hostname, port, world_size, False, timeout)
-torch.distributed.DistNetworkError: The client socket has timed out after 600000ms while trying to connect to (127.0.0.1, 20696).
-Generating...:  20%|██        | 14/70 [14:32<57:06, 61.19s/it]Generating...:  20%|██        | 14/70 [14:32<57:06, 61.19s/it]Generating...:  20%|██        | 14/70 [14:32<57:06, 61.19s/it]Generating...:  20%|██        | 14/70 [14:32<57:06, 61.19s/it]Generating...:  20%|██        | 14/70 [14:32<57:06, 61.19s/it]Generating...:  20%|██        | 14/70 [14:32<57:06, 61.19s/it]Generating...:  20%|██        | 14/70 [14:32<57:06, 61.19s/it]Generating...:  20%|██        | 14/70 [14:32<57:06, 61.19s/it]Generating...:  21%|██▏       | 15/70 [15:32<55:32, 60.60s/it]Generating...:  21%|██▏       | 15/70 [15:32<55:32, 60.60s/it]Generating...:  21%|██▏       | 15/70 [15:32<55:32, 60.60s/it]Generating...:  21%|██▏       | 15/70 [15:32<55:32, 60.60s/it]Generating...:  21%|██▏       | 15/70 [15:32<55:32, 60.60s/it]Generating...:  21%|██▏       | 15/70 [15:32<55:32, 60.60s/it]Generating...:  21%|██▏       | 15/70 [15:32<55:32, 60.60s/it]Generating...:  21%|██▏       | 15/70 [15:32<55:32, 60.60s/it]Generating...:  23%|██▎       | 16/70 [16:43<57:32, 63.94s/it]Generating...:  23%|██▎       | 16/70 [16:43<57:32, 63.94s/it]Generating...:  23%|██▎       | 16/70 [16:43<57:33, 63.94s/it]Generating...:  23%|██▎       | 16/70 [16:43<57:32, 63.94s/it]Generating...:  23%|██▎       | 16/70 [16:43<57:32, 63.94s/it]Generating...:  23%|██▎       | 16/70 [16:43<57:32, 63.94s/it]Generating...:  23%|██▎       | 16/70 [16:43<57:32, 63.94s/it]Generating...:  23%|██▎       | 16/70 [16:43<57:33, 63.94s/it]Generating...:  24%|██▍       | 17/70 [17:54<58:07, 65.81s/it]Generating...:  24%|██▍       | 17/70 [17:54<58:07, 65.81s/it]Generating...:  24%|██▍       | 17/70 [17:54<58:07, 65.81s/it]Generating...:  24%|██▍       | 17/70 [17:54<58:07, 65.81s/it]Generating...:  24%|██▍       | 17/70 [17:54<58:07, 65.81s/it]Generating...:  24%|██▍       | 17/70 [17:54<58:07, 65.81s/it]Generating...:  24%|██▍       | 17/70 [17:54<58:07, 65.81s/it]Generating...:  24%|██▍       | 17/70 [17:54<58:07, 65.81s/it]Generating...:  26%|██▌       | 18/70 [18:58<56:34, 65.28s/it]Generating...:  26%|██▌       | 18/70 [18:58<56:34, 65.28s/it]Generating...:  26%|██▌       | 18/70 [18:58<56:34, 65.28s/it]Generating...:  26%|██▌       | 18/70 [18:58<56:34, 65.28s/it]Generating...:  26%|██▌       | 18/70 [18:58<56:34, 65.28s/it]Generating...:  26%|██▌       | 18/70 [18:58<56:34, 65.28s/it]Generating...:  26%|██▌       | 18/70 [18:58<56:34, 65.28s/it]Generating...:  26%|██▌       | 18/70 [18:58<56:34, 65.28s/it]Generating...:  27%|██▋       | 19/70 [20:12<57:43, 67.90s/it]Generating...:  27%|██▋       | 19/70 [20:12<57:43, 67.90s/it]Generating...:  27%|██▋       | 19/70 [20:12<57:43, 67.90s/it]Generating...:  27%|██▋       | 19/70 [20:12<57:43, 67.90s/it]Generating...:  27%|██▋       | 19/70 [20:12<57:43, 67.90s/it]Generating...:  27%|██▋       | 19/70 [20:12<57:43, 67.90s/it]Generating...:  27%|██▋       | 19/70 [20:12<57:43, 67.90s/it]Generating...:  27%|██▋       | 19/70 [20:12<57:43, 67.90s/it]Generating...:  29%|██▊       | 20/70 [21:23<57:34, 69.09s/it]Generating...:  29%|██▊       | 20/70 [21:23<57:34, 69.09s/it]Generating...:  29%|██▊       | 20/70 [21:23<57:34, 69.09s/it]Generating...:  29%|██▊       | 20/70 [21:23<57:34, 69.09s/it]Generating...:  29%|██▊       | 20/70 [21:23<57:34, 69.09s/it]Generating...:  29%|██▊       | 20/70 [21:23<57:34, 69.09s/it]Generating...:  29%|██▊       | 20/70 [21:23<57:34, 69.09s/it]Generating...:  29%|██▊       | 20/70 [21:23<57:34, 69.09s/it]Generating...:  30%|███       | 21/70 [22:37<57:33, 70.48s/it]Generating...:  30%|███       | 21/70 [22:37<57:33, 70.48s/it]Generating...:  30%|███       | 21/70 [22:37<57:33, 70.48s/it]Generating...:  30%|███       | 21/70 [22:37<57:33, 70.48s/it]Generating...:  30%|███       | 21/70 [22:37<57:33, 70.48s/it]Generating...:  30%|███       | 21/70 [22:37<57:33, 70.48s/it]Generating...:  30%|███       | 21/70 [22:37<57:33, 70.48s/it]Generating...:  30%|███       | 21/70 [22:37<57:33, 70.48s/it]Generating...:  31%|███▏      | 22/70 [24:05<1:00:37, 75.79s/it]Generating...:  31%|███▏      | 22/70 [24:05<1:00:37, 75.79s/it]Generating...:  31%|███▏      | 22/70 [24:05<1:00:37, 75.79s/it]Generating...:  31%|███▏      | 22/70 [24:05<1:00:37, 75.79s/it]Generating...:  31%|███▏      | 22/70 [24:05<1:00:37, 75.79s/it]Generating...:  31%|███▏      | 22/70 [24:05<1:00:37, 75.79s/it]Generating...:  31%|███▏      | 22/70 [24:05<1:00:37, 75.79s/it]Generating...:  31%|███▏      | 22/70 [24:05<1:00:37, 75.79s/it]Generating...:  33%|███▎      | 23/70 [25:20<59:05, 75.44s/it]  Generating...:  33%|███▎      | 23/70 [25:20<59:05, 75.44s/it]  Generating...:  33%|███▎      | 23/70 [25:20<59:05, 75.44s/it]  Generating...:  33%|███▎      | 23/70 [25:20<59:05, 75.44s/it]  Generating...:  33%|███▎      | 23/70 [25:20<59:05, 75.44s/it]  Generating...:  33%|███▎      | 23/70 [25:20<59:05, 75.44s/it]  Generating...:  33%|███▎      | 23/70 [25:20<59:05, 75.44s/it]  Generating...:  33%|███▎      | 23/70 [25:20<59:05, 75.44s/it]  Generating...:  34%|███▍      | 24/70 [26:31<56:53, 74.22s/it]Generating...:  34%|███▍      | 24/70 [26:31<56:53, 74.22s/it]Generating...:  34%|███▍      | 24/70 [26:31<56:53, 74.22s/it]Generating...:  34%|███▍      | 24/70 [26:31<56:53, 74.22s/it]Generating...:  34%|███▍      | 24/70 [26:31<56:53, 74.22s/it]Generating...:  34%|███▍      | 24/70 [26:31<56:53, 74.22s/it]Generating...:  34%|███▍      | 24/70 [26:31<56:53, 74.22s/it]Generating...:  34%|███▍      | 24/70 [26:31<56:53, 74.22s/it]Generating...:  36%|███▌      | 25/70 [27:42<54:51, 73.14s/it]Generating...:  36%|███▌      | 25/70 [27:42<54:51, 73.14s/it]Generating...:  36%|███▌      | 25/70 [27:42<54:51, 73.14s/it]Generating...:  36%|███▌      | 25/70 [27:42<54:51, 73.14s/it]Generating...:  36%|███▌      | 25/70 [27:42<54:51, 73.14s/it]Generating...:  36%|███▌      | 25/70 [27:42<54:51, 73.14s/it]Generating...:  36%|███▌      | 25/70 [27:42<54:51, 73.14s/it]Generating...:  36%|███▌      | 25/70 [27:42<54:51, 73.14s/it]Generating...:  37%|███▋      | 26/70 [28:53<53:16, 72.65s/it]Generating...:  37%|███▋      | 26/70 [28:53<53:16, 72.65s/it]Generating...:  37%|███▋      | 26/70 [28:54<53:16, 72.65s/it]Generating...:  37%|███▋      | 26/70 [28:53<53:16, 72.65s/it]Generating...:  37%|███▋      | 26/70 [28:54<53:16, 72.65s/it]Generating...:  37%|███▋      | 26/70 [28:53<53:16, 72.65s/it]Generating...:  37%|███▋      | 26/70 [28:53<53:16, 72.65s/it]Generating...:  37%|███▋      | 26/70 [28:53<53:16, 72.65s/it]Generating...:  39%|███▊      | 27/70 [29:59<50:38, 70.66s/it]Generating...:  39%|███▊      | 27/70 [29:59<50:38, 70.66s/it]Generating...:  39%|███▊      | 27/70 [30:00<50:38, 70.66s/it]Generating...:  39%|███▊      | 27/70 [29:59<50:38, 70.66s/it]Generating...:  39%|███▊      | 27/70 [29:59<50:38, 70.66s/it]Generating...:  39%|███▊      | 27/70 [29:59<50:38, 70.66s/it]Generating...:  39%|███▊      | 27/70 [30:00<50:38, 70.66s/it]Generating...:  39%|███▊      | 27/70 [30:00<50:38, 70.66s/it]Generating...:  40%|████      | 28/70 [31:12<49:52, 71.25s/it]Generating...:  40%|████      | 28/70 [31:12<49:52, 71.25s/it]Generating...:  40%|████      | 28/70 [31:12<49:52, 71.25s/it]Generating...:  40%|████      | 28/70 [31:12<49:52, 71.25s/it]Generating...:  40%|████      | 28/70 [31:12<49:52, 71.25s/it]Generating...:  40%|████      | 28/70 [31:12<49:52, 71.25s/it]Generating...:  40%|████      | 28/70 [31:12<49:52, 71.25s/it]Generating...:  40%|████      | 28/70 [31:12<49:52, 71.25s/it]Generating...:  41%|████▏     | 29/70 [32:23<48:40, 71.24s/it]Generating...:  41%|████▏     | 29/70 [32:23<48:40, 71.24s/it]Generating...:  41%|████▏     | 29/70 [32:23<48:40, 71.24s/it]Generating...:  41%|████▏     | 29/70 [32:23<48:40, 71.24s/it]Generating...:  41%|████▏     | 29/70 [32:23<48:40, 71.24s/it]Generating...:  41%|████▏     | 29/70 [32:23<48:40, 71.24s/it]Generating...:  41%|████▏     | 29/70 [32:23<48:40, 71.24s/it]Generating...:  41%|████▏     | 29/70 [32:23<48:40, 71.24s/it]Generating...:  43%|████▎     | 30/70 [33:35<47:31, 71.28s/it]Generating...:  43%|████▎     | 30/70 [33:35<47:31, 71.28s/it]Generating...:  43%|████▎     | 30/70 [33:35<47:31, 71.28s/it]Generating...:  43%|████▎     | 30/70 [33:35<47:31, 71.28s/it]Generating...:  43%|████▎     | 30/70 [33:35<47:31, 71.28s/it]Generating...:  43%|████▎     | 30/70 [33:35<47:31, 71.28s/it]Generating...:  43%|████▎     | 30/70 [33:35<47:31, 71.28s/it]Generating...:  43%|████▎     | 30/70 [33:35<47:31, 71.28s/it]Generating...:  44%|████▍     | 31/70 [34:40<45:13, 69.59s/it]Generating...:  44%|████▍     | 31/70 [34:40<45:13, 69.59s/it]Generating...:  44%|████▍     | 31/70 [34:40<45:13, 69.59s/it]Generating...:  44%|████▍     | 31/70 [34:40<45:13, 69.59s/it]Generating...:  44%|████▍     | 31/70 [34:40<45:13, 69.59s/it]Generating...:  44%|████▍     | 31/70 [34:40<45:13, 69.59s/it]Generating...:  44%|████▍     | 31/70 [34:40<45:13, 69.59s/it]Generating...:  44%|████▍     | 31/70 [34:40<45:13, 69.59s/it]Generating...:  46%|████▌     | 32/70 [35:40<42:10, 66.60s/it]Generating...:  46%|████▌     | 32/70 [35:40<42:10, 66.60s/it]Generating...:  46%|████▌     | 32/70 [35:40<42:10, 66.60s/it]Generating...:  46%|████▌     | 32/70 [35:40<42:10, 66.60s/it]Generating...:  46%|████▌     | 32/70 [35:40<42:10, 66.60s/it]Generating...:  46%|████▌     | 32/70 [35:40<42:10, 66.60s/it]Generating...:  46%|████▌     | 32/70 [35:40<42:10, 66.60s/it]Generating...:  46%|████▌     | 32/70 [35:40<42:10, 66.60s/it]Generating...:  47%|████▋     | 33/70 [37:23<47:46, 77.46s/it]Generating...:  47%|████▋     | 33/70 [37:23<47:46, 77.46s/it]Generating...:  47%|████▋     | 33/70 [37:23<47:46, 77.46s/it]Generating...:  47%|████▋     | 33/70 [37:23<47:46, 77.46s/it]Generating...:  47%|████▋     | 33/70 [37:23<47:46, 77.46s/it]Generating...:  47%|████▋     | 33/70 [37:23<47:46, 77.46s/it]Generating...:  47%|████▋     | 33/70 [37:23<47:46, 77.46s/it]Generating...:  47%|████▋     | 33/70 [37:23<47:46, 77.46s/it]Generating...:  49%|████▊     | 34/70 [38:28<44:18, 73.84s/it]Generating...:  49%|████▊     | 34/70 [38:28<44:18, 73.84s/it]Generating...:  49%|████▊     | 34/70 [38:28<44:18, 73.84s/it]Generating...:  49%|████▊     | 34/70 [38:28<44:18, 73.84s/it]Generating...:  49%|████▊     | 34/70 [38:28<44:18, 73.84s/it]Generating...:  49%|████▊     | 34/70 [38:28<44:18, 73.84s/it]Generating...:  49%|████▊     | 34/70 [38:28<44:18, 73.84s/it]Generating...:  49%|████▊     | 34/70 [38:28<44:18, 73.84s/it]Generating...:  50%|█████     | 35/70 [39:27<40:31, 69.46s/it]Generating...:  50%|█████     | 35/70 [39:27<40:31, 69.46s/it]Generating...:  50%|█████     | 35/70 [39:27<40:31, 69.46s/it]Generating...:  50%|█████     | 35/70 [39:27<40:31, 69.46s/it]Generating...:  50%|█████     | 35/70 [39:27<40:31, 69.46s/it]Generating...:  50%|█████     | 35/70 [39:27<40:31, 69.46s/it]Generating...:  50%|█████     | 35/70 [39:27<40:31, 69.46s/it]Generating...:  50%|█████     | 35/70 [39:27<40:31, 69.46s/it]Generating...:  51%|█████▏    | 36/70 [40:27<37:40, 66.50s/it]Generating...:  51%|█████▏    | 36/70 [40:27<37:40, 66.50s/it]Generating...:  51%|█████▏    | 36/70 [40:27<37:40, 66.50s/it]Generating...:  51%|█████▏    | 36/70 [40:27<37:40, 66.50s/it]Generating...:  51%|█████▏    | 36/70 [40:27<37:40, 66.50s/it]Generating...:  51%|█████▏    | 36/70 [40:27<37:40, 66.50s/it]Generating...:  51%|█████▏    | 36/70 [40:27<37:40, 66.50s/it]Generating...:  51%|█████▏    | 36/70 [40:27<37:40, 66.50s/it]Generating...:  53%|█████▎    | 37/70 [41:32<36:23, 66.17s/it]Generating...:  53%|█████▎    | 37/70 [41:32<36:23, 66.17s/it]Generating...:  53%|█████▎    | 37/70 [41:32<36:23, 66.17s/it]Generating...:  53%|█████▎    | 37/70 [41:32<36:23, 66.17s/it]Generating...:  53%|█████▎    | 37/70 [41:32<36:23, 66.17s/it]Generating...:  53%|█████▎    | 37/70 [41:32<36:23, 66.17s/it]Generating...:  53%|█████▎    | 37/70 [41:32<36:23, 66.17s/it]Generating...:  53%|█████▎    | 37/70 [41:32<36:23, 66.17s/it]Generating...:  54%|█████▍    | 38/70 [42:33<34:21, 64.41s/it]Generating...:  54%|█████▍    | 38/70 [42:33<34:21, 64.41s/it]Generating...:  54%|█████▍    | 38/70 [42:33<34:21, 64.41s/it]Generating...:  54%|█████▍    | 38/70 [42:33<34:21, 64.41s/it]Generating...:  54%|█████▍    | 38/70 [42:33<34:21, 64.41s/it]Generating...:  54%|█████▍    | 38/70 [42:33<34:21, 64.41s/it]Generating...:  54%|█████▍    | 38/70 [42:33<34:21, 64.41s/it]Generating...:  54%|█████▍    | 38/70 [42:33<34:21, 64.41s/it]Generating...:  56%|█████▌    | 39/70 [43:33<32:39, 63.21s/it]Generating...:  56%|█████▌    | 39/70 [43:33<32:39, 63.21s/it]Generating...:  56%|█████▌    | 39/70 [43:33<32:39, 63.21s/it]Generating...:  56%|█████▌    | 39/70 [43:33<32:39, 63.21s/it]Generating...:  56%|█████▌    | 39/70 [43:33<32:39, 63.21s/it]Generating...:  56%|█████▌    | 39/70 [43:33<32:39, 63.21s/it]Generating...:  56%|█████▌    | 39/70 [43:33<32:39, 63.21s/it]Generating...:  56%|█████▌    | 39/70 [43:33<32:39, 63.21s/it]Generating...:  57%|█████▋    | 40/70 [44:32<31:00, 62.00s/it]Generating...:  57%|█████▋    | 40/70 [44:32<31:00, 62.00s/it]Generating...:  57%|█████▋    | 40/70 [44:32<31:00, 62.00s/it]Generating...:  57%|█████▋    | 40/70 [44:32<31:00, 62.00s/it]Generating...:  57%|█████▋    | 40/70 [44:32<31:00, 62.00s/it]Generating...:  57%|█████▋    | 40/70 [44:32<31:00, 62.00s/it]Generating...:  57%|█████▋    | 40/70 [44:32<31:00, 62.00s/it]Generating...:  57%|█████▋    | 40/70 [44:32<31:00, 62.00s/it]Generating...:  59%|█████▊    | 41/70 [45:32<29:33, 61.16s/it]Generating...:  59%|█████▊    | 41/70 [45:32<29:33, 61.16s/it]Generating...:  59%|█████▊    | 41/70 [45:32<29:33, 61.16s/it]Generating...:  59%|█████▊    | 41/70 [45:32<29:33, 61.16s/it]Generating...:  59%|█████▊    | 41/70 [45:32<29:33, 61.16s/it]Generating...:  59%|█████▊    | 41/70 [45:32<29:33, 61.16s/it]Generating...:  59%|█████▊    | 41/70 [45:32<29:33, 61.16s/it]Generating...:  59%|█████▊    | 41/70 [45:32<29:33, 61.16s/it]Generating...:  60%|██████    | 42/70 [46:32<28:22, 60.81s/it]Generating...:  60%|██████    | 42/70 [46:32<28:22, 60.81s/it]Generating...:  60%|██████    | 42/70 [46:32<28:22, 60.81s/it]Generating...:  60%|██████    | 42/70 [46:31<28:22, 60.81s/it]Generating...:  60%|██████    | 42/70 [46:31<28:22, 60.81s/it]Generating...:  60%|██████    | 42/70 [46:32<28:22, 60.81s/it]Generating...:  60%|██████    | 42/70 [46:31<28:22, 60.81s/it]Generating...:  60%|██████    | 42/70 [46:32<28:22, 60.81s/it]Generating...:  61%|██████▏   | 43/70 [47:30<27:06, 60.25s/it]Generating...:  61%|██████▏   | 43/70 [47:30<27:06, 60.25s/it]Generating...:  61%|██████▏   | 43/70 [47:30<27:06, 60.25s/it]Generating...:  61%|██████▏   | 43/70 [47:30<27:06, 60.25s/it]Generating...:  61%|██████▏   | 43/70 [47:30<27:06, 60.25s/it]Generating...:  61%|██████▏   | 43/70 [47:30<27:06, 60.25s/it]Generating...:  61%|██████▏   | 43/70 [47:30<27:06, 60.25s/it]Generating...:  61%|██████▏   | 43/70 [47:30<27:06, 60.25s/it]Generating...:  63%|██████▎   | 44/70 [48:30<26:03, 60.15s/it]Generating...:  63%|██████▎   | 44/70 [48:30<26:03, 60.15s/it]Generating...:  63%|██████▎   | 44/70 [48:30<26:03, 60.15s/it]Generating...:  63%|██████▎   | 44/70 [48:30<26:03, 60.15s/it]Generating...:  63%|██████▎   | 44/70 [48:30<26:03, 60.15s/it]Generating...:  63%|██████▎   | 44/70 [48:30<26:03, 60.15s/it]Generating...:  63%|██████▎   | 44/70 [48:30<26:03, 60.15s/it]Generating...:  63%|██████▎   | 44/70 [48:30<26:03, 60.15s/it]Generating...:  64%|██████▍   | 45/70 [49:30<24:58, 59.93s/it]Generating...:  64%|██████▍   | 45/70 [49:30<24:58, 59.93s/it]Generating...:  64%|██████▍   | 45/70 [49:30<24:58, 59.93s/it]Generating...:  64%|██████▍   | 45/70 [49:30<24:58, 59.93s/it]Generating...:  64%|██████▍   | 45/70 [49:30<24:58, 59.93s/it]Generating...:  64%|██████▍   | 45/70 [49:30<24:58, 59.93s/it]Generating...:  64%|██████▍   | 45/70 [49:30<24:58, 59.93s/it]Generating...:  64%|██████▍   | 45/70 [49:30<24:58, 59.93s/it]Generating...:  66%|██████▌   | 46/70 [50:35<24:35, 61.50s/it]Generating...:  66%|██████▌   | 46/70 [50:35<24:35, 61.50s/it]Generating...:  66%|██████▌   | 46/70 [50:35<24:35, 61.50s/it]Generating...:  66%|██████▌   | 46/70 [50:35<24:35, 61.50s/it]Generating...:  66%|██████▌   | 46/70 [50:35<24:35, 61.50s/it]Generating...:  66%|██████▌   | 46/70 [50:35<24:35, 61.50s/it]Generating...:  66%|██████▌   | 46/70 [50:35<24:35, 61.50s/it]Generating...:  66%|██████▌   | 46/70 [50:35<24:35, 61.50s/it]Generating...:  67%|██████▋   | 47/70 [51:35<23:22, 60.98s/it]Generating...:  67%|██████▋   | 47/70 [51:35<23:22, 60.98s/it]Generating...:  67%|██████▋   | 47/70 [51:35<23:22, 60.98s/it]Generating...:  67%|██████▋   | 47/70 [51:35<23:22, 60.98s/it]Generating...:  67%|██████▋   | 47/70 [51:35<23:22, 60.98s/it]Generating...:  67%|██████▋   | 47/70 [51:35<23:22, 60.98s/it]Generating...:  67%|██████▋   | 47/70 [51:35<23:22, 60.98s/it]Generating...:  67%|██████▋   | 47/70 [51:35<23:22, 60.98s/it]Generating...:  69%|██████▊   | 48/70 [52:35<22:15, 60.71s/it]Generating...:  69%|██████▊   | 48/70 [52:35<22:15, 60.71s/it]Generating...:  69%|██████▊   | 48/70 [52:35<22:15, 60.71s/it]Generating...:  69%|██████▊   | 48/70 [52:35<22:15, 60.71s/it]Generating...:  69%|██████▊   | 48/70 [52:35<22:15, 60.71s/it]Generating...:  69%|██████▊   | 48/70 [52:35<22:15, 60.71s/it]Generating...:  69%|██████▊   | 48/70 [52:35<22:15, 60.71s/it]Generating...:  69%|██████▊   | 48/70 [52:35<22:15, 60.71s/it]Generating...:  70%|███████   | 49/70 [53:35<21:09, 60.47s/it]Generating...:  70%|███████   | 49/70 [53:35<21:09, 60.47s/it]Generating...:  70%|███████   | 49/70 [53:35<21:09, 60.47s/it]Generating...:  70%|███████   | 49/70 [53:35<21:09, 60.47s/it]Generating...:  70%|███████   | 49/70 [53:35<21:09, 60.47s/it]Generating...:  70%|███████   | 49/70 [53:35<21:09, 60.47s/it]Generating...:  70%|███████   | 49/70 [53:35<21:09, 60.47s/it]Generating...:  70%|███████   | 49/70 [53:35<21:09, 60.47s/it]Generating...:  71%|███████▏  | 50/70 [54:34<20:01, 60.08s/it]Generating...:  71%|███████▏  | 50/70 [54:34<20:01, 60.08s/it]Generating...:  71%|███████▏  | 50/70 [54:34<20:01, 60.08s/it]Generating...:  71%|███████▏  | 50/70 [54:34<20:01, 60.08s/it]Generating...:  71%|███████▏  | 50/70 [54:34<20:01, 60.08s/it]Generating...:  71%|███████▏  | 50/70 [54:34<20:01, 60.08s/it]Generating...:  71%|███████▏  | 50/70 [54:34<20:01, 60.08s/it]Generating...:  71%|███████▏  | 50/70 [54:34<20:01, 60.08s/it]Generating...:  73%|███████▎  | 51/70 [55:40<19:36, 61.90s/it]Generating...:  73%|███████▎  | 51/70 [55:40<19:36, 61.90s/it]Generating...:  73%|███████▎  | 51/70 [55:40<19:36, 61.90s/it]Generating...:  73%|███████▎  | 51/70 [55:40<19:36, 61.90s/it]Generating...:  73%|███████▎  | 51/70 [55:40<19:36, 61.90s/it]Generating...:  73%|███████▎  | 51/70 [55:40<19:36, 61.90s/it]Generating...:  73%|███████▎  | 51/70 [55:40<19:36, 61.90s/it]Generating...:  73%|███████▎  | 51/70 [55:40<19:36, 61.90s/it]Generating...:  74%|███████▍  | 52/70 [56:46<18:56, 63.12s/it]Generating...:  74%|███████▍  | 52/70 [56:46<18:56, 63.12s/it]Generating...:  74%|███████▍  | 52/70 [56:46<18:56, 63.12s/it]Generating...:  74%|███████▍  | 52/70 [56:46<18:56, 63.12s/it]Generating...:  74%|███████▍  | 52/70 [56:46<18:56, 63.12s/it]Generating...:  74%|███████▍  | 52/70 [56:46<18:56, 63.12s/it]Generating...:  74%|███████▍  | 52/70 [56:46<18:56, 63.12s/it]Generating...:  74%|███████▍  | 52/70 [56:46<18:56, 63.12s/it]Generating...:  76%|███████▌  | 53/70 [58:21<20:37, 72.79s/it]Generating...:  76%|███████▌  | 53/70 [58:21<20:37, 72.79s/it]Generating...:  76%|███████▌  | 53/70 [58:21<20:37, 72.79s/it]Generating...:  76%|███████▌  | 53/70 [58:21<20:37, 72.79s/it]Generating...:  76%|███████▌  | 53/70 [58:21<20:37, 72.79s/it]Generating...:  76%|███████▌  | 53/70 [58:21<20:37, 72.79s/it]Generating...:  76%|███████▌  | 53/70 [58:21<20:37, 72.79s/it]Generating...:  76%|███████▌  | 53/70 [58:21<20:37, 72.79s/it]Generating...:  77%|███████▋  | 54/70 [59:33<19:19, 72.46s/it]Generating...:  77%|███████▋  | 54/70 [59:33<19:19, 72.46s/it]Generating...:  77%|███████▋  | 54/70 [59:33<19:19, 72.46s/it]Generating...:  77%|███████▋  | 54/70 [59:33<19:19, 72.46s/it]Generating...:  77%|███████▋  | 54/70 [59:33<19:19, 72.46s/it]Generating...:  77%|███████▋  | 54/70 [59:33<19:19, 72.46s/it]Generating...:  77%|███████▋  | 54/70 [59:33<19:19, 72.46s/it]Generating...:  77%|███████▋  | 54/70 [59:33<19:19, 72.46s/it]Generating...:  79%|███████▊  | 55/70 [1:00:32<17:04, 68.32s/it]Generating...:  79%|███████▊  | 55/70 [1:00:32<17:04, 68.32s/it]Generating...:  79%|███████▊  | 55/70 [1:00:32<17:04, 68.32s/it]Generating...:  79%|███████▊  | 55/70 [1:00:32<17:04, 68.32s/it]Generating...:  79%|███████▊  | 55/70 [1:00:32<17:04, 68.32s/it]Generating...:  79%|███████▊  | 55/70 [1:00:32<17:04, 68.32s/it]Generating...:  79%|███████▊  | 55/70 [1:00:32<17:04, 68.32s/it]Generating...:  79%|███████▊  | 55/70 [1:00:32<17:04, 68.32s/it]Generating...:  80%|████████  | 56/70 [1:01:36<15:41, 67.25s/it]Generating...:  80%|████████  | 56/70 [1:01:36<15:41, 67.25s/it]Generating...:  80%|████████  | 56/70 [1:01:36<15:41, 67.25s/it]Generating...:  80%|████████  | 56/70 [1:01:36<15:41, 67.25s/it]Generating...:  80%|████████  | 56/70 [1:01:36<15:41, 67.25s/it]Generating...:  80%|████████  | 56/70 [1:01:36<15:41, 67.25s/it]Generating...:  80%|████████  | 56/70 [1:01:36<15:41, 67.25s/it]Generating...:  80%|████████  | 56/70 [1:01:36<15:41, 67.25s/it]Generating...:  81%|████████▏ | 57/70 [1:02:40<14:20, 66.20s/it]Generating...:  81%|████████▏ | 57/70 [1:02:40<14:20, 66.20s/it]Generating...:  81%|████████▏ | 57/70 [1:02:40<14:20, 66.20s/it]Generating...:  81%|████████▏ | 57/70 [1:02:40<14:20, 66.20s/it]Generating...:  81%|████████▏ | 57/70 [1:02:40<14:20, 66.20s/it]Generating...:  81%|████████▏ | 57/70 [1:02:40<14:20, 66.20s/it]Generating...:  81%|████████▏ | 57/70 [1:02:40<14:20, 66.20s/it]Generating...:  81%|████████▏ | 57/70 [1:02:40<14:20, 66.20s/it]Generating...:  83%|████████▎ | 58/70 [1:03:44<13:04, 65.38s/it]Generating...:  83%|████████▎ | 58/70 [1:03:44<13:04, 65.38s/it]Generating...:  83%|████████▎ | 58/70 [1:03:44<13:04, 65.38s/it]Generating...:  83%|████████▎ | 58/70 [1:03:44<13:04, 65.38s/it]Generating...:  83%|████████▎ | 58/70 [1:03:44<13:04, 65.38s/it]Generating...:  83%|████████▎ | 58/70 [1:03:44<13:04, 65.38s/it]Generating...:  83%|████████▎ | 58/70 [1:03:44<13:04, 65.38s/it]Generating...:  83%|████████▎ | 58/70 [1:03:44<13:04, 65.38s/it]Generating...:  84%|████████▍ | 59/70 [1:04:49<11:59, 65.44s/it]Generating...:  84%|████████▍ | 59/70 [1:04:49<11:59, 65.44s/it]Generating...:  84%|████████▍ | 59/70 [1:04:49<11:59, 65.44s/it]Generating...:  84%|████████▍ | 59/70 [1:04:49<11:59, 65.44s/it]Generating...:  84%|████████▍ | 59/70 [1:04:49<11:59, 65.44s/it]Generating...:  84%|████████▍ | 59/70 [1:04:49<11:59, 65.44s/it]Generating...:  84%|████████▍ | 59/70 [1:04:49<11:59, 65.44s/it]Generating...:  84%|████████▍ | 59/70 [1:04:49<11:59, 65.44s/it]Generating...:  86%|████████▌ | 60/70 [1:05:50<10:39, 64.00s/it]Generating...:  86%|████████▌ | 60/70 [1:05:50<10:39, 64.00s/it]Generating...:  86%|████████▌ | 60/70 [1:05:50<10:39, 64.00s/it]Generating...:  86%|████████▌ | 60/70 [1:05:50<10:39, 64.00s/it]Generating...:  86%|████████▌ | 60/70 [1:05:50<10:39, 64.00s/it]Generating...:  86%|████████▌ | 60/70 [1:05:50<10:39, 64.00s/it]Generating...:  86%|████████▌ | 60/70 [1:05:50<10:39, 64.00s/it]Generating...:  86%|████████▌ | 60/70 [1:05:50<10:39, 64.00s/it]Generating...:  87%|████████▋ | 61/70 [1:07:02<09:56, 66.30s/it]Generating...:  87%|████████▋ | 61/70 [1:07:02<09:56, 66.30s/it]Generating...:  87%|████████▋ | 61/70 [1:07:02<09:56, 66.30s/it]Generating...:  87%|████████▋ | 61/70 [1:07:02<09:56, 66.30s/it]Generating...:  87%|████████▋ | 61/70 [1:07:02<09:56, 66.30s/it]Generating...:  87%|████████▋ | 61/70 [1:07:02<09:56, 66.30s/it]Generating...:  87%|████████▋ | 61/70 [1:07:02<09:56, 66.30s/it]Generating...:  87%|████████▋ | 61/70 [1:07:02<09:56, 66.30s/it]Generating...:  89%|████████▊ | 62/70 [1:08:02<08:36, 64.51s/it]Generating...:  89%|████████▊ | 62/70 [1:08:02<08:36, 64.51s/it]Generating...:  89%|████████▊ | 62/70 [1:08:02<08:36, 64.51s/it]Generating...:  89%|████████▊ | 62/70 [1:08:02<08:36, 64.51s/it]Generating...:  89%|████████▊ | 62/70 [1:08:02<08:36, 64.51s/it]Generating...:  89%|████████▊ | 62/70 [1:08:02<08:36, 64.51s/it]Generating...:  89%|████████▊ | 62/70 [1:08:02<08:36, 64.51s/it]Generating...:  89%|████████▊ | 62/70 [1:08:02<08:36, 64.51s/it]Generating...:  90%|█████████ | 63/70 [1:09:31<08:24, 72.01s/it]Generating...:  90%|█████████ | 63/70 [1:09:31<08:24, 72.01s/it]Generating...:  90%|█████████ | 63/70 [1:09:31<08:24, 72.01s/it]Generating...:  90%|█████████ | 63/70 [1:09:31<08:24, 72.01s/it]Generating...:  90%|█████████ | 63/70 [1:09:31<08:24, 72.01s/it]Generating...:  90%|█████████ | 63/70 [1:09:31<08:24, 72.01s/it]Generating...:  90%|█████████ | 63/70 [1:09:31<08:24, 72.01s/it]Generating...:  90%|█████████ | 63/70 [1:09:31<08:24, 72.01s/it]Generating...:  91%|█████████▏| 64/70 [1:10:32<06:51, 68.57s/it]Generating...:  91%|█████████▏| 64/70 [1:10:32<06:51, 68.57s/it]Generating...:  91%|█████████▏| 64/70 [1:10:32<06:51, 68.57s/it]Generating...:  91%|█████████▏| 64/70 [1:10:32<06:51, 68.57s/it]Generating...:  91%|█████████▏| 64/70 [1:10:32<06:51, 68.57s/it]Generating...:  91%|█████████▏| 64/70 [1:10:32<06:51, 68.57s/it]Generating...:  91%|█████████▏| 64/70 [1:10:32<06:51, 68.57s/it]Generating...:  91%|█████████▏| 64/70 [1:10:32<06:51, 68.57s/it]Generating...:  93%|█████████▎| 65/70 [1:11:32<05:30, 66.16s/it]Generating...:  93%|█████████▎| 65/70 [1:11:32<05:30, 66.16s/it]Generating...:  93%|█████████▎| 65/70 [1:11:32<05:30, 66.16s/it]Generating...:  93%|█████████▎| 65/70 [1:11:32<05:30, 66.16s/it]Generating...:  93%|█████████▎| 65/70 [1:11:32<05:30, 66.16s/it]Generating...:  93%|█████████▎| 65/70 [1:11:32<05:30, 66.16s/it]Generating...:  93%|█████████▎| 65/70 [1:11:32<05:30, 66.16s/it]Generating...:  93%|█████████▎| 65/70 [1:11:32<05:30, 66.16s/it]Generating...:  94%|█████████▍| 66/70 [1:12:32<04:16, 64.24s/it]Generating...:  94%|█████████▍| 66/70 [1:12:32<04:16, 64.24s/it]Generating...:  94%|█████████▍| 66/70 [1:12:32<04:16, 64.24s/it]Generating...:  94%|█████████▍| 66/70 [1:12:32<04:16, 64.24s/it]Generating...:  94%|█████████▍| 66/70 [1:12:32<04:16, 64.24s/it]Generating...:  94%|█████████▍| 66/70 [1:12:32<04:16, 64.24s/it]Generating...:  94%|█████████▍| 66/70 [1:12:32<04:16, 64.24s/it]Generating...:  94%|█████████▍| 66/70 [1:12:32<04:16, 64.24s/it]Generating...:  96%|█████████▌| 67/70 [1:13:38<03:14, 64.74s/it]Generating...:  96%|█████████▌| 67/70 [1:13:38<03:14, 64.74s/it]Generating...:  96%|█████████▌| 67/70 [1:13:38<03:14, 64.74s/it]Generating...:  96%|█████████▌| 67/70 [1:13:38<03:14, 64.74s/it]Generating...:  96%|█████████▌| 67/70 [1:13:38<03:14, 64.74s/it]Generating...:  96%|█████████▌| 67/70 [1:13:38<03:14, 64.74s/it]Generating...:  96%|█████████▌| 67/70 [1:13:38<03:14, 64.74s/it]Generating...:  96%|█████████▌| 67/70 [1:13:38<03:14, 64.74s/it]Generating...:  97%|█████████▋| 68/70 [1:14:49<02:13, 66.58s/it]Generating...:  97%|█████████▋| 68/70 [1:14:49<02:13, 66.58s/it]Generating...:  97%|█████████▋| 68/70 [1:14:49<02:13, 66.58s/it]Generating...:  97%|█████████▋| 68/70 [1:14:49<02:13, 66.58s/it]Generating...:  97%|█████████▋| 68/70 [1:14:49<02:13, 66.58s/it]Generating...:  97%|█████████▋| 68/70 [1:14:49<02:13, 66.58s/it]Generating...:  97%|█████████▋| 68/70 [1:14:49<02:13, 66.58s/it]Generating...:  97%|█████████▋| 68/70 [1:14:49<02:13, 66.58s/it]Generating...:  99%|█████████▊| 69/70 [1:15:49<01:04, 64.54s/it]Generating...:  99%|█████████▊| 69/70 [1:15:49<01:04, 64.54s/it]Generating...:  99%|█████████▊| 69/70 [1:15:49<01:04, 64.54s/it]Generating...:  99%|█████████▊| 69/70 [1:15:49<01:04, 64.54s/it]Generating...:  99%|█████████▊| 69/70 [1:15:49<01:04, 64.54s/it]Generating...:  99%|█████████▊| 69/70 [1:15:49<01:04, 64.54s/it]Generating...:  99%|█████████▊| 69/70 [1:15:49<01:04, 64.54s/it]Generating...:  99%|█████████▊| 69/70 [1:15:49<01:04, 64.54s/it]Generating...: 100%|██████████| 70/70 [1:16:54<00:00, 64.87s/it]Generating...: 100%|██████████| 70/70 [1:16:54<00:00, 64.87s/it]Generating...: 100%|██████████| 70/70 [1:16:54<00:00, 64.87s/it]Generating...: 100%|██████████| 70/70 [1:16:54<00:00, 64.87s/it]Generating...: 100%|██████████| 70/70 [1:16:54<00:00, 64.87s/it]Generating...: 100%|██████████| 70/70 [1:16:54<00:00, 64.87s/it]Generating...: 100%|██████████| 70/70 [1:16:54<00:00, 64.87s/it]Generating...: 100%|██████████| 70/70 [1:16:54<00:00, 64.87s/it]Generating...: 100%|██████████| 70/70 [1:16:54<00:00, 65.93s/it]Generating...: 100%|██████████| 70/70 [1:16:54<00:00, 65.93s/it]Generating...: 100%|██████████| 70/70 [1:16:54<00:00, 65.93s/it]Generating...: 100%|██████████| 70/70 [1:16:54<00:00, 65.93s/it]Generating...: 100%|██████████| 70/70 [1:16:54<00:00, 65.93s/it]Generating...: 100%|██████████| 70/70 [1:16:54<00:00, 65.93s/it]Generating...: 100%|██████████| 70/70 [1:16:54<00:00, 65.93s/it]
-
-
-
-
-
-
-Generating...: 100%|██████████| 70/70 [1:16:54<00:00, 65.93s/it]
-[rank2]:W1110 15:22:34.204000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 42187 hash value: 4662830296737990197
-[rank1]:W1110 15:22:34.335000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 39229 hash value: 17704059828734779010
-[rank6]:W1110 15:22:34.406000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 43362 hash value: 5479081855268503187
-[rank0]:W1110 15:22:34.484000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 38057 hash value: 10190658178473560166
-[rank3]:W1110 15:22:34.505000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 40024 hash value: 13639845141589999791
-[rank7]:W1110 15:22:34.505000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 40855 hash value: 7087350753317503432
-[rank4]:W1110 15:22:34.570000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 41042 hash value: 17345272039090259593
-[rank5]:W1110 15:22:34.778000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 38640 hash value: 9917120499145505399
-[rank0]:W1110 15:22:34.967000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 43362 hash value: 12014873021748409171
-[rank0]:W1110 15:22:34.970000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 43362 hash value: 12014873021748409171
-[rank0]:W1110 15:22:34.972000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 43362 hash value: 12014873021748409171
-[rank0]:W1110 15:22:34.974000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 43362 hash value: 12014873021748409171
-[rank0]:W1110 15:22:34.976000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 43362 hash value: 12014873021748409171
-[rank0]:W1110 15:22:34.978000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 43362 hash value: 12014873021748409171
-[rank3]:W1110 15:22:34.978000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 15165775158567111781
-[rank7]:W1110 15:22:34.978000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 6475571178142550744
-[rank1]:W1110 15:22:34.978000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415655568741
-[rank4]:W1110 15:22:34.978000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 7249169887501832008
-[rank6]:W1110 15:22:34.978000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank2]:W1110 15:22:34.978000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank5]:W1110 15:22:34.978000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 7249169887501832008
-[rank0]:W1110 15:22:34.980000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 43362 hash value: 12014873021748409171
-[rank0]:W1110 15:22:34.985000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 43362 hash value: 12014873021748409171
-[rank0]:W1110 15:22:34.986000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 100762994949750259
-[rank0]:W1110 15:22:34.990000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 15468574488398711972
-[rank3]:W1110 15:22:34.991000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 15208346818637871712
-[rank2]:W1110 15:22:34.991000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 10201639756674178380
-[rank4]:W1110 15:22:34.991000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 7249170280239577644
-[rank1]:W1110 15:22:34.991000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 5476425603508604284
-[rank7]:W1110 15:22:34.991000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 13800512212344086518
-[rank5]:W1110 15:22:34.991000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 5859783320332308031
-[rank6]:W1110 15:22:34.991000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 7634553868653783364
-[rank0]:W1110 15:22:34.993000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 15468574488398711972
-[rank0]:W1110 15:22:34.996000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 15468574488398711972
-[rank0]:W1110 15:22:34.997000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 15468574488398711972
-[rank0]:W1110 15:22:34.998000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 15468574488398711972
-[rank0]:W1110 15:22:34.999000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 15468574488398711972
-[rank0]:W1110 15:22:35.000000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 15468574488398711972
-[rank0]:W1110 15:22:35.001000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 15468574488398711972
-[rank0]:W1110 15:22:35.002000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 13116726535967841761
-[rank0]:W1110 15:22:35.006000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 17315722644978372768
-[rank2]:W1110 15:22:35.006000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 49767 hash value: 8128710638934725883
-[rank3]:W1110 15:22:35.006000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 47965 hash value: 6334007439852029679
-[rank4]:W1110 15:22:35.006000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 39865 hash value: 16904278177885278942
-[rank7]:W1110 15:22:35.007000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 46677 hash value: 2999461896966672925
-[rank1]:W1110 15:22:35.007000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 49848 hash value: 13167508627929231324
-[rank6]:W1110 15:22:35.007000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 49035 hash value: 16553443220161713119
-[rank5]:W1110 15:22:35.007000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 51088 hash value: 1349226308162535496
-[rank0]:W1110 15:22:35.007000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 17315722644978372768
-[rank0]:W1110 15:22:35.011000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 17315722644978372768
-[rank0]:W1110 15:22:35.012000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 17315722644978372768
-[rank0]:W1110 15:22:35.013000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 17315722644978372768
-[rank0]:W1110 15:22:35.014000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 17315722644978372768
-[rank0]:W1110 15:22:35.015000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 17315722644978372768
-[rank0]:W1110 15:22:35.016000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 17315722644978372768
-[rank0]:W1110 15:22:35.018000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 48082 hash value: 6377207669250667837
-[rank3]:W1110 15:22:35.022000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank4]:W1110 15:22:35.022000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908223210
-[rank7]:W1110 15:22:35.022000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank6]:W1110 15:22:35.022000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank5]:W1110 15:22:35.022000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank2]:W1110 15:22:35.022000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank1]:W1110 15:22:35.022000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 8163468435338816897
-[rank0]:W1110 15:22:35.022000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 51088 hash value: 12784913674051495764
-[rank0]:W1110 15:22:35.028000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 51088 hash value: 12784913674051495764
-[rank0]:W1110 15:22:35.030000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 51088 hash value: 12784913674051495764
-[rank0]:W1110 15:22:35.032000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 51088 hash value: 12784913674051495764
-[rank0]:W1110 15:22:35.034000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 51088 hash value: 12784913674051495764
-[rank0]:W1110 15:22:35.036000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 51088 hash value: 12784913674051495764
-[rank0]:W1110 15:22:35.038000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 51088 hash value: 12784913674051495764
-[rank0]:W1110 15:22:35.040000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 51088 hash value: 12784913674051495764
-[rank0]:W1110 15:22:35.041000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 100762994949746626
-[rank0]:W1110 15:22:35.045000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 16798023496289417991
-[rank3]:W1110 15:22:35.045000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 107298487631457855
-[rank2]:W1110 15:22:35.045000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank4]:W1110 15:22:35.045000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 10978510432726235580
-[rank1]:W1110 15:22:35.045000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 8163468435338816897
-[rank7]:W1110 15:22:35.045000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14920316194379124359
-[rank6]:W1110 15:22:35.045000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 12760118203891625443
-[rank5]:W1110 15:22:35.045000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 9223449677976106806
-[rank0]:W1110 15:22:35.047000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 16798023496289417991
-[rank0]:W1110 15:22:35.050000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 16798023496289417991
-[rank0]:W1110 15:22:35.051000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 16798023496289417991
-[rank0]:W1110 15:22:35.052000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 16798023496289417991
-[rank0]:W1110 15:22:35.053000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 16798023496289417991
-[rank0]:W1110 15:22:35.054000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 16798023496289417991
-[rank0]:W1110 15:22:35.055000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 16798023496289417991
-[rank0]:W1110 15:22:35.056000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 12325180052725017288
-[rank0]:W1110 15:22:35.100000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 13646740093146991680
-[rank2]:W1110 15:22:35.100000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 50406 hash value: 17771396116975124021
-[rank3]:W1110 15:22:35.100000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 53437 hash value: 2234990453898393386
-[rank4]:W1110 15:22:35.100000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 53315 hash value: 7123141592699977142
-[rank5]:W1110 15:22:35.100000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 51056 hash value: 12931847842743912123
-[rank7]:W1110 15:22:35.100000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 51128 hash value: 15330430579907730118
-[rank1]:W1110 15:22:35.100000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 49914 hash value: 15158276199576320540
-[rank6]:W1110 15:22:35.100000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 52385 hash value: 3951223024349687500
-[rank0]:W1110 15:22:35.101000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 13646740093146991680
-[rank0]:W1110 15:22:35.105000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 13646740093146991680
-[rank0]:W1110 15:22:35.106000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 13646740093146991680
-[rank0]:W1110 15:22:35.107000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 13646740093146991680
-[rank0]:W1110 15:22:35.108000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 13646740093146991680
-[rank0]:W1110 15:22:35.109000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 13646740093146991680
-[rank0]:W1110 15:22:35.110000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 13646740093146991680
-[rank0]:W1110 15:22:35.112000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 52315 hash value: 2901327155639926340
-[rank2]:W1110 15:22:35.116000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank1]:W1110 15:22:35.116000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank7]:W1110 15:22:35.116000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank3]:W1110 15:22:35.116000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank6]:W1110 15:22:35.116000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank4]:W1110 15:22:35.116000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank5]:W1110 15:22:35.116000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank0]:W1110 15:22:35.117000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 53437 hash value: 1967799090817498114
-[rank0]:W1110 15:22:35.122000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 53437 hash value: 1967799090817498114
-[rank0]:W1110 15:22:35.124000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 53437 hash value: 1967799090817498114
-[rank0]:W1110 15:22:35.126000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 53437 hash value: 1967799090817498114
-[rank0]:W1110 15:22:35.128000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 53437 hash value: 1967799090817498114
-[rank0]:W1110 15:22:35.130000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 53437 hash value: 1967799090817498114
-[rank0]:W1110 15:22:35.132000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 53437 hash value: 1967799090817498114
-[rank0]:W1110 15:22:35.134000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 53437 hash value: 1967799090817498114
-[rank0]:W1110 15:22:35.135000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 100762994949746626
-[rank0]:W1110 15:22:35.139000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 4466613043385409466
-[rank3]:W1110 15:22:35.139000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 12826790799051801796
-[rank4]:W1110 15:22:35.139000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 2080530102404780745
-[rank5]:W1110 15:22:35.140000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 16858811488333850520
-[rank1]:W1110 15:22:35.140000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 7249169887501832008
-[rank7]:W1110 15:22:35.140000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 12760118203891625443
-[rank2]:W1110 15:22:35.140000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 7391278077284946882
-[rank6]:W1110 15:22:35.140000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 7824157749669226449
-[rank0]:W1110 15:22:35.141000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 4466613043385409466
-[rank0]:W1110 15:22:35.145000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 4466613043385409466
-[rank0]:W1110 15:22:35.146000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 4466613043385409466
-[rank0]:W1110 15:22:35.147000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 4466613043385409466
-[rank0]:W1110 15:22:35.147000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 4466613043385409466
-[rank0]:W1110 15:22:35.148000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 4466613043385409466
-[rank0]:W1110 15:22:35.149000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 4466613043385409466
-[rank0]:W1110 15:22:35.150000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 2578925375724431070
-[rank0]:W1110 15:22:35.154000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 9366716870900036429
-[rank3]:W1110 15:22:35.155000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 44159 hash value: 14285874184232677712
-[rank4]:W1110 15:22:35.155000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 45699 hash value: 3164265613167739168
-[rank5]:W1110 15:22:35.155000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 45031 hash value: 8096695099606846480
-[rank2]:W1110 15:22:35.155000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 46050 hash value: 11590478102860245364
-[rank1]:W1110 15:22:35.155000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 46360 hash value: 7786209269870210049
-[rank6]:W1110 15:22:35.155000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 44053 hash value: 13120440018657994097
-[rank7]:W1110 15:22:35.155000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 46207 hash value: 3307062637158492004
-[rank0]:W1110 15:22:35.156000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 9366716870900036429
-[rank0]:W1110 15:22:35.159000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 9366716870900036429
-[rank0]:W1110 15:22:35.160000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 9366716870900036429
-[rank0]:W1110 15:22:35.161000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 9366716870900036429
-[rank0]:W1110 15:22:35.162000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 9366716870900036429
-[rank0]:W1110 15:22:35.163000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 9366716870900036429
-[rank0]:W1110 15:22:35.164000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 9366716870900036429
-[rank0]:W1110 15:22:35.165000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 43912 hash value: 4217632974247748945
-[rank2]:W1110 15:22:35.169000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank1]:W1110 15:22:35.169000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank3]:W1110 15:22:35.169000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank7]:W1110 15:22:35.169000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank4]:W1110 15:22:35.169000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank6]:W1110 15:22:35.169000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank5]:W1110 15:22:35.169000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank0]:W1110 15:22:35.170000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 46360 hash value: 2447271881215591943
-[rank0]:W1110 15:22:35.175000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 46360 hash value: 2447271881215591943
-[rank0]:W1110 15:22:35.177000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 46360 hash value: 2447271881215591943
-[rank0]:W1110 15:22:35.179000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 46360 hash value: 2447271881215591943
-[rank0]:W1110 15:22:35.181000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 46360 hash value: 2447271881215591943
-[rank0]:W1110 15:22:35.183000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 46360 hash value: 2447271881215591943
-[rank0]:W1110 15:22:35.184000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 46360 hash value: 2447271881215591943
-[rank0]:W1110 15:22:35.186000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 46360 hash value: 2447271881215591943
-[rank0]:W1110 15:22:35.188000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank2]:W1110 15:22:35.192000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank3]:W1110 15:22:35.192000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 7391278077284934289
-[rank1]:W1110 15:22:35.192000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 7634553868653783364
-[rank7]:W1110 15:22:35.192000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 7391278077296375758
-[rank4]:W1110 15:22:35.192000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908223210
-[rank5]:W1110 15:22:35.192000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank0]:W1110 15:22:35.192000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 17068560844784273574
-[rank6]:W1110 15:22:35.192000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415655568741
-[rank0]:W1110 15:22:35.196000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 17068560844784273574
-[rank0]:W1110 15:22:35.197000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 17068560844784273574
-[rank0]:W1110 15:22:35.198000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 17068560844784273574
-[rank0]:W1110 15:22:35.199000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 17068560844784273574
-[rank0]:W1110 15:22:35.200000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 17068560844784273574
-[rank0]:W1110 15:22:35.201000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 17068560844784273574
-[rank0]:W1110 15:22:35.202000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 17068560844784273574
-[rank0]:W1110 15:22:35.203000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 8163468435338816897
-[rank4]:W1110 15:22:35.207000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 43966 hash value: 16458009700922948074
-[rank2]:W1110 15:22:35.207000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 45569 hash value: 11923219507216542305
-[rank3]:W1110 15:22:35.207000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 42107 hash value: 9925175582059520901
-[rank0]:W1110 15:22:35.207000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 15055850837275923368
-[rank5]:W1110 15:22:35.207000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 44393 hash value: 6622242244957362659
-[rank1]:W1110 15:22:35.207000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 42615 hash value: 17444508827203164042
-[rank7]:W1110 15:22:35.207000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 44095 hash value: 13213657357869104658
-[rank6]:W1110 15:22:35.207000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 44201 hash value: 6205855474220039148
-[rank0]:W1110 15:22:35.212000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 15055850837275923368
-[rank0]:W1110 15:22:35.214000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 15055850837275923368
-[rank0]:W1110 15:22:35.215000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 15055850837275923368
-[rank0]:W1110 15:22:35.216000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 15055850837275923368
-[rank0]:W1110 15:22:35.217000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 15055850837275923368
-[rank0]:W1110 15:22:35.218000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 15055850837275923368
-[rank0]:W1110 15:22:35.219000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 15055850837275923368
-[rank0]:W1110 15:22:35.220000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 43316 hash value: 6467102834892186674
-[rank3]:W1110 15:22:35.224000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank2]:W1110 15:22:35.224000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank4]:W1110 15:22:35.224000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank1]:W1110 15:22:35.224000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank6]:W1110 15:22:35.224000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank5]:W1110 15:22:35.224000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank7]:W1110 15:22:35.224000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank0]:W1110 15:22:35.225000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 45569 hash value: 13365650783863820338
-[rank0]:W1110 15:22:35.230000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 45569 hash value: 13365650783863820338
-[rank0]:W1110 15:22:35.232000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 45569 hash value: 13365650783863820338
-[rank0]:W1110 15:22:35.234000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 45569 hash value: 13365650783863820338
-[rank0]:W1110 15:22:35.235000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 45569 hash value: 13365650783863820338
-[rank0]:W1110 15:22:35.237000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 45569 hash value: 13365650783863820338
-[rank0]:W1110 15:22:35.239000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 45569 hash value: 13365650783863820338
-[rank0]:W1110 15:22:35.241000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 45569 hash value: 13365650783863820338
-[rank0]:W1110 15:22:35.243000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 9223449677976106806
-[rank0]:W1110 15:22:35.247000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 12420100026917076270
-[rank1]:W1110 15:22:35.247000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 100762994949746626
-[rank2]:W1110 15:22:35.247000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14920316194379124359
-[rank3]:W1110 15:22:35.247000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 9707684007058040015
-[rank4]:W1110 15:22:35.247000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14920316194379124359
-[rank7]:W1110 15:22:35.247000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 13855304788125529212
-[rank6]:W1110 15:22:35.247000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 12760118203891625443
-[rank5]:W1110 15:22:35.247000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 7824157749669262784
-[rank0]:W1110 15:22:35.249000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 12420100026917076270
-[rank0]:W1110 15:22:35.252000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 12420100026917076270
-[rank0]:W1110 15:22:35.253000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 12420100026917076270
-[rank0]:W1110 15:22:35.254000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 12420100026917076270
-[rank0]:W1110 15:22:35.255000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 12420100026917076270
-[rank0]:W1110 15:22:35.256000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 12420100026917076270
-[rank0]:W1110 15:22:35.257000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 12420100026917076270
-[rank0]:W1110 15:22:35.258000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 8163468435338816897
-[rank0]:W1110 15:22:35.262000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 1253484920663800852
-[rank4]:W1110 15:22:35.262000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 42340 hash value: 8339146401690109014
-[rank2]:W1110 15:22:35.262000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 38687 hash value: 166666579045833951
-[rank3]:W1110 15:22:35.262000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 42965 hash value: 11828792117185142954
-[rank1]:W1110 15:22:35.262000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 41755 hash value: 6438704639374352425
-[rank7]:W1110 15:22:35.262000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 39118 hash value: 16880435048769373774
-[rank6]:W1110 15:22:35.262000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 44192 hash value: 1906240445234294976
-[rank5]:W1110 15:22:35.262000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 42906 hash value: 7309358589560238823
-[rank0]:W1110 15:22:35.263000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 1253484920663800852
-[rank0]:W1110 15:22:35.267000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 1253484920663800852
-[rank0]:W1110 15:22:35.268000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 1253484920663800852
-[rank0]:W1110 15:22:35.269000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 1253484920663800852
-[rank0]:W1110 15:22:35.270000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 1253484920663800852
-[rank0]:W1110 15:22:35.271000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 1253484920663800852
-[rank0]:W1110 15:22:35.272000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 1253484920663800852
-[rank0]:W1110 15:22:35.273000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 47213 hash value: 544139327770011973
-[rank2]:W1110 15:22:35.277000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 2080527501599604670
-[rank3]:W1110 15:22:35.277000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 6475571177367036283
-[rank1]:W1110 15:22:35.277000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 5477670588598117349
-[rank4]:W1110 15:22:35.277000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 6475571178142554729
-[rank7]:W1110 15:22:35.277000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank6]:W1110 15:22:35.278000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank5]:W1110 15:22:35.278000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 262382661208901368
-[rank0]:W1110 15:22:35.278000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 47213 hash value: 7398463264167640577
-[rank0]:W1110 15:22:35.283000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 47213 hash value: 7398463264167640577
-[rank0]:W1110 15:22:35.285000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 47213 hash value: 7398463264167640577
-[rank0]:W1110 15:22:35.287000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 47213 hash value: 7398463264167640577
-[rank0]:W1110 15:22:35.289000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 47213 hash value: 7398463264167640577
-[rank0]:W1110 15:22:35.291000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 47213 hash value: 7398463264167640577
-[rank0]:W1110 15:22:35.292000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 47213 hash value: 7398463264167640577
-[rank0]:W1110 15:22:35.294000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 47213 hash value: 7398463264167640577
-[rank0]:W1110 15:22:35.295000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 107298487388897276
-[rank3]:W1110 15:22:35.299000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 9799981658928388624
-[rank2]:W1110 15:22:35.299000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 9848831685589267288
-[rank0]:W1110 15:22:35.299000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 792070316462638323
-[rank4]:W1110 15:22:35.300000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 11103551417634548943
-[rank7]:W1110 15:22:35.300000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 13747325178270160389
-[rank1]:W1110 15:22:35.300000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 8891434345261105361
-[rank5]:W1110 15:22:35.300000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 15208313123409129113
-[rank6]:W1110 15:22:35.300000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 7248595418174972045
-[rank0]:W1110 15:22:35.302000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 792070316462638323
-[rank0]:W1110 15:22:35.305000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 792070316462638323
-[rank0]:W1110 15:22:35.306000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 792070316462638323
-[rank0]:W1110 15:22:35.307000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 792070316462638323
-[rank0]:W1110 15:22:35.308000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 792070316462638323
-[rank0]:W1110 15:22:35.309000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 792070316462638323
-[rank0]:W1110 15:22:35.310000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 792070316462638323
-[rank0]:W1110 15:22:35.311000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14920318652581060708
-[rank0]:W1110 15:22:35.315000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 6076826759214369958
-[rank3]:W1110 15:22:35.315000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 48384 hash value: 16572500433351823693
-[rank2]:W1110 15:22:35.315000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 46139 hash value: 8870225463105920554
-[rank4]:W1110 15:22:35.315000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 51222 hash value: 12924351952167562705
-[rank5]:W1110 15:22:35.315000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 48059 hash value: 14830866537948588972
-[rank7]:W1110 15:22:35.315000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 48324 hash value: 18270034914035959172
-[rank6]:W1110 15:22:35.315000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 45899 hash value: 16687178045515957115
-[rank1]:W1110 15:22:35.315000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 52919 hash value: 17571281892051345740
-[rank0]:W1110 15:22:35.316000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 6076826759214369958
-[rank0]:W1110 15:22:35.320000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 6076826759214369958
-[rank0]:W1110 15:22:35.321000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 6076826759214369958
-[rank0]:W1110 15:22:35.322000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 6076826759214369958
-[rank0]:W1110 15:22:35.323000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 6076826759214369958
-[rank0]:W1110 15:22:35.324000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 6076826759214369958
-[rank0]:W1110 15:22:35.325000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 6076826759214369958
-[rank0]:W1110 15:22:35.326000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 51470 hash value: 16247774712901619119
-[rank2]:W1110 15:22:35.330000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415655568741
-[rank7]:W1110 15:22:35.330000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank3]:W1110 15:22:35.330000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 2080530102404780745
-[rank1]:W1110 15:22:35.330000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank6]:W1110 15:22:35.330000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank4]:W1110 15:22:35.330000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank5]:W1110 15:22:35.330000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank0]:W1110 15:22:35.331000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 52919 hash value: 4976789687147979538
-[rank0]:W1110 15:22:35.336000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 52919 hash value: 4976789687147979538
-[rank0]:W1110 15:22:35.338000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 52919 hash value: 4976789687147979538
-[rank0]:W1110 15:22:35.340000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 52919 hash value: 4976789687147979538
-[rank0]:W1110 15:22:35.342000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 52919 hash value: 4976789687147979538
-[rank0]:W1110 15:22:35.344000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 52919 hash value: 4976789687147979538
-[rank0]:W1110 15:22:35.346000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 52919 hash value: 4976789687147979538
-[rank0]:W1110 15:22:35.348000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 52919 hash value: 4976789687147979538
-[rank0]:W1110 15:22:35.349000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank3]:W1110 15:22:35.353000 103391 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 2080530102404780745
-[rank6]:W1110 15:22:35.354000 103394 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 9223449677976106806
-[rank4]:W1110 15:22:35.353000 103392 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank2]:W1110 15:22:35.353000 103390 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 2080530100130247313
-[rank0]:W1110 15:22:35.353000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 4430401285575172477
-[rank5]:W1110 15:22:35.353000 103393 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 9223449677976106806
-[rank1]:W1110 15:22:35.354000 103389 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908223210
-[rank7]:W1110 15:22:35.354000 103395 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 14941580415908222809
-[rank0]:W1110 15:22:35.357000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 4430401285575172477
-[rank0]:W1110 15:22:35.359000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 4430401285575172477
-[rank0]:W1110 15:22:35.360000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 4430401285575172477
-[rank0]:W1110 15:22:35.361000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 4430401285575172477
-[rank0]:W1110 15:22:35.362000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 4430401285575172477
-[rank0]:W1110 15:22:35.363000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 4430401285575172477
-[rank0]:W1110 15:22:35.364000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 4430401285575172477
-[rank0]:W1110 15:22:35.365000 103388 site-packages/torch/distributed/distributed_c10d.py:2632] _object_to_tensor size: 36 hash value: 7391278077284934289
-[rank0]:W1110 15:22:35.368000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 3767410133624591202
-[rank0]:W1110 15:22:35.369000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 3767410133624591202
-[rank0]:W1110 15:22:35.370000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 3767410133624591202
-[rank0]:W1110 15:22:35.372000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 3767410133624591202
-[rank0]:W1110 15:22:35.373000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 3767410133624591202
-[rank0]:W1110 15:22:35.374000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 3767410133624591202
-[rank0]:W1110 15:22:35.375000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 3767410133624591202
-[rank0]:W1110 15:22:35.376000 103388 site-packages/torch/distributed/distributed_c10d.py:2644] _tensor_to_object size: 36 hash value: 3767410133624591202
-2025-11-10:15:22:42 INFO     [loggers.evaluation_tracker:209] Saving results aggregated
-2025-11-10:15:22:42 INFO     [loggers.evaluation_tracker:298] Saving per-sample results for: minerva_math_algebra
-2025-11-10:15:22:42 INFO     [loggers.evaluation_tracker:298] Saving per-sample results for: minerva_math_counting_and_prob
-2025-11-10:15:22:43 INFO     [loggers.evaluation_tracker:298] Saving per-sample results for: minerva_math_geometry
-2025-11-10:15:22:43 INFO     [loggers.evaluation_tracker:298] Saving per-sample results for: minerva_math_intermediate_algebra
-2025-11-10:15:22:43 INFO     [loggers.evaluation_tracker:298] Saving per-sample results for: minerva_math_num_theory
-2025-11-10:15:22:43 INFO     [loggers.evaluation_tracker:298] Saving per-sample results for: minerva_math_prealgebra
-2025-11-10:15:22:43 INFO     [loggers.evaluation_tracker:298] Saving per-sample results for: minerva_math_precalc
-[rank0]:[W1110 15:22:44.153137190 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())

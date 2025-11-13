@@ -1,286 +1,0 @@
-The following values were not passed to `accelerate launch` and had defaults used instead:
-		More than one GPU was found, enabling multi-GPU training.
-		If this was unintended please pass in `--num_processes=1`.
-	`--mixed_precision` was set to a value of `'no'`
-	`--dynamo_backend` was set to a value of `'no'`
-To avoid this warning pass in values for each of the problematic parameters or run `accelerate config`.
-2025-11-10:14:09:16 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:14:09:16 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:14:09:16 INFO     [__main__:450] Selected Tasks: ['humaneval_instruct']
-2025-11-10:14:09:16 INFO     [__main__:450] Selected Tasks: ['humaneval_instruct']
-2025-11-10:14:09:16 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-2025-11-10:14:09:16 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 32, 'steps': 32, 'block_length': 32, 'cfg': 0.0, 'confidence_eos_eot_inf':
-        True}
-2025-11-10:14:09:16 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-2025-11-10:14:09:16 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 32, 'steps': 32, 'block_length': 32, 'cfg': 0.0, 'confidence_eos_eot_inf':
-        True}
-[W1110 14:09:16.379757494 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[W1110 14:09:16.379783359 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-2025-11-10:14:09:17 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:14:09:17 INFO     [__main__:450] Selected Tasks: ['humaneval_instruct']
-2025-11-10:14:09:17 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-2025-11-10:14:09:17 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 32, 'steps': 32, 'block_length': 32, 'cfg': 0.0, 'confidence_eos_eot_inf':
-        True}
-[W1110 14:09:17.759790862 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-2025-11-10:14:09:17 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:14:09:17 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:14:09:17 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:14:09:17 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:14:09:17 INFO     [__main__:450] Selected Tasks: ['humaneval_instruct']
-2025-11-10:14:09:17 INFO     [__main__:450] Selected Tasks: ['humaneval_instruct']
-2025-11-10:14:09:17 WARNING  [__main__:369]  --limit SHOULD ONLY BE USED FOR TESTING.REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
-2025-11-10:14:09:17 INFO     [__main__:450] Selected Tasks: ['humaneval_instruct']
-2025-11-10:14:09:17 INFO     [__main__:450] Selected Tasks: ['humaneval_instruct']
-2025-11-10:14:09:17 INFO     [__main__:450] Selected Tasks: ['humaneval_instruct']
-2025-11-10:14:09:17 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-2025-11-10:14:09:17 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 32, 'steps': 32, 'block_length': 32, 'cfg': 0.0, 'confidence_eos_eot_inf':
-        True}
-2025-11-10:14:09:17 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-2025-11-10:14:09:17 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 32, 'steps': 32, 'block_length': 32, 'cfg': 0.0, 'confidence_eos_eot_inf':
-        True}
-2025-11-10:14:09:17 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-2025-11-10:14:09:17 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 32, 'steps': 32, 'block_length': 32, 'cfg': 0.0, 'confidence_eos_eot_inf':
-        True}
-2025-11-10:14:09:17 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-2025-11-10:14:09:17 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 32, 'steps': 32, 'block_length': 32, 'cfg': 0.0, 'confidence_eos_eot_inf':
-        True}
-2025-11-10:14:09:17 INFO     [evaluator:202] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
-[W1110 14:09:17.792660664 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-2025-11-10:14:09:17 INFO     [evaluator:240] Initializing llada model, with arguments: {'pretrained': '/mnt/lustrenew/mllm_aligned/shared/models/huggingface/GSAI-ML/LLaDA-8B-Instruct',
-        'is_check_greedy': False, 'mc_num': 1, 'max_new_tokens': 32, 'steps': 32, 'block_length': 32, 'cfg': 0.0, 'confidence_eos_eot_inf':
-        True}
-[W1110 14:09:17.793919471 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[W1110 14:09:17.795186961 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[W1110 14:09:17.795657727 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[W1110 14:09:17.797588465 Utils.hpp:135] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-2025-11-10:14:09:17 WARNING  [accelerate.utils.other:441] Detected kernel version 3.10.0, which is below the recommended minimum of 5.5.0; this can cause the process to hang. It is recommended to upgrade the kernel to the minimum version or higher.
-Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.20s/it]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.26s/it]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.29s/it]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.29s/it]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.29s/it]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.29s/it]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.25s/it]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:11,  2.29s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:10,  2.58s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:11,  2.80s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:11,  2.81s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:11,  2.79s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:11,  2.80s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:11,  2.81s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:11,  2.81s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:11,  2.81s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:07<00:07,  2.52s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:07<00:07,  2.64s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:07<00:07,  2.64s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:07<00:07,  2.63s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:07<00:07,  2.64s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:07<00:07,  2.64s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:07<00:07,  2.64s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:07<00:08,  2.70s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:10<00:05,  2.57s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:10<00:05,  2.74s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:10<00:05,  2.74s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:10<00:05,  2.74s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:10<00:05,  2.74s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:10<00:05,  2.77s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:10<00:05,  2.78s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:10<00:05,  2.74s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:12<00:02,  2.49s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:12<00:02,  2.52s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:12<00:02,  2.58s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:12<00:02,  2.54s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:12<00:02,  2.54s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:12<00:02,  2.56s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:12<00:02,  2.54s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:12<00:02,  2.56s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:14<00:00,  2.30s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:14<00:00,  2.47s/it]
-Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.40s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.40s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.43s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.40s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.52s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.52s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.41s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.52s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.41s/it]
-
-Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.52s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.52s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.42s/it]
-
-
-Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.51s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:15<00:00,  2.52s/it]
-
-[rank7]:[W1110 14:09:36.611072608 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[rank3]:[W1110 14:09:36.611251392 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[rank5]:[W1110 14:09:36.624480838 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[rank2]:[W1110 14:09:36.640610674 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[rank6]:[W1110 14:09:36.645246551 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[rank4]:[W1110 14:09:36.645354572 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[rank0]:[W1110 14:09:36.645981758 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-[rank1]:[W1110 14:09:36.646352979 Utils.hpp:110] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
-Downloading builder script: 0.00B [00:00, ?B/s]Downloading builder script: 1.73kB [00:00, 5.12kB/s]Downloading builder script: 9.18kB [00:00, 27.0kB/s]
-Downloading builder script: 0.00B [00:00, ?B/s]Downloading builder script: 9.18kB [00:00, 21.6MB/s]
-Downloading extra modules: 0.00B [00:00, ?B/s]Downloading extra modules: 6.10kB [00:00, 17.9MB/s]
-Downloading builder script: 0.00B [00:00, ?B/s]Downloading builder script: 9.18kB [00:00, 19.3MB/s]
-Downloading builder script: 0.00B [00:00, ?B/s]Downloading builder script: 9.18kB [00:00, 15.6MB/s]
-Downloading extra modules: 0.00B [00:00, ?B/s]Downloading extra modules: 6.10kB [00:00, 15.0MB/s]
-2025-11-10:14:09:49 INFO     [evaluator:305] humaneval_instruct: Using gen_kwargs: {'until': ['\nclass', '\ndef', '\n#', '\nif', '\nprint'], 'max_gen_toks': 1024, 'do_sample': False}
-2025-11-10:14:09:49 INFO     [evaluator:320] num_fewshot has been set to 0 for humaneval_instruct in its config. Manual configuration will be ignored.
-2025-11-10:14:09:49 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:14:09:49 INFO     [api.task:434] Building contexts for humaneval_instruct on rank 3...
-  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 826.22it/s]
-2025-11-10:14:09:49 INFO     [evaluator:305] humaneval_instruct: Using gen_kwargs: {'until': ['\nclass', '\ndef', '\n#', '\nif', '\nprint'], 'max_gen_toks': 1024, 'do_sample': False}
-2025-11-10:14:09:49 INFO     [evaluator:320] num_fewshot has been set to 0 for humaneval_instruct in its config. Manual configuration will be ignored.
-2025-11-10:14:09:49 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:14:09:49 INFO     [api.task:434] Building contexts for humaneval_instruct on rank 4...
-  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 840.86it/s]
-2025-11-10:14:09:49 INFO     [evaluator:305] humaneval_instruct: Using gen_kwargs: {'until': ['\nclass', '\ndef', '\n#', '\nif', '\nprint'], 'max_gen_toks': 1024, 'do_sample': False}
-2025-11-10:14:09:49 INFO     [evaluator:320] num_fewshot has been set to 0 for humaneval_instruct in its config. Manual configuration will be ignored.
-2025-11-10:14:09:49 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:14:09:49 INFO     [api.task:434] Building contexts for humaneval_instruct on rank 6...
-  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 830.67it/s]
-2025-11-10:14:09:49 INFO     [evaluator:305] humaneval_instruct: Using gen_kwargs: {'until': ['\nclass', '\ndef', '\n#', '\nif', '\nprint'], 'max_gen_toks': 1024, 'do_sample': False}
-2025-11-10:14:09:49 INFO     [evaluator:320] num_fewshot has been set to 0 for humaneval_instruct in its config. Manual configuration will be ignored.
-2025-11-10:14:09:49 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:14:09:49 INFO     [api.task:434] Building contexts for humaneval_instruct on rank 0...
-  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 833.29it/s]
-2025-11-10:14:09:50 INFO     [evaluator:305] humaneval_instruct: Using gen_kwargs: {'until': ['\nclass', '\ndef', '\n#', '\nif', '\nprint'], 'max_gen_toks': 1024, 'do_sample': False}
-2025-11-10:14:09:50 INFO     [evaluator:320] num_fewshot has been set to 0 for humaneval_instruct in its config. Manual configuration will be ignored.
-2025-11-10:14:09:50 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:14:09:50 INFO     [api.task:434] Building contexts for humaneval_instruct on rank 1...
-  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 841.54it/s]
-2025-11-10:14:09:50 INFO     [evaluator:305] humaneval_instruct: Using gen_kwargs: {'until': ['\nclass', '\ndef', '\n#', '\nif', '\nprint'], 'max_gen_toks': 1024, 'do_sample': False}
-2025-11-10:14:09:50 INFO     [evaluator:320] num_fewshot has been set to 0 for humaneval_instruct in its config. Manual configuration will be ignored.
-2025-11-10:14:09:50 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:14:09:50 INFO     [api.task:434] Building contexts for humaneval_instruct on rank 5...
-  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 844.72it/s]
-2025-11-10:14:09:50 INFO     [evaluator:305] humaneval_instruct: Using gen_kwargs: {'until': ['\nclass', '\ndef', '\n#', '\nif', '\nprint'], 'max_gen_toks': 1024, 'do_sample': False}
-2025-11-10:14:09:50 INFO     [evaluator:320] num_fewshot has been set to 0 for humaneval_instruct in its config. Manual configuration will be ignored.
-2025-11-10:14:09:50 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:14:09:50 INFO     [api.task:434] Building contexts for humaneval_instruct on rank 7...
-  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 835.10it/s]
-2025-11-10:14:09:51 INFO     [evaluator:305] humaneval_instruct: Using gen_kwargs: {'until': ['\nclass', '\ndef', '\n#', '\nif', '\nprint'], 'max_gen_toks': 1024, 'do_sample': False}
-2025-11-10:14:09:51 INFO     [evaluator:320] num_fewshot has been set to 0 for humaneval_instruct in its config. Manual configuration will be ignored.
-2025-11-10:14:09:51 WARNING  [evaluator:480] Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details.
-2025-11-10:14:09:51 INFO     [api.task:434] Building contexts for humaneval_instruct on rank 2...
-  0%|          | 0/10 [00:00<?, ?it/s]100%|██████████| 10/10 [00:00<00:00, 836.22it/s]
-2025-11-10:14:09:51 INFO     [evaluator:574] Running generate_until requests
-2025-11-10:14:09:51 INFO     [evaluator:574] Running generate_until requests
-2025-11-10:14:09:51 INFO     [evaluator:574] Running generate_until requests
-2025-11-10:14:09:51 INFO     [evaluator:574] Running generate_until requests
-2025-11-10:14:09:51 INFO     [evaluator:574] Running generate_until requests
-2025-11-10:14:09:51 INFO     [evaluator:574] Running generate_until requests
-2025-11-10:14:09:51 INFO     [evaluator:574] Running generate_until requests
-2025-11-10:14:09:51 INFO     [evaluator:574] Running generate_until requests
-Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7efe79172710> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-2025-11-10:14:09:54 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7efe79172710> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Map:   0%|          | 0/10 [00:00<?, ? examples/s]Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7fe6e0122d40> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-2025-11-10:14:09:54 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7fe6e0122d40> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Map:   0%|          | 0/10 [00:00<?, ? examples/s]Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f89b017ed40> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-2025-11-10:14:09:54 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f89b017ed40> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Map:   0%|          | 0/10 [00:00<?, ? examples/s]Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f110706ed40> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-2025-11-10:14:09:54 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f110706ed40> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Map:   0%|          | 0/10 [00:00<?, ? examples/s]Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f2b7010ad40> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-2025-11-10:14:09:54 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f2b7010ad40> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7fbd61b8e710> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Map: 100%|██████████| 10/10 [00:00<00:00, 777.64 examples/s]Map:   0%|          | 0/10 [00:00<?, ? examples/s]2025-11-10:14:09:54 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7fbd61b8e710> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-
-Map:   0%|          | 0/10 [00:00<?, ? examples/s]Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f730de1a710> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Generating...:   0%|          | 0/10 [00:00<?, ?it/s]2025-11-10:14:09:54 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f730de1a710> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Map: 100%|██████████| 10/10 [00:00<00:00, 831.16 examples/s]Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f9c5c15e710> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-
-Map:   0%|          | 0/10 [00:00<?, ? examples/s]2025-11-10:14:09:54 WARNING  [datasets.fingerprint:258] Parameter 'function'=<function LLaDAEvalHarness.generate_until.<locals>._tokenize at 0x7f9c5c15e710> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
-Generating...:   0%|          | 0/10 [00:00<?, ?it/s]Map:   0%|          | 0/10 [00:00<?, ? examples/s]Map: 100%|██████████| 10/10 [00:00<00:00, 797.29 examples/s]
-Map: 100%|██████████| 10/10 [00:00<00:00, 862.55 examples/s]
-Generating...:   0%|          | 0/10 [00:00<?, ?it/s]Generating...:   0%|          | 0/10 [00:00<?, ?it/s]Map: 100%|██████████| 10/10 [00:00<00:00, 1002.39 examples/s]
-Map: 100%|██████████| 10/10 [00:00<00:00, 800.81 examples/s]Generating...:   0%|          | 0/10 [00:00<?, ?it/s]
-Generating...:   0%|          | 0/10 [00:00<?, ?it/s]Map: 100%|██████████| 10/10 [00:00<00:00, 822.54 examples/s]
-Map: 100%|██████████| 10/10 [00:00<00:00, 885.40 examples/s]
-Generating...:   0%|          | 0/10 [00:00<?, ?it/s]Generating...:   0%|          | 0/10 [00:00<?, ?it/s]Generating...:  10%|█         | 1/10 [00:02<00:20,  2.30s/it]Generating...:  10%|█         | 1/10 [00:02<00:20,  2.31s/it]Generating...:  10%|█         | 1/10 [00:02<00:20,  2.30s/it]Generating...:  10%|█         | 1/10 [00:02<00:20,  2.30s/it]Generating...:  10%|█         | 1/10 [00:02<00:20,  2.32s/it]Generating...:  10%|█         | 1/10 [00:02<00:20,  2.31s/it]Generating...:  10%|█         | 1/10 [00:02<00:20,  2.30s/it]Generating...:  10%|█         | 1/10 [00:02<00:20,  2.31s/it]Generating...:  20%|██        | 2/10 [00:03<00:14,  1.84s/it]Generating...:  20%|██        | 2/10 [00:03<00:14,  1.85s/it]Generating...:  20%|██        | 2/10 [00:03<00:14,  1.84s/it]Generating...:  20%|██        | 2/10 [00:03<00:14,  1.84s/it]Generating...:  20%|██        | 2/10 [00:03<00:14,  1.84s/it]Generating...:  20%|██        | 2/10 [00:03<00:14,  1.84s/it]Generating...:  20%|██        | 2/10 [00:03<00:14,  1.84s/it]Generating...:  20%|██        | 2/10 [00:03<00:14,  1.84s/it]Generating...:  30%|███       | 3/10 [00:05<00:11,  1.70s/it]Generating...:  30%|███       | 3/10 [00:05<00:11,  1.70s/it]Generating...:  30%|███       | 3/10 [00:05<00:11,  1.70s/it]Generating...:  30%|███       | 3/10 [00:05<00:11,  1.70s/it]Generating...:  30%|███       | 3/10 [00:05<00:11,  1.70s/it]Generating...:  30%|███       | 3/10 [00:05<00:11,  1.70s/it]Generating...:  30%|███       | 3/10 [00:05<00:11,  1.70s/it]Generating...:  30%|███       | 3/10 [00:05<00:11,  1.70s/it]Generating...:  40%|████      | 4/10 [00:06<00:08,  1.50s/it]Generating...:  40%|████      | 4/10 [00:06<00:08,  1.50s/it]Generating...:  40%|████      | 4/10 [00:06<00:08,  1.50s/it]Generating...:  40%|████      | 4/10 [00:06<00:09,  1.50s/it]Generating...:  40%|████      | 4/10 [00:06<00:09,  1.50s/it]Generating...:  40%|████      | 4/10 [00:06<00:09,  1.50s/it]Generating...:  40%|████      | 4/10 [00:06<00:09,  1.50s/it]Generating...:  40%|████      | 4/10 [00:06<00:09,  1.50s/it]Generating...:  50%|█████     | 5/10 [00:08<00:08,  1.68s/it]Generating...:  50%|█████     | 5/10 [00:08<00:08,  1.68s/it]Generating...:  50%|█████     | 5/10 [00:08<00:08,  1.68s/it]Generating...:  50%|█████     | 5/10 [00:08<00:08,  1.68s/it]Generating...:  50%|█████     | 5/10 [00:08<00:08,  1.68s/it]Generating...:  50%|█████     | 5/10 [00:08<00:08,  1.68s/it]Generating...:  50%|█████     | 5/10 [00:08<00:08,  1.68s/it]Generating...:  50%|█████     | 5/10 [00:08<00:08,  1.68s/it]Generating...:  60%|██████    | 6/10 [00:10<00:06,  1.63s/it]Generating...:  60%|██████    | 6/10 [00:10<00:06,  1.63s/it]Generating...:  60%|██████    | 6/10 [00:10<00:06,  1.63s/it]Generating...:  60%|██████    | 6/10 [00:10<00:06,  1.63s/it]Generating...:  60%|██████    | 6/10 [00:10<00:06,  1.63s/it]Generating...:  60%|██████    | 6/10 [00:10<00:06,  1.63s/it]Generating...:  60%|██████    | 6/10 [00:10<00:06,  1.63s/it]Generating...:  60%|██████    | 6/10 [00:10<00:06,  1.63s/it]Generating...:  70%|███████   | 7/10 [00:11<00:04,  1.50s/it]Generating...:  70%|███████   | 7/10 [00:11<00:04,  1.50s/it]Generating...:  70%|███████   | 7/10 [00:11<00:04,  1.50s/it]Generating...:  70%|███████   | 7/10 [00:11<00:04,  1.50s/it]Generating...:  70%|███████   | 7/10 [00:11<00:04,  1.50s/it]Generating...:  70%|███████   | 7/10 [00:11<00:04,  1.50s/it]Generating...:  70%|███████   | 7/10 [00:11<00:04,  1.50s/it]Generating...:  70%|███████   | 7/10 [00:11<00:04,  1.50s/it]Generating...:  80%|████████  | 8/10 [00:12<00:02,  1.42s/it]Generating...:  80%|████████  | 8/10 [00:12<00:02,  1.42s/it]Generating...:  80%|████████  | 8/10 [00:12<00:02,  1.42s/it]Generating...:  80%|████████  | 8/10 [00:12<00:02,  1.42s/it]Generating...:  80%|████████  | 8/10 [00:12<00:02,  1.42s/it]Generating...:  80%|████████  | 8/10 [00:12<00:02,  1.42s/it]Generating...:  80%|████████  | 8/10 [00:12<00:02,  1.42s/it]Generating...:  80%|████████  | 8/10 [00:12<00:02,  1.42s/it]Generating...:  90%|█████████ | 9/10 [00:14<00:01,  1.68s/it]Generating...:  90%|█████████ | 9/10 [00:14<00:01,  1.68s/it]Generating...:  90%|█████████ | 9/10 [00:14<00:01,  1.68s/it]Generating...:  90%|█████████ | 9/10 [00:14<00:01,  1.68s/it]Generating...:  90%|█████████ | 9/10 [00:14<00:01,  1.68s/it]Generating...:  90%|█████████ | 9/10 [00:14<00:01,  1.68s/it]Generating...:  90%|█████████ | 9/10 [00:14<00:01,  1.68s/it]Generating...:  90%|█████████ | 9/10 [00:14<00:01,  1.68s/it]Generating...: 100%|██████████| 10/10 [00:17<00:00,  1.84s/it]Generating...: 100%|██████████| 10/10 [00:17<00:00,  1.84s/it]Generating...: 100%|██████████| 10/10 [00:17<00:00,  1.84s/it]Generating...: 100%|██████████| 10/10 [00:17<00:00,  1.84s/it]Generating...: 100%|██████████| 10/10 [00:17<00:00,  1.84s/it]Generating...: 100%|██████████| 10/10 [00:17<00:00,  1.84s/it]Generating...: 100%|██████████| 10/10 [00:17<00:00,  1.84s/it]Generating...: 100%|██████████| 10/10 [00:17<00:00,  1.84s/it]Generating...: 100%|██████████| 10/10 [00:17<00:00,  1.70s/it]Generating...: 100%|██████████| 10/10 [00:17<00:00,  1.70s/it]Generating...: 100%|██████████| 10/10 [00:17<00:00,  1.70s/it]Generating...: 100%|██████████| 10/10 [00:17<00:00,  1.70s/it]Generating...: 100%|██████████| 10/10 [00:17<00:00,  1.70s/it]Generating...: 100%|██████████| 10/10 [00:17<00:00,  1.70s/it]Generating...: 100%|██████████| 10/10 [00:17<00:00,  1.70s/it]Generating...: 100%|██████████| 10/10 [00:17<00:00,  1.70s/it]
-
-
-
-
-
-
-
-[rank7]: Traceback (most recent call last):
-[rank7]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/pipelines/llada/eval.py", line 317, in <module>
-[rank7]:     cli_evaluate()
-[rank7]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/__main__.py", line 459, in cli_evaluate
-[rank7]:     results = evaluator.simple_evaluate(
-[rank7]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/utils.py", line 458, in _wrapper
-[rank7]:     return fn(*args, **kwargs)
-[rank7]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/evaluator.py", line 357, in simple_evaluate
-[rank7]:     results = evaluate(
-[rank7]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/utils.py", line 458, in _wrapper
-[rank7]:     return fn(*args, **kwargs)
-[rank7]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/evaluator.py", line 631, in evaluate
-[rank7]:     metrics = task.process_results(
-[rank7]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/api/task.py", line 1726, in process_results
-[rank7]:     result_score = self._metric_fn_list[metric](
-[rank7]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/tasks/humaneval/utils.py", line 19, in pass_at_k
-[rank7]:     res = compute_.compute(
-[rank7]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/evaluate/module.py", line 481, in compute
-[rank7]:     os.remove(file_path)
-[rank7]: FileNotFoundError: [Errno 2] No such file or directory: '/mnt/petrelfs/fanyuyu/.cache/huggingface/metrics/code_eval/default/default_experiment-1-0.arrow'
-[rank2]: Traceback (most recent call last):
-[rank2]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/pipelines/llada/eval.py", line 317, in <module>
-[rank2]:     cli_evaluate()
-[rank2]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/__main__.py", line 459, in cli_evaluate
-[rank2]:     results = evaluator.simple_evaluate(
-[rank2]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/utils.py", line 458, in _wrapper
-[rank2]:     return fn(*args, **kwargs)
-[rank2]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/evaluator.py", line 357, in simple_evaluate
-[rank2]:     results = evaluate(
-[rank2]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/utils.py", line 458, in _wrapper
-[rank2]:     return fn(*args, **kwargs)
-[rank2]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/evaluator.py", line 631, in evaluate
-[rank2]:     metrics = task.process_results(
-[rank2]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/api/task.py", line 1726, in process_results
-[rank2]:     result_score = self._metric_fn_list[metric](
-[rank2]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/tasks/humaneval/utils.py", line 19, in pass_at_k
-[rank2]:     res = compute_.compute(
-[rank2]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/evaluate/module.py", line 481, in compute
-[rank2]:     os.remove(file_path)
-[rank2]: FileNotFoundError: [Errno 2] No such file or directory: '/mnt/petrelfs/fanyuyu/.cache/huggingface/metrics/code_eval/default/default_experiment-1-0.arrow'
-[rank4]: Traceback (most recent call last):
-[rank4]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/pipelines/llada/eval.py", line 317, in <module>
-[rank4]:     cli_evaluate()
-[rank4]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/__main__.py", line 459, in cli_evaluate
-[rank4]:     results = evaluator.simple_evaluate(
-[rank4]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/utils.py", line 458, in _wrapper
-[rank4]:     return fn(*args, **kwargs)
-[rank4]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/evaluator.py", line 357, in simple_evaluate
-[rank4]:     results = evaluate(
-[rank4]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/utils.py", line 458, in _wrapper
-[rank4]:     return fn(*args, **kwargs)
-[rank4]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/evaluator.py", line 631, in evaluate
-[rank4]:     metrics = task.process_results(
-[rank4]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/api/task.py", line 1726, in process_results
-[rank4]:     result_score = self._metric_fn_list[metric](
-[rank4]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/tasks/humaneval/utils.py", line 19, in pass_at_k
-[rank4]:     res = compute_.compute(
-[rank4]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/evaluate/module.py", line 456, in compute
-[rank4]:     self._finalize()
-[rank4]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/evaluate/module.py", line 406, in _finalize
-[rank4]:     raise ValueError(
-[rank4]: ValueError: Error in finalize: another evaluation module instance is already using the local cache file. Please specify an experiment_id to avoid collision between distributed evaluation module instances.
-[rank5]: Traceback (most recent call last):
-[rank5]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/pipelines/llada/eval.py", line 317, in <module>
-[rank5]:     cli_evaluate()
-[rank5]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/__main__.py", line 459, in cli_evaluate
-[rank5]:     results = evaluator.simple_evaluate(
-[rank5]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/utils.py", line 458, in _wrapper
-[rank5]:     return fn(*args, **kwargs)
-[rank5]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/evaluator.py", line 357, in simple_evaluate
-[rank5]:     results = evaluate(
-[rank5]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/utils.py", line 458, in _wrapper
-[rank5]:     return fn(*args, **kwargs)
-[rank5]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/evaluator.py", line 631, in evaluate
-[rank5]:     metrics = task.process_results(
-[rank5]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/api/task.py", line 1726, in process_results
-[rank5]:     result_score = self._metric_fn_list[metric](
-[rank5]:   File "/mnt/petrelfs/fanyuyu/fyy/dllm/lm-evaluation-harness/lm_eval/tasks/humaneval/utils.py", line 19, in pass_at_k
-[rank5]:     res = compute_.compute(
-[rank5]:   File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/evaluate/module.py", line 481, in compute
-[rank5]:     os.remove(file_path)
-[rank5]: FileNotFoundError: [Errno 2] No such file or directory: '/mnt/petrelfs/fanyuyu/.cache/huggingface/metrics/code_eval/default/default_experiment-1-0.arrow'
-W1110 14:10:14.793000 31034 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 31296 closing signal SIGTERM
-W1110 14:10:14.795000 31034 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 31297 closing signal SIGTERM
-W1110 14:10:14.797000 31034 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 31298 closing signal SIGTERM
-W1110 14:10:14.798000 31034 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 31300 closing signal SIGTERM
-W1110 14:10:14.808000 31034 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 31301 closing signal SIGTERM
-W1110 14:10:14.816000 31034 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 31302 closing signal SIGTERM
-W1110 14:10:14.819000 31034 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 31303 closing signal SIGTERM
-E1110 14:10:16.339000 31034 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 7 (pid: 31304) of binary: /mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/python3.10
-Traceback (most recent call last):
-  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/bin/accelerate", line 7, in <module>
-    sys.exit(main())
-  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/accelerate/commands/accelerate_cli.py", line 50, in main
-    args.func(args)
-  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/accelerate/commands/launch.py", line 1189, in launch_command
-    multi_gpu_launcher(args)
-  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/accelerate/commands/launch.py", line 815, in multi_gpu_launcher
-    distrib_run.run(args)
-  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
-    elastic_launch(
-  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
-    return launch_agent(self._config, self._entrypoint, list(args))
-  File "/mnt/petrelfs/fanyuyu/miniconda3/envs/vllm/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
-    raise ChildFailedError(
-torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
-============================================================
-/mnt/petrelfs/fanyuyu/fyy/dllm/dllm/pipelines/llada/eval.py FAILED
-------------------------------------------------------------
-Failures:
-  <NO_OTHER_FAILURES>
-------------------------------------------------------------
-Root Cause (first observed failure):
-[0]:
-  time      : 2025-11-10_14:10:14
-  host      : SH-IDCA1404-10-140-54-26
-  rank      : 7 (local_rank: 7)
-  exitcode  : 1 (pid: 31304)
-  error_file: <N/A>
-  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
-============================================================
