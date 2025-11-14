@@ -53,6 +53,21 @@ def compute_labels(x: torch.Tensor, attention_mask: torch.Tensor, mask_id: int):
     return {"B": B_i, "B_all": B_all, "R": R_i, "L": L_vals}
 
 
+def choose_extract_steps(effective_steps: int, num_extract: int) -> list[int]:
+    """
+    Sample num_extract timestamps uniformly from [1, effective_steps-1].
+    No manual final-step enforcement.
+    """
+    if num_extract <= 0:
+        return []
+
+    # avoid step 0 because that is trivial prefill
+    candidates = list(range(1, effective_steps))
+    num_extract = min(num_extract, len(candidates))
+
+    steps = np.random.choice(candidates, size=num_extract, replace=False)
+    return sorted(int(s) for s in steps)
+
 
 # ---------------------- Core Generation & Probing -------------------- #
 
@@ -77,6 +92,7 @@ def generate_labelled_data(
     stochastic_transfer = kwargs.get("stochastic_transfer", config.stochastic_transfer)
     return_dict_in_generate = kwargs.get("return_dict_in_generate", config.return_dict_in_generate)
     confidence_eos_eot_inf = kwargs.get("confidence_eos_eot_inf", config.confidence_eos_eot_inf)
+    num_extract_steps = kwargs.get("num_extract_steps", getattr(config, "num_extract_steps", 1))
 
     mask_id = generator_instance.tokenizer.mask_token_id
     eos_id = generator_instance.tokenizer.eos_token_id
@@ -101,7 +117,9 @@ def generate_labelled_data(
 
     histories = [x.clone()] if return_dict_in_generate else None
     probe_layers = probe_layers or [1, 8, 16, 24]
-    collected = {lid: [] for lid in probe_layers}
+    
+    flat_hidden = {lid: [] for lid in probe_layers}
+    flat_labels = {k: [] for k in ["B", "B_all", "R", "L"]}
 
     # ----- diffusion steps -----
     num_transfer_tokens = get_num_transfer_tokens(
@@ -111,6 +129,9 @@ def generate_labelled_data(
         stochastic=stochastic_transfer,
     )
     effective_steps = num_transfer_tokens.size(1)
+
+    extract_steps = choose_extract_steps(effective_steps, num_extract_steps)
+    probe_steps: list[int] = []
 
     for step_idx in range(effective_steps):
         mask_index = x == mask_id
@@ -151,90 +172,101 @@ def generate_labelled_data(
             _, idx = torch.topk(confidence[j], k=num_transfer_tokens[j, step_idx])
             transfer_index[j, idx] = True
 
-        if step_idx == effective_steps - 10:
-            for layer_id in probe_layers:
-                collected[layer_id].append(hidden_states[layer_id].detach().cpu())
-            labels = compute_labels(x, attention_mask, mask_id)
-            break
+        # ---- snapshot at selected timesteps ----
         
+        if step_idx in extract_steps:
+            labels = compute_labels(x, attention_mask, mask_id)
+            assert x.size(0) == 1
+
+            # flatten labels
+            for key in flat_labels:
+                flat_labels[key].append(labels[key].view(-1).detach().cpu())
+
+            # flatten hidden states
+            for layer_id in probe_layers:
+                h = hidden_states[layer_id]      # (1, T, D)
+                T, D = h.size(1), h.size(2)
+                flat_hidden[layer_id].append(h.view(T, D).detach().cpu())
+
+            probe_steps.append(step_idx)
+            if len(probe_steps) == len(extract_steps):
+                break
+
+        # update x for next diffusion step
         x[transfer_index] = x0[transfer_index]
         if histories is not None:
             histories.append(x.clone())
 
+    if not probe_steps:
+        raise RuntimeError("No extraction steps were collected. Check num_extract_steps / extract_steps logic.")
 
-    # concatenate all collected batches
+    # ---- concatenate flattened outputs ----
+    labels_agg = {
+        key: torch.cat(tensors, dim=0) for key, tensors in flat_labels.items()
+    }  # each: (N_tokens,)
+    hidden_agg = {
+        lid: torch.cat(tensors, dim=0) for lid, tensors in flat_hidden.items()
+    }  # each: (N_tokens, D)
+
     probe_data = {
-        "hidden_states": {lid: torch.cat(collected[lid], dim=0) for lid in probe_layers},
-        "labels": labels,
+        "hidden_states": hidden_agg,
+        "labels": labels_agg,
         "steps": steps,
         "max_new_tokens": max_new_tokens,
+        "eff_steps": probe_steps,  # list[int]
     }
+
     output = GeneratorOutput(sequences=x, histories=histories) if return_dict_in_generate else x
     return output, probe_data
 
 
 # ---------------------- Saving Based on Hierarchy -------------------- #
-
-def save_probe_data_grouped(probe_data, model_tag, dataset_tag):
-    """Save one generation-config's results into layer-based .pt files."""
+def save_probe_data_grouped(probe_data, model_tag, dataset_tag, split_idx):
     steps = probe_data["steps"]
     L_len = probe_data["max_new_tokens"]
     labels = probe_data["labels"]
-    num_samples = probe_data.get("num_samples", None)
-    deduped_L = probe_data.get("deduped_L", None)
+    eff_steps = probe_data.get("eff_steps", None)
 
     for layer_id, h in probe_data["hidden_states"].items():
-        layer_dir = f"probe_data/{model_tag}/{dataset_tag}/layer{layer_id:02d}/step{steps:03d}"
-        os.makedirs(layer_dir, exist_ok=True)
-        save_path = os.path.join(layer_dir, f"L{L_len}.pt")
 
-        # save tensor data
+        # NEW DIRECTORY STRUCTURE (no step folder)
+        layer_dir = f"/mnt/lustrenew/mllm_safety-shared/fanyuyu/probe_data/{model_tag}/{dataset_tag}/layer{layer_id:02d}"
+        os.makedirs(layer_dir, exist_ok=True)
+
+        # NEW FILE NAME FORMAT
+        save_path = os.path.join(
+            layer_dir,
+            f"L{L_len}_step{steps}_split{split_idx:02d}.pt"
+        )
+
         torch.save(
             {
-                "hidden_states": h.numpy(),                      # (N_tokens, d)
-                "B":          labels["B"].cpu().numpy(),         # (N_tokens,)
-                "B_all":      labels["B_all"].cpu().numpy(),     # (N_tokens,)
-                "R":          labels["R"].cpu().numpy(),         # (N_tokens,)
-                "L":          labels["L"].cpu().numpy(),         # (N_tokens,)
+                "hidden_states": h.to(torch.float32).cpu().numpy(),
+                "B": labels["B"].cpu().numpy(),
+                "B_all": labels["B_all"].cpu().numpy(),
+                "R": labels["R"].cpu().numpy(),
+                "L": labels["L"].cpu().numpy(),
+                "steps": steps,
+                "L_len": L_len,
+                "eff_steps": eff_steps,
+                "split_idx": split_idx,
             },
             save_path,
         )
 
-        # write to meta index
+        # NEW META INDEX FILE (still appended)
         meta_path = os.path.join(os.path.dirname(layer_dir), "meta_index.jsonl")
-        entry = {"layer": layer_id, "step": steps, "L": L_len, "path": save_path}
-        with open(meta_path, "a") as f:
-            f.write(json.dumps(entry) + "\n")
-
-        # write summary metadata
-        summary_path = os.path.join(os.path.dirname(layer_dir), "meta_summary.json")
-
-        summary_entry = {
+        entry = {
             "layer": layer_id,
             "steps": steps,
             "L": L_len,
+            "eff_steps": eff_steps,
+            "split": split_idx,
+            "path": save_path
         }
-        if num_samples is not None:
-            summary_entry["num_samples"] = num_samples
-        if deduped_L is not None:
-            summary_entry["deduped_L"] = deduped_L
+        with open(meta_path, "a") as f:
+            f.write(json.dumps(entry) + "\n")
 
-        # append entry to JSON list
-        if os.path.exists(summary_path):
-            with open(summary_path, "r") as f:
-                try:
-                    existing = json.load(f)
-                    if not isinstance(existing, list):
-                        existing = [existing]
-                except json.JSONDecodeError:
-                    existing = []
-        else:
-            existing = []
-
-        existing.append(summary_entry)
-
-        with open(summary_path, "w") as f:
-            json.dump(existing, f, indent=2)
 
 if __name__ == "__main__":
     import transformers
@@ -247,9 +279,14 @@ if __name__ == "__main__":
     @dataclass
     class ScriptArguments:
         model_name_or_path: str = "GSAI-ML/LLaDA-8B-Instruct"
+        dataset_name: str = "openai/gsm8k"
+        dataset_config: str = "main"
+        dataset_split: str = "test"
+        model_tag: str = "llada_instruct"
         seed: int = 42
-        visualize: bool = True
         dtype: str = "float32"
+        split_idx: int = 0
+        num_splits: int = 1
 
         def __post_init__(self):
             self.model_name_or_path = dllm.utils.resolve_with_base_env(
@@ -262,9 +299,7 @@ if __name__ == "__main__":
         max_new_tokens: int = 1024
         temperature: float = 0.0
         remasking: str = "low_confidence"
-
-    start = 0
-    end = 300
+        num_extract_steps: int = 4   # collect 4 diffusion timesteps
 
     # ----------------------- Initialization ----------------------- #
     parser = transformers.HfArgumentParser((ScriptArguments, GeneratorConfig))
@@ -277,17 +312,35 @@ if __name__ == "__main__":
     generator = llada.LLaDAGenerator(model=model, tokenizer=tokenizer)
 
     # ----------------------- Dataset load -------------------------- #
-    dataset = load_dataset("openai/gsm8k", "main")["train"]
-    probe_layers = [1, 8, 16, 24]
-    collected_batches = {lid: [] for lid in probe_layers}
-    collected_labels = []  # store labels per sample
+    if script_args.dataset_config:
+        dataset = load_dataset(
+            script_args.dataset_name, script_args.dataset_config
+        )[script_args.dataset_split]
+    else:
+        dataset = load_dataset(script_args.dataset_name)[script_args.dataset_split]
 
-    print(f"[Info] Starting probe extraction for {len(dataset)} GSM8K samples...")
+    probe_layers = [1, 8, 16, 24]
+
+    # ---- determine split ----
+    total = len(dataset)
+    chunk = math.ceil(total / script_args.num_splits)
+    start = script_args.split_idx * chunk
+    end   = min((script_args.split_idx + 1) * chunk, total)
+
+    print(f"[Split] Processing samples {start} → {end} (split {script_args.split_idx}/{script_args.num_splits})")
     subset = dataset.select(range(start, end))
+
+    # ============================================================
+    #  MAIN EXTRACTION LOOP (AGGREGATED)
+    # ============================================================
+    agg_hidden = {lid: [] for lid in probe_layers}
+    agg_labels = {k: [] for k in ["B", "B_all", "R", "L"]}
+    agg_eff_steps = []
+
     for idx, sample in enumerate(tqdm(subset, desc="Extracting probe data", dynamic_ncols=True)):
         question = sample["question"]
-        message = [{"role": "user", "content": question}]
-        inputs = [tokenizer.apply_chat_template(message, add_generation_prompt=True, tokenize=True)]
+        msg = [{"role": "user", "content": question}]
+        inputs = [tokenizer.apply_chat_template(msg, add_generation_prompt=True, tokenize=True)]
 
         output, probe_data = generate_labelled_data(
             generator_instance=generator,
@@ -296,70 +349,46 @@ if __name__ == "__main__":
             probe_layers=probe_layers,
             return_dict_in_generate=True,
         )
+        # --------------------------
+        # ACCUMULATE (NOT SAVE YET)
+        # --------------------------
+        for key in agg_labels:
+            agg_labels[key].append(probe_data["labels"][key])  # shape: (N_tokens_sample,)
 
-        # (Optional) decode occasionally to avoid slowdown
+        for lid in probe_layers:
+            agg_hidden[lid].append(probe_data["hidden_states"][lid])  # shape: (N_tokens_sample, D)
+
+        agg_eff_steps.extend(probe_data["eff_steps"])
+
         if (idx + 1) % 50 == 0:
             decoded = tokenizer.decode(output.sequences[0])
-            tqdm.write(f"[{idx+1}] {decoded[:200]}...")  # use tqdm.write instead of print
+            tqdm.write(f"[{idx+1}] {decoded[:200]} ...")
 
-        # accumulate results
-        for layer_id in probe_layers:
-            collected_batches[layer_id].append(probe_data["hidden_states"][layer_id].cpu())
-        collected_labels.append(probe_data["labels"])
+    # ============================================================
+    #  CONCATENATE ALL SAMPLES & SAVE
+    # ============================================================
 
-    # ----------------------- Save grouped results ----------------------- #
-    print("[Info] Flattening and saving probe data...")
+    print("\n[Info] Concatenating and saving aggregated results...")
 
-    # Initialize result container
     probe_data_final = {
-        "hidden_states": {},   # per-layer flattened embeddings
-        "labels": {},          # global flattened labels
+        "hidden_states": {
+            lid: torch.cat(agg_hidden[lid], dim=0)
+            for lid in probe_layers
+        },
+        "labels": {
+            k: torch.cat(agg_labels[k], dim=0)
+            for k in agg_labels
+        },
+        "steps": gen_config.steps,
+        "max_new_tokens": gen_config.max_new_tokens,
+        "eff_steps": agg_eff_steps,
+        "num_samples": len(subset),
     }
-
-    # -------------------------------------------------------------------
-    # 1️⃣  Flatten labels ONCE (shared across all layers)
-    # -------------------------------------------------------------------
-    ref_layer = probe_layers[0]
-    labels_flat = {"B": [], "B_all": [], "R": [], "L": []}
-    sample_lengths = []  # store each sample's seq_len
-
-    for h_ref, lbl in zip(collected_batches[ref_layer], collected_labels):
-        seq_len = h_ref.shape[1]
-        lbl_cpu = {k: v[0, :seq_len].cpu() for k, v in lbl.items()}
-        valid_mask = lbl_cpu["L"] > 0
-        sample_lengths.append(int(valid_mask.sum()))  # record each sample's true length
-
-        for key in ["B", "B_all", "R", "L"]:
-            labels_flat[key].append(lbl_cpu[key][valid_mask])
-
-    # Concatenate all label segments across samples
-    for key in labels_flat:
-        labels_flat[key] = torch.cat(labels_flat[key], dim=0)
-
-    probe_data_final["labels"] = labels_flat
-    probe_data_final["num_samples"] = len(sample_lengths)
-    probe_data_final["deduped_L"] = sample_lengths
-
-
-    # -------------------------------------------------------------------
-    # 2️⃣  Flatten hidden states PER LAYER (aligned to label token order)
-    # -------------------------------------------------------------------
-    for layer_id in probe_layers:
-        flat_h_list = []
-        for h, lbl in zip(collected_batches[layer_id], collected_labels):
-            seq_len = h.shape[1]
-            valid_mask = lbl["L"][0, :seq_len].cpu() > 0
-            flat_h_list.append(h[0, valid_mask, :])
-        probe_data_final["hidden_states"][layer_id] = torch.cat(flat_h_list, dim=0)
-
-    # -------------------------------------------------------------------
-    # 3️⃣  Save metadata for reproducibility
-    # -------------------------------------------------------------------
-    probe_data_final["steps"] = gen_config.steps
-    probe_data_final["max_new_tokens"] = gen_config.max_new_tokens
     save_probe_data_grouped(
         probe_data_final,
-        model_tag="llada_instruct",
-        dataset_tag="gsm8k",
+        model_tag=script_args.model_tag,
+        dataset_tag=script_args.dataset_name.split("/")[-1],
+        split_idx=script_args.split_idx,
     )
-    print("[Done] Probe data extraction complete and saved.")
+
+    print("[Done] Probe data extraction complete.")
