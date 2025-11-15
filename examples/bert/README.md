@@ -160,10 +160,10 @@ bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-larg
 
 |                     | LAMBADA | GSM8K | CEVAL&#8209;valid | BBH | Minerva&#8209;Math | MMLU | Winogrande | HellaSwag | CMMLU |
 |:----------------|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|
-| [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0)(evaluated) | 49.3 | 5.9 | 25.0 | 17.9 | 3.1 | 26.1 | 49.7 | 41.0 | 24.3 |
-| [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0)(evaluated) | 46.3 | 17.1 | 24.6 | 25.1 | 3.8 | 33.5 | 53.1 | 45.0 | 27.5 |
-| [`Qwen1.5-0.5B`](https://huggingface.co/Qwen/Qwen1.5-0.5B)(reported) | 48.6 | 22.0 | 50.5 | 18.3 | 3.1 | 39.2 | 55.0 | 48.2 | 46.6 |
-| [`Qwen1.5-0.5B-chat`](https://huggingface.co/Qwen/Qwen1.5-0.5B-Chat)(reported) | / | 11.3 | 37.2 | / | / | 35.0 | / | / | / |
+| [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0)(evaluated) | 49.3 | 5.90 | 25.0 | 17.9 | 3.10 | 26.1 | 49.7 | 41.0 | 24.3 |
+| [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0)(evaluated) | 46.3 | 17.1 | 24.6 | 25.1 | 3.80 | 33.5 | 53.1 | 45.0 | 27.5 |
+| [`Qwen1.5-0.5B`](https://huggingface.co/Qwen/Qwen1.5-0.5B)(reported) | 48.6 | 22.0 | 50.5 | 18.3 | 3.10 | 39.2 | 55.0 | 48.2 | 46.6 |
+| [`Qwen1.5-0.5B-chat`](https://huggingface.co/Qwen/Qwen1.5-0.5B-Chat)(evaluated) | 41.2 | 11.3 | 37.2 | 18.2 | 2.14 | 35.0 | 52.0 | 36.9 | 32.2 |
 
 <!-- </div> -->
 
@@ -181,5 +181,6 @@ Results (evaluated) are evaluated using our framework, while results (reported) 
 <code>Qwen1.5-0.5B</code> results are from the 
 <a href="https://qwenlm.github.io/blog/qwen1.5/" style="color: #808080; text-decoration: none;">Qwen1.5 official blog</a>;
 <code>Qwen1.5-0.5B-chat</code> results are from the 
-<a href="https://huggingface.co/Qwen/Qwen2-0.5B-Instruct" style="color: #808080; text-decoration: none;">Qwen2-0.5B-Instruct model card</a>.
+For <code>Qwen1.5-0.5B-Chat</code>, since the original release only reported scores on GSM8K, C-Eval (valid), and MMLU, 
+we additionally evaluate the remaining benchmarks using our framework.
 </p>
