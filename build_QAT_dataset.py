@@ -84,7 +84,7 @@ Then continue with a concise explanation of how to reach it.
             entry = {
                 "id": qid,
                 "question": question,
-                "answer_key": answer,
+                "answer_key": extracted_answer,
                 "generated": text,
             }
             fout.write(json.dumps(entry) + "\n")
