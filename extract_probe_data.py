@@ -255,7 +255,7 @@ def save_probe_data_grouped(probe_data, model_tag, dataset_tag, split_idx):
         )
 
         # NEW META INDEX FILE (still appended)
-        meta_path = os.path.join(os.path.dirname(layer_dir), "meta_index.jsonl")
+        meta_path = os.path.join(layer_dir, "meta_index.jsonl")
         entry = {
             "layer": layer_id,
             "steps": steps,

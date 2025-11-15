@@ -16,7 +16,7 @@ job_count=0
 
 for ((i=0; i<NUM_SPLITS; i++)); do
 
-    if (( job_count >= MAX_JOBS )); then
+    if (( i >= MAX_JOBS )); then
         echo "Reached MAX_JOBS=$MAX_JOBS → stop submitting."
         break
     fi

@@ -3,7 +3,33 @@ import numpy as np
 from sklearn.linear_model import RidgeCV
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import r2_score, mean_absolute_error
+import matplotlib.pyplot as plt
 from glob import glob
+import random
+import time
+
+def plot_label_histograms(targets, out_path):
+    plt.figure(figsize=(12, 8))
+
+    plt.subplot(2, 2, 1)
+    plt.hist(targets["B"], bins=50)
+    plt.title("B")
+
+    plt.subplot(2, 2, 2)
+    plt.hist(targets["B_all"], bins=50)
+    plt.title("B_all")
+
+    plt.subplot(2, 2, 3)
+    plt.hist(targets["L"], bins=50)
+    plt.title("L")
+
+    plt.subplot(2, 2, 4)
+    plt.hist(targets["R"], bins=50)
+    plt.title("R")
+
+    plt.tight_layout()
+    plt.savefig(out_path)
+    plt.close()
 
 
 def load_layer_data(layer_dir: str):
@@ -15,8 +41,12 @@ def load_layer_data(layer_dir: str):
     records = [json.loads(line) for line in open(meta_path)]
     X_list, B_list,Ball_list, R_list, L_list = [], [], [], [], []
 
-    for rec in records:
+    sampled_records = random.sample(records, 5)
+    for rec in sampled_records:
+        t0 = time.time()
         data = torch.load(rec["path"], map_location="cpu", weights_only=False)
+        t1 = time.time()
+        print(f"Loaded {rec['path']} in {t1 - t0:.4f}s")
         h = torch.as_tensor(data["hidden_states"]).reshape(-1, data["hidden_states"].shape[-1])
         X_list.append(h)
         B_list.append(torch.as_tensor(data["B"]).reshape(-1, 1))
@@ -29,6 +59,7 @@ def load_layer_data(layer_dir: str):
     yBall = torch.cat(Ball_list, dim=0).numpy()
     yR = torch.cat(R_list, dim=0).numpy()
     yL = torch.cat(L_list, dim=0).numpy()
+    print("Finish loading")
 
     return X, {"B": yB, "B_all": yBall, "R": yR, "L": yL}
 
@@ -59,18 +90,36 @@ def main(layer_dir: str):
     print(f"=== Training probes for {layer_dir} ===")
     X, targets = load_layer_data(layer_dir)
 
-    # ---- 90/10 shuffle + split ----
+    layer_name = os.path.basename(layer_dir.rstrip("/"))
+    output_path = f"{layer_name}_visualization.png"
+
+    plot_label_histograms(targets, output_path)
+    print(f"Saved label histograms → {output_path}")
+
     N = X.shape[0]
     idx = np.random.permutation(N)
-    split = int(0.9 * N)
 
-    X_train = X[idx[:split]]
-    X_test  = X[idx[split:]]
+    # ---- limit dataset ----
+    TRAIN_MAX = 40000
+    TEST_MAX  = 4000
+
+    # ensure we don't overflow
+    train_end = min(TRAIN_MAX, N)
+    test_end  = min(TRAIN_MAX + TEST_MAX, N)
+
+    train_idx = idx[:train_end]
+    test_idx  = idx[train_end:test_end]
+
+    X_train = X[train_idx]
+    X_test  = X[test_idx]
+
+    print("Train:", X_train.shape)
+    print("Test :", X_test.shape)
 
     results = {}
     for name, y in targets.items():
-        y_train = y[idx[:split]]
-        y_test  = y[idx[split:]]
+        y_train = y[train_idx]
+        y_test  = y[test_idx]
 
         stats = train_ridge_probe(X_train, y_train, X_test, y_test)
         results[name] = stats
