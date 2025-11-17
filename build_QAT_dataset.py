@@ -1,5 +1,6 @@
 import os, json, torch, re
 from transformers import AutoTokenizer, AutoModelForCausalLM
+from tqdm import tqdm
 
 # ================================================================
 # Load model once globally
@@ -31,10 +32,8 @@ def build_answer_first_dataset(dataset, output_path: str, max_new_tokens: int = 
         Extract answer after '####', then generate:
         "Ans: <answer>\n\n<reasoning>"
     """
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-
     with open(output_path, "w") as fout:
-        for i, rec in enumerate(dataset):
+        for i, rec in enumerate(tqdm(dataset, desc="Generating answer-first dataset")):
             qid = rec.get("id", str(i))
             question = rec["question"]
             full_answer_text = rec["answer"]
@@ -79,7 +78,7 @@ Then continue with a concise explanation of how to reach it.
             generated_ids = output_ids[0][inputs["input_ids"].shape[1]:]
             text = tokenizer.decode(generated_ids, skip_special_tokens=True).strip()
             print(text)
-            breakpoint()
+            # breakpoint()
             # ---- Save result ----
             entry = {
                 "id": qid,

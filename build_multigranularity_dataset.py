@@ -2,6 +2,7 @@ import json
 import os
 from typing import List, Dict
 import datasets
+from tqdm import tqdm
 
 ###############################################
 # 1. Teacher model wrapper
@@ -50,8 +51,8 @@ def call_llm(prompt: str, max_new_tokens: int = 512, temperature: float = 0.2) -
     # 4. Decode and slice off the prompt part
     generated_ids = output_ids[0][inputs["input_ids"].shape[1]:]
     text = tokenizer.decode(generated_ids, skip_special_tokens=True).strip()
-    print(text)
-    breakpoint()
+    # print(text)
+    # breakpoint()
 
     return text
 
@@ -61,7 +62,7 @@ def call_llm(prompt: str, max_new_tokens: int = 512, temperature: float = 0.2) -
 
 GRANULARITY_SPECS = {
     32:  {"name": "MVA",        "instruction": "Provide ONLY `Ans: <value>` in ≤32 tokens."},
-    64:  {"name": "ANS+WHY",    "instruction": "Output `Ans: <value>. Why: <short clause>` (≤64 tokens)."},
+    64:  {"name": "ANS+WHY",    "instruction": "Output `<short clause>` followed by `Ans: <value>` at the very end (≤64 tokens)."},
     128: {"name": "BULLETS3",   "instruction": "Give exactly 3 bullets, each ≤20 tokens, ending with `Ans: <value>`."},
     256: {"name": "SHORT_COT",  "instruction": "Give a short reasoning ≤8 steps, then `Ans: <value>`."},
     512: {"name": "COT+VERIFY", "instruction": "Give detailed reasoning, 1-line verification, then `Ans: <value>`."},
@@ -83,6 +84,14 @@ def build_compression_prompt(question: str, answer: str, L: int) -> str:
             "- For this very small budget, provide **only** the final answer line.\n"
             "- Do not include any reasoning, explanation, or extra words.\n"
         )
+    
+    # special guidance for ANS+WHY format
+    ans_why_hint = ""
+    if L == 64:
+        ans_why_hint = (
+            "- Start with '<brief explanation>', then end with 'Ans: <value>'.\n"
+            "- Do NOT repeat 'Ans:' multiple times. It should appear ONLY ONCE at the very end.\n"
+        )
 
     return f"""
 You are generating an answer under a strict token budget.
@@ -98,7 +107,7 @@ TARGET FORMAT ({spec['name']}):
 
 RULES:
 - Must be ≤ {L} tokens.
-{small_budget_hint}- If reasoning or explanation is allowed, it should come **before** the final answer.
+{small_budget_hint}{ans_why_hint}- If reasoning or explanation is allowed, it should come **before** the final answer.
 - The final answer must appear exactly once, **at the end**, in the form `Ans: <value>`.
 - No apologies, no meta text, no repetition.
 - Avoid irrelevant or decorative content.
@@ -173,7 +182,7 @@ def build_dataset_from_hf(input_dataset: datasets.Dataset, output_path: str):
     # os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     with open(output_path, "w") as fout:
-        for i, rec in enumerate(input_dataset):
+        for i, rec in enumerate(tqdm(input_dataset, desc="Processing questions")):
             qid = rec.get("id", str(i))
             entry = build_entry(qid, rec["question"], rec["answer"])
             fout.write(json.dumps(entry) + "\n")
@@ -185,12 +194,23 @@ def build_dataset_from_hf(input_dataset: datasets.Dataset, output_path: str):
 ###############################################
 
 if __name__ == "__main__":
+    import argparse
     from datasets import load_dataset
+
+    parser = argparse.ArgumentParser(description="Build multi-granularity dataset")
+    parser.add_argument("--start", type=int, default=0, help="Start index")
+    parser.add_argument("--end", type=int, default=10, help="End index")
+    parser.add_argument("--output", type=str, default=None, help="Output file path")
+    args = parser.parse_args()
+
+    # Auto-generate output filename if not provided
+    if args.output is None:
+        args.output = f"multi_granularity_gsm8k_{args.start}_{args.end}.jsonl"
 
     # example: load GSM8K
     ds = load_dataset("gsm8k", "main")["train"]  # change split if needed
 
     build_dataset_from_hf(
-        input_dataset=ds.select(range(1000)),  # subset for quick PoC
-        output_path="multi_granularity_gsm8k_1000.jsonl",
+        input_dataset=ds.select(range(args.start, args.end)),
+        output_path=args.output,
     )
