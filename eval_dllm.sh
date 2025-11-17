@@ -175,7 +175,7 @@ while [[ "$#" -gt 0 ]]; do
         --block_length)   OVERRIDE_BLOCK_LENGTH="$2"; shift ;;
         --cfg)            OVERRIDE_CFG="$2"; shift ;;
         --seed)           OVERRIDE_SEED="$2"; shift ;;
-        --output_path)    OVERRIDE_OUTPUT_PATH="$2"; shift ;;    # ✅ NEW
+        --output_path)    OVERRIDE_OUTPUT_PATH="$2"; shift ;;   
         *) echo "Unknown optional parameter passed: $1"; exit 1 ;;
     esac
     shift

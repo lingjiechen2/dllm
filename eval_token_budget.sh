@@ -1,6 +1,6 @@
 
 export PYTHONPATH=.:$PYTHONPATH
-export BASE_MODELS_DIR="/mnt/lustrenew/mllm_aligned/shared/models/huggingface"
+export BASE_MODELS_DIR="/mnt/lustrenew/mllm_safety-shared/tmp/fanyuyu/models/LLaDA-8B-SFT/multi_granularity_gsm8k_1"
 export BASE_DATASETS_DIR="/mnt/lustrenew/mllm_aligned/shared/datasets/huggingface"
 export HF_DATASETS_CACHE="/mnt/lustrenew/mllm_safety-shared/datasets/huggingface"
 
@@ -16,17 +16,17 @@ export MASTER_ADDR MASTER_PORT WORLD_SIZE
 
 num_gpu=4
 common_args="--model llada --apply_chat_template"
-model_name_or_path="GSAI-ML/LLaDA-8B-Instruct"
-task_name="minerva_math"
+model_name_or_path="checkpoint-final"
+task_name="gsm8k_cot"
 length_list=(32 64 128 256 512 1024)
 seed=42
 limit=80
 
-mkdir -p "length_awareness/${task_name}"
+mkdir -p "multi_granularity/${task_name}"
 
 for length in "${length_list[@]}"; do
   echo "Checking for existing output for length=${length}"
-  base_dir="length_awareness/${task_name}/$(basename "$model_name_or_path")"
+  base_dir="multi_granularity/${task_name}/$(basename "$model_name_or_path")"
   mkdir -p "$base_dir"
 
 
@@ -49,8 +49,8 @@ for length in "${length_list[@]}"; do
     --ntasks-per-node=${num_gpu} \
     --cpus-per-task=${num_gpu} \
     --time=04:00:00 \
-    --output="/mnt/petrelfs/fanyuyu/fyy/dllm/length_awareness/${task_name}/%x-%j.out" \
-    --error="/mnt/petrelfs/fanyuyu/fyy/dllm/length_awareness/${task_name}/%x-%j.err" \
+    --output="/mnt/petrelfs/fanyuyu/fyy/dllm/multi_granularity/${task_name}/%x-%j.out" \
+    --error="/mnt/petrelfs/fanyuyu/fyy/dllm/multi_granularity/${task_name}/%x-%j.err" \
     --requeue \
     eval_dllm.sh llada "${task_name}" "${BASE_MODELS_DIR}/${model_name_or_path}" True 1 False "${limit}" \
       --max_new_tokens "${length}" \
@@ -59,6 +59,7 @@ for length in "${length_list[@]}"; do
       --seed "${seed}" \
       --output_path "${prefix}.json"
   sleep 0.5
+  # break
 done
 
 
