@@ -86,6 +86,7 @@ def get_tokenizer(model_args) -> transformers.PreTrainedTokenizer:
     from dllm.pipelines.llada.models.modeling_llada import LLaDAModelLM
     from dllm.pipelines.llada.models.modeling_lladamoe import LLaDAMoEModelLM
     from dllm.pipelines.dream.models.modeling_dream import DreamModel
+    from dllm.pipelines.a2d import A2DLlamaLMHeadModel, A2DQwen2LMHeadModel
     from transformers import (
         BertPreTrainedModel,
         RobertaPreTrainedModel,
@@ -172,6 +173,25 @@ def get_tokenizer(model_args) -> transformers.PreTrainedTokenizer:
 [Answer]
 {% endif %}
 """
+    elif issubclass(model_cls, A2DLlamaLMHeadModel):
+        # [TODO]
+        MAGIC_UNUSED_TOKEN = 128159
+        # Update the string used when decoding this token (ID → string)
+        tokenizer.added_tokens_decoder[MAGIC_UNUSED_TOKEN].content = "<|mask|>"
+
+        # Update the mapping used for encoding (string → ID)
+        tokenizer.added_tokens_encoder["<|mask|>"] = MAGIC_UNUSED_TOKEN
+
+        # Set this token as the mask token
+        tokenizer.mask_token = "<|mask|>"
+        tokenizer.mask_token_id = MAGIC_UNUSED_TOKEN
+
+        tokenizer.eot_token = "<|eot_id|>"
+        tokenizer.eot_token_id = tokenizer.convert_tokens_to_ids(tokenizer.eot_token)
+        pass
+    elif issubclass(model_cls, A2DQwen2LMHeadModel):
+        # [TODO]
+        pass
     else:
         print_main("no tokenizer customization for model class:", model_cls)
     return tokenizer

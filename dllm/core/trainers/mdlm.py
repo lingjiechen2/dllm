@@ -138,3 +138,14 @@ class MDLMTrainer(transformers.Trainer):
 
         # === 8. Return final loss (and optionally model outputs) ===
         return (loss, outputs) if return_outputs else loss
+
+
+class A2DMDLMTrainer(MDLMTrainer):
+
+    def _preprocess_inputs(self, inputs):
+        labels = inputs["labels"]
+        assert (labels[:, 0] == -100).all()
+
+    def _postprocess_outputs(self, outputs):
+        logits = outputs.logits
+        outputs.logits = torch.cat([logits[:, :1], logits[:, :-1]], dim=1)

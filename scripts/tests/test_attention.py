@@ -1,176 +1,3 @@
-# """
-# LLaDA / MoE / Dream attention mask invariance tests (compact version)
-# """
-
-# import gc
-
-# import torch
-# import transformers
-# import dllm
-# import pytest
-
-# ERROR_THRESHOLD = 1e-3
-
-
-# def _cuda_cleanup():
-#     if torch.cuda.is_available():
-#         torch.cuda.empty_cache()
-#         # Reclaim interprocess memory blocks (useful after large model del)
-#         try:
-#             torch.cuda.ipc_collect()
-#         except Exception:
-#             # Not all PyTorch builds expose ipc_collect on all platforms
-#             pass
-
-
-# def _forward_variants(model):
-#     """
-#     Run the 5 padding/mask variants and return tensors sliced to the 'real' tokens [101,102,103,104].
-#     Returns dict: {'A','B','C','D','E'} each [1, 4, H]
-#     """
-#     device = model.device
-
-#     # base token sequence (the "real" tokens)
-#     base_token = torch.tensor([[101, 102, 103, 104]], device=device)
-#     pad_token = torch.tensor([[0]], device=device)
-
-#     # A: no padding
-#     a_ids = base_token
-#     a_mask = torch.ones_like(a_ids)
-
-#     # B: left-pad a 0
-#     b_ids = torch.cat([pad_token, base_token], dim=1)
-#     b_mask = torch.cat(
-#         [torch.zeros_like(pad_token), torch.ones_like(base_token)], dim=1
-#     )
-
-#     # C: right-pad a 0
-#     c_ids = torch.cat([base_token, pad_token], dim=1)
-#     c_mask = torch.cat(
-#         [torch.ones_like(base_token), torch.zeros_like(pad_token)], dim=1
-#     )
-
-#     # D: same as A but attention_mask=None
-#     d_ids = base_token
-#     d_mask = None
-
-#     # E: same as A but omit attention_mask entirely
-#     e_ids = base_token
-
-#     with torch.no_grad():
-#         out_A = model(input_ids=a_ids, attention_mask=a_mask).logits  # [1,4,H]
-#         out_B = model(input_ids=b_ids, attention_mask=b_mask).logits[:, 1:]  # [1,4,H]
-#         out_C = model(input_ids=c_ids, attention_mask=c_mask).logits[:, :-1]  # [1,4,H]
-#         out_D = model(input_ids=d_ids, attention_mask=d_mask).logits  # [1,4,H]
-#         out_E = model(input_ids=e_ids).logits  # [1,4,H]
-
-#     return {"A": out_A, "B": out_B, "C": out_C, "D": out_D, "E": out_E}
-
-
-# def _forward_batched(model):
-#     """
-#     Run A/B/C in a single batch and slice back to the 'real' tokens [101,102,103,104].
-#     Returns dict: {'A','B','C'} each [1, 4, H]
-#     """
-#     device = model.device
-
-#     base_token = torch.tensor([[101, 102, 103, 104]], device=device)
-#     pad_token = torch.tensor([[0]], device=device)
-
-#     # To batch them, make all seq_len = 5
-#     # A (no pad): right-pad with 0, mask last position as 0
-#     a_ids = torch.cat([base_token, pad_token], dim=1)  # [1,5]
-#     a_mask = torch.cat(
-#         [torch.ones_like(base_token), torch.zeros_like(pad_token)], dim=1
-#     )
-
-#     # B (left pad): same as single variant
-#     b_ids = torch.cat([pad_token, base_token], dim=1)  # [1,5]
-#     b_mask = torch.cat(
-#         [torch.zeros_like(pad_token), torch.ones_like(base_token)], dim=1
-#     )
-
-#     # C (right pad): same as single variant
-#     c_ids = torch.cat([base_token, pad_token], dim=1)  # [1,5]
-#     c_mask = torch.cat(
-#         [torch.ones_like(base_token), torch.zeros_like(pad_token)], dim=1
-#     )
-
-#     batch_ids = torch.cat([a_ids, b_ids, c_ids], dim=0)   # [3,5]
-#     batch_mask = torch.cat([a_mask, b_mask, c_mask], dim=0)  # [3,5]
-
-#     with torch.no_grad():
-#         logits = model(input_ids=batch_ids, attention_mask=batch_mask).logits  # [3,5,H]
-
-#     # Recover the "real" tokens [1,2,3,4] view for each case
-#     out_A = logits[0:1, :4, :]   # A: positions 0..3
-#     out_B = logits[1:2, 1:, :]   # B: positions 1..4
-#     out_C = logits[2:3, :4, :]   # C: positions 0..3
-
-#     return {"A": out_A, "B": out_B, "C": out_C}
-
-
-# def _assert_invariance(outs: dict, tag: str):
-#     ref = outs["A"]
-#     for k in ("B", "C", "D", "E"):
-#         assert torch.allclose(
-#             ref, outs[k], atol=ERROR_THRESHOLD, rtol=ERROR_THRESHOLD
-#         ), f"[{tag}] Mismatch A vs {k}"
-
-
-# def _assert_batch_consistency(single_outs: dict, batch_outs: dict, tag: str):
-#     """
-#     Check that running A/B/C separately vs batched gives the same logits
-#     on the 'real' tokens.
-#     """
-#     for k in ("A", "B", "C"):
-#         assert torch.allclose(
-#             single_outs[k], batch_outs[k], atol=ERROR_THRESHOLD, rtol=ERROR_THRESHOLD
-#         ), f"[{tag}] Batch vs single mismatch for {k}"
-
-
-# @pytest.mark.parametrize(
-#     "repo, attn_impl, human_name",
-#     [
-#         ("GSAI-ML/LLaDA-8B-Base", None, "LLaDA Base"),
-#         # ("inclusionAI/LLaDA-MoE-7B-A1B-Base", None, "LLaDA MoE"),
-#         # ("Dream-org/Dream-v0-Base-7B", None, "Dream Base"),
-#     ],
-# )
-# def test_attention_mask_invariance(repo, attn_impl, human_name):
-#     """
-#     For each model/backend:
-#       1) Check padding/mask invariance across A..E on the 'real' tokens.
-#       2) Check that A/B/C single-sample vs batched inference produce identical logits.
-#       3) Print a ✅ message for debug visibility (pytest still enforces assertions).
-#     """
-#     model_path = dllm.utils.resolve_with_base_env(repo, "BASE_MODELS_DIR")
-
-#     if attn_impl is None:
-#         model = transformers.AutoModel.from_pretrained(
-#             model_path, dtype=torch.float32, device_map="auto"
-#         ).eval()
-#     else:
-#         config = transformers.AutoConfig.from_pretrained(
-#             model_path, attn_implementation=attn_impl
-#         )
-#         model = transformers.AutoModel.from_pretrained(
-#             model_path, config=config, dtype=torch.float32, device_map="auto"
-#         ).eval()
-
-#     outs_single = _forward_variants(model)
-#     _assert_invariance(outs_single, human_name)
-
-#     outs_batch = _forward_batched(model)
-#     _assert_batch_consistency(outs_single, outs_batch, human_name)
-
-#     print(
-#         f"✅ {human_name} attention mask invariance + batch consistency passed within {ERROR_THRESHOLD}."
-#     )
-#     del model
-#     gc.collect()
-#     _cuda_cleanup()
-
 """
 LLaDA / MoE / Dream attention mask invariance tests
 
@@ -252,10 +79,31 @@ def _get_model_device(model: torch.nn.Module) -> torch.device:
     return next(model.parameters()).device
 
 
+def _build_position_ids(
+    input_ids: torch.Tensor,
+    attention_mask: torch.Tensor | None,
+) -> torch.Tensor:
+    """
+    Build position_ids so that *real* tokens (mask==1) get contiguous
+    positions [0, 1, 2, ...] regardless of left/right padding.
+
+    If attention_mask is None, we treat all positions as real.
+    """
+    if attention_mask is None:
+        mask = torch.ones_like(input_ids, dtype=torch.long)
+    else:
+        # assume mask is 0/1
+        mask = attention_mask.to(dtype=torch.long)
+
+    pos_ids = torch.cumsum(mask, dim=1) - 1  # first real token -> 0
+    pos_ids = torch.clamp(pos_ids, min=0)
+    return pos_ids.to(dtype=torch.long)
+
+
 # -------------------------------------------------------------------------
 # 1) Single-sample variants over multiple base token sets
 # -------------------------------------------------------------------------
-def _forward_variants(model) -> Dict[str, torch.Tensor]:
+def _forward_variants(model, use_position_ids: bool) -> Dict[str, torch.Tensor]:
     """
     For each base token set in BASE_TOKEN_SETS, run 5 variants:
 
@@ -310,23 +158,73 @@ def _forward_variants(model) -> Dict[str, torch.Tensor]:
         ids_omitted = base
 
         with torch.no_grad():
-            out_no_pad = model(
-                input_ids=ids_no_pad, attention_mask=mask_no_pad
-            ).logits  # [1,4,H]
+            # no_padding
+            if use_position_ids:
+                pos_no_pad = _build_position_ids(ids_no_pad, mask_no_pad)
+                out_no_pad = model(
+                    input_ids=ids_no_pad,
+                    attention_mask=mask_no_pad,
+                    position_ids=pos_no_pad,
+                ).logits  # [1,4,H]
+            else:
+                out_no_pad = model(
+                    input_ids=ids_no_pad,
+                    attention_mask=mask_no_pad,
+                ).logits  # [1,4,H]
 
-            out_left = model(
-                input_ids=ids_left, attention_mask=mask_left
-            ).logits[:, 1:]  # [1,4,H] (skip pad position)
+            # left_padding (slice off pad position)
+            if use_position_ids:
+                pos_left = _build_position_ids(ids_left, mask_left)
+                out_left = model(
+                    input_ids=ids_left,
+                    attention_mask=mask_left,
+                    position_ids=pos_left,
+                ).logits[:, 1:]  # [1,4,H]
+            else:
+                out_left = model(
+                    input_ids=ids_left,
+                    attention_mask=mask_left,
+                ).logits[:, 1:]  # [1,4,H]
 
-            out_right = model(
-                input_ids=ids_right, attention_mask=mask_right
-            ).logits[:, :-1]  # [1,4,H] (ignore padded position)
+            # right_padding (ignore last padded position)
+            if use_position_ids:
+                pos_right = _build_position_ids(ids_right, mask_right)
+                out_right = model(
+                    input_ids=ids_right,
+                    attention_mask=mask_right,
+                    position_ids=pos_right,
+                ).logits[:, :-1]  # [1,4,H]
+            else:
+                out_right = model(
+                    input_ids=ids_right,
+                    attention_mask=mask_right,
+                ).logits[:, :-1]  # [1,4,H]
 
-            out_no_mask = model(
-                input_ids=ids_no_mask, attention_mask=mask_none
-            ).logits  # [1,4,H]
+            # no_mask (attention_mask=None)
+            if use_position_ids:
+                pos_no_mask = _build_position_ids(ids_no_mask, mask_none)
+                out_no_mask = model(
+                    input_ids=ids_no_mask,
+                    attention_mask=mask_none,
+                    position_ids=pos_no_mask,
+                ).logits  # [1,4,H]
+            else:
+                out_no_mask = model(
+                    input_ids=ids_no_mask,
+                    attention_mask=mask_none,
+                ).logits  # [1,4,H]
 
-            out_omitted = model(input_ids=ids_omitted).logits  # [1,4,H]
+            # mask_omitted (no attention_mask kwarg)
+            if use_position_ids:
+                pos_omitted = _build_position_ids(ids_omitted, None)
+                out_omitted = model(
+                    input_ids=ids_omitted,
+                    position_ids=pos_omitted,
+                ).logits  # [1,4,H]
+            else:
+                out_omitted = model(
+                    input_ids=ids_omitted,
+                ).logits  # [1,4,H]
 
         acc["no_padding"].append(out_no_pad)
         acc["left_padding"].append(out_left)
@@ -356,7 +254,7 @@ def _assert_invariance(outs: Dict[str, torch.Tensor], tag: str):
 # -------------------------------------------------------------------------
 # 2) Batch tests over all base token sets
 # -------------------------------------------------------------------------
-def _forward_batch_nopad(model) -> torch.Tensor:
+def _forward_batch_nopad(model, use_position_ids: bool) -> torch.Tensor:
     """
     Batch = stack all base token sets (no padding):
 
@@ -377,12 +275,23 @@ def _forward_batch_nopad(model) -> torch.Tensor:
     mask = torch.ones_like(base_batch)                         # [N,4]
 
     with torch.no_grad():
-        logits = model(input_ids=base_batch, attention_mask=mask).logits  # [N,4,H]
+        if use_position_ids:
+            pos = _build_position_ids(base_batch, mask)
+            logits = model(
+                input_ids=base_batch,
+                attention_mask=mask,
+                position_ids=pos,
+            ).logits  # [N,4,H]
+        else:
+            logits = model(
+                input_ids=base_batch,
+                attention_mask=mask,
+            ).logits  # [N,4,H]
 
     return logits
 
 
-def _forward_batch_padded(model) -> torch.Tensor:
+def _forward_batch_padded(model, use_position_ids: bool) -> torch.Tensor:
     """
     Padded batch over all base token sets.
 
@@ -432,7 +341,18 @@ def _forward_batch_padded(model) -> torch.Tensor:
     batch_mask = mask_stacked.reshape(-1, mask_stacked.size(-1))# [2N,5]
 
     with torch.no_grad():
-        logits = model(input_ids=batch_ids, attention_mask=batch_mask).logits  # [2N,5,H]
+        if use_position_ids:
+            pos = _build_position_ids(batch_ids, batch_mask)
+            logits = model(
+                input_ids=batch_ids,
+                attention_mask=batch_mask,
+                position_ids=pos,
+            ).logits  # [2N,5,H]
+        else:
+            logits = model(
+                input_ids=batch_ids,
+                attention_mask=batch_mask,
+            ).logits  # [2N,5,H]
 
     return logits
 
@@ -495,14 +415,14 @@ def _assert_batch_equal_to_single(
 # PyTest entry point
 # -------------------------------------------------------------------------
 @pytest.mark.parametrize(
-    "repo, attn_impl, human_name",
+    "model_name_or_path, attn_impl, use_position_ids",
     [
-        ("GSAI-ML/LLaDA-8B-Base", None, "LLaDA Base"),
-        ("inclusionAI/LLaDA-MoE-7B-A1B-Base", None, "LLaDA MoE"),
-        ("Dream-org/Dream-v0-Base-7B", None, "Dream Base"),
+        ("GSAI-ML/LLaDA-8B-Base", None, False),
+        ("inclusionAI/LLaDA-MoE-7B-A1B-Base", None, False),
+        ("Dream-org/Dream-v0-Base-7B", None, False),
     ],
 )
-def test_attention_mask_invariance(repo, attn_impl, human_name):
+def test_attention_mask_invariance(model_name_or_path, attn_impl, use_position_ids):
     """
     For each model:
 
@@ -519,7 +439,7 @@ def test_attention_mask_invariance(repo, attn_impl, human_name):
       All logits on the 4 real tokens must match single-sample "no_padding"
       for every base token set.
     """
-    model_path = dllm.utils.resolve_with_base_env(repo, "BASE_MODELS_DIR")
+    model_path = dllm.utils.resolve_with_base_env(model_name_or_path, "BASE_MODELS_DIR")
 
     # Load model. We assume it's a decoder-style model with .logits.
     if attn_impl is None:
@@ -541,26 +461,109 @@ def test_attention_mask_invariance(repo, attn_impl, human_name):
         ).eval()
 
     # 1) Single-sample variants over all base token sets
-    outs_single = _forward_variants(model)
-    _assert_invariance(outs_single, human_name)
+    outs_single = _forward_variants(model, use_position_ids=use_position_ids)
+    _assert_invariance(outs_single, f"{model_name_or_path}/pos_ids={use_position_ids}")
     single_no_pad = outs_single["no_padding"]  # [N,4,H]
 
     # 2) Batch (no padding)
-    batch_nopad = _forward_batch_nopad(model)  # [N,4,H]
+    batch_nopad = _forward_batch_nopad(model, use_position_ids=use_position_ids)  # [N,4,H]
 
     # 3) Batch (padded, left+right)
-    batch_padded = _forward_batch_padded(model)  # [2N,5,H]
+    batch_padded = _forward_batch_padded(model, use_position_ids=use_position_ids)  # [2N,5,H]
 
     _assert_batch_equal_to_single(
         single_no_pad=single_no_pad,
         batch_nopad=batch_nopad,
         batch_padded=batch_padded,
-        tag=human_name,
+        tag=f"{model_name_or_path}/pos_ids={use_position_ids}",
     )
 
     print(
-        f"✅ {human_name} passed: mask invariance + batch (no-pad & padded) "
-        f"consistency across {len(BASE_TOKEN_SETS)} base token sets within {ERROR_THRESHOLD}."
+        f"✅ {model_name_or_path} (pos_ids={use_position_ids}) passed: "
+        f"mask invariance + batch (no-pad & padded) consistency across "
+        f"{len(BASE_TOKEN_SETS)} base token sets within {ERROR_THRESHOLD}."
+    )
+
+    del model
+    gc.collect()
+    _cuda_cleanup()
+
+
+@pytest.mark.parametrize(
+    "model_name_or_path, config_cls, model_cls, attn_impl, use_position_ids",
+    [
+        # ("openai-community/gpt2",
+        #  dllm.pipelines.a2d.A2DGPT2Config,
+        #  dllm.pipelines.a2d.A2DGPT2LMHeadModel,
+        #  None,
+        #  True),
+        ("meta-llama/Llama-3.2-1B",
+         dllm.pipelines.a2d.A2DLlamaConfig,
+         dllm.pipelines.a2d.A2DLlamaLMHeadModel,
+         None,
+         False),
+        ("Qwen/Qwen2.5-0.5B",
+         dllm.pipelines.a2d.A2DQwen2Config,
+         dllm.pipelines.a2d.A2DQwen2LMHeadModel,
+         None,
+         False),
+        ("Qwen/Qwen3-0.6B-Base",
+         dllm.pipelines.a2d.A2DQwen3Config,
+         dllm.pipelines.a2d.A2DQwen3LMHeadModel,
+         None,
+         False),
+    ],
+)
+def test_a2d_attention_mask_invariance(
+    model_name_or_path,
+    config_cls,
+    model_cls,
+    attn_impl, 
+    use_position_ids,
+):
+    """
+    For each model:
+
+      1) Single-sample invariance over all base token sets:
+           no_padding, left_padding, right_padding,
+           no_mask, mask_omitted.
+
+      2) Batch without padding:
+           stack all base token sets.
+
+      3) Batch with padding:
+           for each base, create right-padded + left-padded rows.
+
+      All logits on the 4 real tokens must match single-sample "no_padding"
+      for every base token set.
+    """
+    torch.set_default_device("cuda")
+    model_path = dllm.utils.resolve_with_base_env(model_name_or_path, "BASE_MODELS_DIR")
+    config = config_cls.from_pretrained(model_path, attn_implementation=attn_impl)
+    model = model_cls(config)
+
+    # 1) Single-sample variants over all base token sets
+    outs_single = _forward_variants(model, use_position_ids=use_position_ids)
+    _assert_invariance(outs_single, f"{model_name_or_path}/pos_ids={use_position_ids}")
+    single_no_pad = outs_single["no_padding"]  # [N,4,H]
+
+    # 2) Batch (no padding)
+    batch_nopad = _forward_batch_nopad(model, use_position_ids=use_position_ids)  # [N,4,H]
+
+    # 3) Batch (padded, left+right)
+    batch_padded = _forward_batch_padded(model, use_position_ids=use_position_ids)  # [2N,5,H]
+
+    _assert_batch_equal_to_single(
+        single_no_pad=single_no_pad,
+        batch_nopad=batch_nopad,
+        batch_padded=batch_padded,
+        tag=f"{model_name_or_path}/pos_ids={use_position_ids}",
+    )
+
+    print(
+        f"✅ {model_name_or_path} (pos_ids={use_position_ids}) passed: "
+        f"mask invariance + batch (no-pad & padded) consistency across "
+        f"{len(BASE_TOKEN_SETS)} base token sets within {ERROR_THRESHOLD}."
     )
 
     del model
