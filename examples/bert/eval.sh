@@ -5,7 +5,7 @@ export HF_ALLOW_CODE_EVAL=1                 # Allow code evaluation
 export HF_DATASETS_TRUST_REMOTE_CODE=True   # For cmmlu dataset
 
 # ===== Optional but recommended for stability and debugging =====
-export NCCL_ASYNC_ERROR_HANDLING=1          # Enable async error handling for multi-GPU communication to avoid deadlocks
+export TORCH_NCCL_ASYNC_ERROR_HANDLING=1    # Enable async error handling for multi-GPU communication to avoid deadlocks
 export NCCL_DEBUG=warn                      # Show NCCL warnings for better diagnosis without flooding logs
 export TORCH_DISTRIBUTED_DEBUG=DETAIL       # Provide detailed logging for PyTorch distributed debugging
 
@@ -18,6 +18,8 @@ while [[ $# -gt 0 ]]; do
       model_name_or_path="$2"; shift 2 ;;
     --num_gpu)
       num_gpu="$2"; shift 2 ;;
+    *) 
+      echo "Error: Unknown argument: $1"; exit 1 ;;
   esac
 done
 

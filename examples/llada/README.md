@@ -154,13 +154,13 @@ python examples/llada/chat.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct"
 For example, to evaluate [LLaDA-8B-Instruct](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) on [MMLU-Pro](https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro) using 4 GPUs, run:
 ```shell
 # Use model_args to adjust the generation arguments for evalution.
-accelerate launch --num_processes 4 \
+accelerate launch --num_processes 1 \
     dllm/pipelines/llada/eval.py \
-    --tasks "mmlu_pro" \
+    --tasks "gsm8k_cot" \
     --model "llada" \
     --apply_chat_template \
     --num_fewshot 0 \
-    --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,is_check_greedy=False,mc_num=1,max_new_tokens=256,steps=256,block_length=256,cfg=0.0"
+    --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,max_new_tokens=512,steps=512,block_length=512,cfg=0.0,logits_eos_inf=False,confidence_eos_eot_inf=True"
 ```
 
 To automatically evaluate [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) and [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) on all benchmarks, run:
