@@ -12,7 +12,7 @@ export TORCH_DISTRIBUTED_DEBUG=DETAIL       # Provide detailed logging for PyTor
 # ===== Input Arguments =====
 model_name_or_path="GSAI-ML/LLaDA-8B-Instruct"
 instruct=True
-num_gpu=4
+num_gpu=1
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --model_name_or_path)

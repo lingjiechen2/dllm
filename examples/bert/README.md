@@ -127,16 +127,16 @@ python -u examples/bert/chat.py --model_name_or_path "dllm-collection/ModernBERT
 ## Evaluation
 > Read [(optional) Evaluation setup](/README.md/#optional-evaluation-setup) before running evaluation. 
 
-For example, to evaluate [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0) on [`MMLU-Pro`](https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro) using 4 GPUs, run:
+For example, to evaluate [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0) on [`gsm8k`](https://huggingface.co/datasets/openai/gsm8k) using 4 GPUs, run:
 ```shell
 # use model_args to adjust the generation arguments for evalution.
-accelerate launch  --num_processes 4 \
+accelerate launch  --num_processes 1 \
     dllm/pipelines/bert/eval.py \
-    --tasks "mmlu_pro" \
+    --tasks "gsm8k_bert" \
     --model "bert" \
     --apply_chat_template \
     --num_fewshot 0 \
-    --model_args "pretrained=dllm-collection/ModernBERT-large-chat-v0,is_check_greedy=False,mc_num=1,max_new_tokens=256,steps=256,block_length=32"
+    --model_args "pretrained=dllm-collection/ModernBERT-large-chat-v0,max_new_tokens=256,steps=256,block_length=32"
 ```
 
 To automatically evaluate [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0) and [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0) on all benchmarks, run:
@@ -146,15 +146,6 @@ bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-larg
 ```
 
 ### Evaluation results
-
-<!-- > Evaluated results are obtained using our own evaluation framework, while Reported results are taken from the original paper. 
-> Because the original work does not fully disclose its evaluation techniques or implementation tricks, we reproduce the setup using the best available methods. As a result, our reproduced scores may show a small residual gap relative to the reported numbers.  -->
-
-<!-- | [`GPT-2`](https://huggingface.co/openai-community/gpt2)(reported) | 0.460 | – |  |  |  |  |  |  |  |
-| [`GPT-2`](https://huggingface.co/openai-community/gpt2)(evaluated) | 0.438 | 0.020 |  |  |  |  |  |  |  |
-| [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(reported) | 0.555 | – |  |  |  |  |  |  |  |
-| [`GPT-2-medium`](https://huggingface.co/openai-community/gpt2-medium)(evaluated) | 0.549 | 0.021 |  |  |  |  |  |  |  | -->
-<!-- <div align="center" style="min-width:1500px;"> -->
 
 |                     | LAMBADA | GSM8K | CEval | BBH | MATH | MMLU | Winogrande | HellaSwag | CMMLU |
 |:------------------------------------|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|
