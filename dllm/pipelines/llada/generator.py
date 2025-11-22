@@ -44,6 +44,8 @@ class LLaDAGeneratorConfig(GeneratorConfig):
     stochastic_transfer: bool = False
     cfg_scale: float = 0.0
     cfg_keep_tokens: list[int] | None = None
+    logits_eos_inf: bool = False
+    confidence_eos_eot_inf: bool = False
 
 
 @dataclass
@@ -67,11 +69,15 @@ class LLaDAGenerator(BaseGenerator):
         cfg_scale = kwargs.get("cfg_scale", config.cfg_scale)
         cfg_keep_tokens = kwargs.get("cfg_keep_tokens", config.cfg_keep_tokens)
         remasking = kwargs.get("remasking", config.remasking)
+        logits_eos_inf = kwargs.get("logits_eos_inf", config.logits_eos_inf)
         stochastic_transfer = kwargs.get(
             "stochastic_transfer", config.stochastic_transfer
         )
         return_dict_in_generate = kwargs.get(
             "return_dict_in_generate", config.return_dict_in_generate
+        )
+        confidence_eos_eot_inf = kwargs.get(
+            "confidence_eos_eot_inf", config.confidence_eos_eot_inf
         )
 
         assert 1 <= block_length
@@ -163,12 +169,18 @@ class LLaDAGenerator(BaseGenerator):
                     logits = self.model(
                         x, attention_mask=attention_mask
                     ).logits  # Use attention mask here
+                
+                if logits_eos_inf:
+                    logits[:, :, 126081] = -torch.inf
 
                 # Argmax decoding with optional Gumbel-Max noise for exploration
                 logits_with_noise = add_gumbel_noise(logits, temperature=temperature)
                 x0 = torch.argmax(
                     logits_with_noise, dim=-1
                 )  # [B, T] predicted token ids
+
+                if confidence_eos_eot_inf:
+                    logits_with_noise[:, :, 126081] = logits[:, :, 126348] = -torch.inf
 
                 # Per-position confidence used to pick which masks to commit this step
                 if remasking == "low_confidence":
