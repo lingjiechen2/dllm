@@ -32,6 +32,7 @@ import accelerate
 
 import dllm
 from dllm.pipelines import dream
+
 logger = dllm.utils.get_default_logger(__name__)
 
 
@@ -66,7 +67,7 @@ class DataArguments(dllm.utils.DataArguments):
 @dataclass
 class TrainingArguments(dllm.utils.TrainingArguments):
     output_dir: str = (
-        "models/Dream-7B-PT/dclm-baseline-1.0[train:10_000_000,test:10_000]"
+        "models/Dream-v0-Base-7B/dclm-baseline-1.0[train:10_000_000,test:10_000]"
     )
     learning_rate: float = 3e-4
     max_steps: int = 2_000
@@ -144,11 +145,18 @@ def train():
         eval_dataset=dataset.get("test", None),
         args=training_args,
         loss_weight_type=training_args.loss_weight_type,
-        data_collator=dream.utils.DreamPTCollator(
-            tokenizer,
-            return_tensors="pt",
-            padding=True,
-            random_length_ratio=data_args.random_length_ratio,
+        data_collator=(
+            dllm.utils.PrependBOSWrapper(
+                dllm.utils.RandomTruncateWrapper(
+                    transformers.DataCollatorForSeq2Seq(
+                        tokenizer,
+                        return_tensors="pt",
+                        padding=True,
+                    ),
+                    random_length_ratio=data_args.random_length_ratio,
+                ),
+                bos_token_id=tokenizer.bos_token_id,
+            )
         ),
     )
     trainer.train()

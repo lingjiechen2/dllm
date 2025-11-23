@@ -67,7 +67,7 @@ accelerate launch \
     examples/llada/sft.py \
     --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
     --dataset_args "allenai/tulu-3-sft-mixture" \
-    --output_dir "models/LLaDA-8B-SFT/tulu-3-sft-mixture" \
+    --output_dir "models/LLaDA-8B-Base/tulu-3-sft-mixture" \
     --max_length 1024 \ 
     --num_train_epochs 4 \
     --learning_rate 2e-5
@@ -79,7 +79,7 @@ sbatch --nodes=2 --gres=gpu:8 scripts/train.slurm.sh \
     --script_path "examples/llada/sft.py" \
     --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
     --dataset_args "allenai/tulu-3-sft-mixture" \
-    --output_dir "models/LLaDA-8B-SFT/tulu-3-sft-mixture" \
+    --output_dir "models/LLaDA-8B-Base/tulu-3-sft-mixture" \
     --max_length 1024 \ 
     --num_train_epochs 4 \
     --learning_rate 2e-5
@@ -94,7 +94,7 @@ Though LLaDA is trained on proprietary data, we tried our best to reproduce [`LL
 # preprocessing SFT data (optional, but can avoid redundant preprocessing for multi-node training)
 python dllm/tools/preprocess_sft_dataset.py \
     --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
-    --sft_map_fn_path "dllm.utils.default_sft_map_fn" \
+    --sft_map_fn_path "dllm.utils.default_mdlm_sft_map_fn" \
     --dataset_args "allenai/tulu-3-sft-mixture" \
     --output_dir "data/sft/llada/tulu-3-sft-mixture" \
     --num_proc 64
@@ -106,15 +106,12 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
     --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
     --dataset_args "data/sft/llada/tulu-3-sft-mixture" \
     --load_preprocessed_data True \
-    --output_dir "models/LLaDA-8B-SFT-tulu3-fsdp-bs4-len2048-ep5-lr1e-5" \
+    --output_dir "models/LLaDA-8B-Base/tulu-3-sft-mixture/fsdp-bs4-len2048-ep5-lr1e-5" \
     --max_length 2048 \
-    --truncation "right" \
-    --group_by_length True \
     --num_train_epochs 5 \
     --learning_rate 1e-5 \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
-    --eval_on_start False \
     --eval_steps 0.1 \
     --save_steps 0.05
 ```
@@ -130,7 +127,7 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
     --script_path "examples/llada/pt.py" \
     --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
     --dataset_args "mlfoundations/dclm-baseline-1.0" \
-    --output_dir "models/LLaDA-8B-PT/dclm-baseline-1.0" \
+    --output_dir "models/LLaDA-8B-Base/dclm-baseline-1.0" \
     --max_length 1024 \ 
     --max_steps 2000 \
     --learning_rate 3e-4
@@ -154,7 +151,7 @@ python examples/llada/chat.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct"
 For example, to evaluate [LLaDA-8B-Instruct](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) on [gsm8k](https://huggingface.co/datasets/openai/gsm8k) using 4 GPUs, run:
 ```shell
 # Use model_args to adjust the generation arguments for evalution.
-accelerate launch --num_processes 1 \
+accelerate launch --num_processes 4 \
     dllm/pipelines/llada/eval.py \
     --tasks "gsm8k_cot" \
     --model "llada" \

@@ -86,7 +86,11 @@ def get_tokenizer(model_args) -> transformers.PreTrainedTokenizer:
     from dllm.pipelines.llada.models.modeling_llada import LLaDAModelLM
     from dllm.pipelines.llada.models.modeling_lladamoe import LLaDAMoEModelLM
     from dllm.pipelines.dream.models.modeling_dream import DreamModel
-    from dllm.pipelines.rnd.models.modeling_rnd import RND1LM
+    from dllm.pipelines.a2d import (
+        A2DLlamaLMHeadModel,
+        A2DQwen2LMHeadModel,
+        A2DQwen3LMHeadModel,
+    )
     from transformers import (
         BertPreTrainedModel,
         RobertaPreTrainedModel,
@@ -141,8 +145,6 @@ def get_tokenizer(model_args) -> transformers.PreTrainedTokenizer:
     elif issubclass(model_cls, DreamModel):
         tokenizer.eot_token = "<|im_end|>"
         tokenizer.eot_token_id = tokenizer.convert_tokens_to_ids(tokenizer.eot_token)
-    elif issubclass(model_cls, RND1LM):
-        tokenizer.add_special_tokens({"mask_token": "<|mask|>"})
     elif issubclass(
         model_cls,
         (BertPreTrainedModel, RobertaPreTrainedModel, ModernBertPreTrainedModel),
@@ -175,6 +177,18 @@ def get_tokenizer(model_args) -> transformers.PreTrainedTokenizer:
 [Answer]
 {% endif %}
 """
+    elif issubclass(model_cls, A2DLlamaLMHeadModel):
+        tokenizer.add_special_tokens({"mask_token": "<|mask|>"})
+        tokenizer.eot_token = "<|eot_id|>"
+        tokenizer.eot_token_id = tokenizer.convert_tokens_to_ids(tokenizer.eot_token)
+    elif issubclass(model_cls, A2DQwen2LMHeadModel):
+        tokenizer.add_special_tokens({"mask_token": "<|mask|>"})
+        tokenizer.eot_token = "<|im_end|>"
+        tokenizer.eot_token_id = tokenizer.convert_tokens_to_ids(tokenizer.eot_token)
+    elif issubclass(model_cls, A2DQwen3LMHeadModel):
+        tokenizer.add_special_tokens({"mask_token": "<|mask|>"})
+        tokenizer.eot_token = "<|im_end|>"
+        tokenizer.eot_token_id = tokenizer.convert_tokens_to_ids(tokenizer.eot_token)
     else:
         print_main("no tokenizer customization for model class:", model_cls)
     return tokenizer

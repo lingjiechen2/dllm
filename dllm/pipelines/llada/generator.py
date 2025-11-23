@@ -9,7 +9,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from dllm.utils.generation_utils import get_num_transfer_tokens
+from dllm.core.generation.utils import get_num_transfer_tokens
 from dllm.core.generation.generator import (
     GeneratorOutput,
     GeneratorConfig,
@@ -44,6 +44,7 @@ class LLaDAGeneratorConfig(GeneratorConfig):
     stochastic_transfer: bool = False
     cfg_scale: float = 0.0
     cfg_keep_tokens: list[int] | None = None
+    right_shift_logits: bool = False
     logits_eos_inf: bool = False
     confidence_eos_eot_inf: bool = False
 
@@ -76,6 +77,7 @@ class LLaDAGenerator(BaseGenerator):
         return_dict_in_generate = kwargs.get(
             "return_dict_in_generate", config.return_dict_in_generate
         )
+        right_shift_logits = kwargs.get("right_shift_logits", config.right_shift_logits)
         confidence_eos_eot_inf = kwargs.get(
             "confidence_eos_eot_inf", config.confidence_eos_eot_inf
         )
@@ -173,6 +175,9 @@ class LLaDAGenerator(BaseGenerator):
                 if logits_eos_inf:
                     logits[:, :, 126081] = -torch.inf
 
+                if right_shift_logits:
+                    logits = torch.cat([logits[:, :1], logits[:, :-1]], dim=1)
+
                 # Argmax decoding with optional Gumbel-Max noise for exploration
                 logits_with_noise = add_gumbel_noise(logits, temperature=temperature)
                 x0 = torch.argmax(
@@ -249,11 +254,16 @@ class LLaDAGenerator(BaseGenerator):
         cfg_scale = kwargs.get("cfg_scale", config.cfg_scale)
         cfg_keep_tokens = kwargs.get("cfg_keep_tokens", config.cfg_keep_tokens)
         remasking = kwargs.get("remasking", config.remasking)
+        logits_eos_inf = kwargs.get("logits_eos_inf", config.logits_eos_inf)
         stochastic_transfer = kwargs.get(
             "stochastic_transfer", config.stochastic_transfer
         )
         return_dict_in_generate = kwargs.get(
             "return_dict_in_generate", config.return_dict_in_generate
+        )
+        right_shift_logits = kwargs.get("right_shift_logits", config.right_shift_logits)
+        confidence_eos_eot_inf = kwargs.get(
+            "confidence_eos_eot_inf", config.confidence_eos_eot_inf
         )
 
         mask_id = self.tokenizer.mask_token_id
@@ -345,9 +355,18 @@ class LLaDAGenerator(BaseGenerator):
                         x, attention_mask=attention_mask
                     ).logits  # Use attention mask here
 
+                if logits_eos_inf:
+                    logits[:, :, 126081] = -torch.inf
+
+                if right_shift_logits:
+                    logits = torch.cat([logits[:, :1], logits[:, :-1]], dim=1)
+
                 # Greedy with optional Gumbel-Max noise
                 logits_with_noise = add_gumbel_noise(logits, temperature=temperature)
-                x0 = torch.argmax(logits_with_noise, dim=-1)  # [B, T]
+                x0 = torch.argmax(logits_with_noise, dim=-1) # [B, T]
+
+                if confidence_eos_eot_inf:
+                    logits_with_noise[:, :, 126081] = logits[:, :, 126348] = -torch.inf
 
                 # Confidence used for choosing which masks to commit this step
                 if remasking == "low_confidence":

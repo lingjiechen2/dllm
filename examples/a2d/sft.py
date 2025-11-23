@@ -1,30 +1,29 @@
 """
 Local users
 ------------
-- 1 GPU (4bit quant & LoRA, useful for testing):
+- 1 GPU:
     accelerate launch \
         --config_file scripts/accelerate_configs/ddp.yaml --num_processes 1 \
-        examples/llada/sft.py \
-        --load_in_4bit True --lora True
+        examples/a2d/sft.py
     
 - 8 GPUs (FSDP):
     accelerate launch \
         --config_file scripts/accelerate_configs/fsdp.yaml \
-        examples/llada/sft.py
+        examples/a2d/sft.py
 
 Slurm users
 # Note: run `mkdir logs` before running sbatch; and adjust 
 #       `partition` and `quotatype` in `scripts/train.slurm.sh` for your cluster.
 ------------
 - 1 Node, 8 GPUs (FSDP):
-    sbatch --gres=gpu:8 scripts/train.slurm.sh \
+    sbatch --gres=gpu:1 scripts/train.slurm.sh \
         --accelerate_config "fsdp" \
-        --script_path "examples/llada/sft.py"
+        --script_path "examples/a2d/sft.py"
 
 - 2 Nodes, 16 GPUs (FSDP):
     sbatch --nodes=2 --gres=gpu:8 scripts/train.slurm.sh \
         --accelerate_config "fsdp" \
-        --script_path "examples/llada/sft.py"
+        --script_path "examples/a2d/sft.py"
 """
 
 import os
@@ -41,12 +40,15 @@ logger = dllm.utils.get_default_logger(__name__)
 
 @dataclass
 class ModelArguments(dllm.utils.ModelArguments):
-    model_name_or_path: str = "GSAI-ML/LLaDA-8B-Base"
+    model_name_or_path: str = "models/a2d/Qwen2.5-Coder-0.5B-Instruct"
 
 
 @dataclass
 class DataArguments(dllm.utils.DataArguments):
-    dataset_args: str = "allenai/tulu-3-sft-mixture[train:10000,test:1000]"
+    dataset_args: str = (
+        "OpenCoder-LLM/opc-sft-stage2[name:educational_instruct,train:10000,test:1000]"
+    )
+    max_length: int = 1024
     load_preprocessed_data: bool = False
     mask_prompt_loss: bool = field(
         default=True,
@@ -56,8 +58,18 @@ class DataArguments(dllm.utils.DataArguments):
 
 @dataclass
 class TrainingArguments(dllm.utils.TrainingArguments):
-    output_dir: str = "models/LLaDA-8B-Base/tulu-3-sft-mixture[train:10000,test:1000]"
+    output_dir: str = (
+        "models/a2d/Qwen2.5-Coder-0.5B-Instruct/opc-sft-stage2[name:educational_instruct,train:10000,test:1000]"
+    )
     group_by_length: bool = True
+    learning_rate: float = 1e-4
+    num_train_epochs: int = 10
+    per_device_train_batch_size: int = 16
+    per_device_eval_batch_size: int = 16
+    eval_steps: float = 0.1
+    save_steps: float = 0.1
+    # a2d-specific
+    right_shift_logits: bool = True
 
 
 def train():
@@ -94,6 +106,21 @@ def train():
         # truncate / filter long sequences if needed
         dataset = dllm.utils.post_process_dataset(dataset, data_args)
 
+    # ----- Collator --------------------------------------------------------------
+    data_collator = transformers.DataCollatorForSeq2Seq(
+        tokenizer,
+        return_tensors="pt",
+        padding=True,
+        label_pad_token_id=tokenizer.pad_token_id,  # finetune on padded <eos_token>
+    )
+    data_collator = dllm.utils.NoAttentionMaskWrapper(
+        data_collator
+    )  # padded <eos_token> should be visible
+    if training_args.right_shift_logits and not data_args.mask_prompt_loss:
+        data_collator = dllm.utils.PrependBOSWrapper(
+            data_collator, bos_token_id=tokenizer.bos_token_id
+        )
+
     # ----- Training --------------------------------------------------------------
     accelerate.PartialState().wait_for_everyone()
     logger.info("Start training...")
@@ -103,16 +130,8 @@ def train():
         train_dataset=dataset["train"],
         eval_dataset=dataset.get("test", None),
         args=training_args,
-        data_collator=(
-            dllm.utils.NoAttentionMaskWrapper(  # padded <eos_token> should be visible
-                transformers.DataCollatorForSeq2Seq(
-                    tokenizer,
-                    return_tensors="pt",
-                    padding=True,
-                    label_pad_token_id=tokenizer.pad_token_id,  # finetune on padded <eos_token>
-                ),
-            )
-        ),
+        right_shift_logits=training_args.right_shift_logits,
+        data_collator=data_collator,
     )
     trainer.train()
     trainer.save_model(os.path.join(training_args.output_dir, "checkpoint-final"))

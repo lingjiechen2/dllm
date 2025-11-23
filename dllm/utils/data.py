@@ -182,16 +182,7 @@ def post_process_dataset_streaming(
         raise NotImplementedError
 
 
-@dataclass
-class NoAttentionMaskCollator(transformers.DataCollatorForSeq2Seq):
-    def __call__(self, features, return_tensors=None):
-        outputs = super().__call__(features, return_tensors)
-        # fintune on padding <eos_token>; should not mask them out
-        outputs.pop("attention_mask")
-        return outputs
-
-
-def default_sft_map_fn(row, *, tokenizer, mask_prompt_loss: bool = True) -> dict:
+def default_mdlm_sft_map_fn(row, *, tokenizer, mask_prompt_loss: bool = True) -> dict:
     """
     Build input_ids and labels for SFT.
 
