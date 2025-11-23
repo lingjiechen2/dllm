@@ -6,8 +6,7 @@ from dataclasses import dataclass
 
 import transformers
 
-import dllm
-from dllm.tools.chat import decode_trim
+import dllmdecode_trim
 from dllm.pipelines import llada
 
 
@@ -60,7 +59,7 @@ inputs = tokenizer.apply_chat_template(
     tokenize=True,
 )
 outputs = generator.generate(inputs, gen_config, return_dict_in_generate=True)
-sequences = decode_trim(tokenizer, outputs.sequences.tolist(), inputs)
+sequences = dllm.core.generation.utils.decode_trim(tokenizer, outputs.sequences.tolist(), inputs)
 
 for iter, s in enumerate(sequences):
     print("\n" + "-" * 80)

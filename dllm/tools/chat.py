@@ -58,55 +58,55 @@ def boxed(text: str, width: int = L, padding: int = 1):
     print(bottom)
 
 
-def decode_trim(tokenizer, seq_ids_list, input_ids_list) -> str:
-    """
-    Return only the generated text, truncated at the first EOS **after** the prompt.
+# def decode_trim(tokenizer, seq_ids_list, input_ids_list) -> str:
+#     """
+#     Return only the generated text, truncated at the first EOS **after** the prompt.
 
-    Args:
-        tokenizer: HF tokenizer with eos_token_id / pad_token_id.
-        seq_ids: Full sequence token ids from the model (prompt + generation).
-        input_ids: The prompt token ids that were fed into the model.
+#     Args:
+#         tokenizer: HF tokenizer with eos_token_id / pad_token_id.
+#         seq_ids: Full sequence token ids from the model (prompt + generation).
+#         input_ids: The prompt token ids that were fed into the model.
 
-    Behavior:
-        - Finds the first eos_token_id that occurs at or after len(input_ids).
-        - Slices generation up to (but not including) that EOS.
-        - Decodes only the generation span, skipping special/pad tokens.
-    """
-    # Make sure we can index these
-    sequences = []
-    for seq_ids, input_ids in zip(seq_ids_list, input_ids_list):
-        full = list(seq_ids)
-        prompt = list(input_ids)
+#     Behavior:
+#         - Finds the first eos_token_id that occurs at or after len(input_ids).
+#         - Slices generation up to (but not including) that EOS.
+#         - Decodes only the generation span, skipping special/pad tokens.
+#     """
+#     # Make sure we can index these
+#     sequences = []
+#     for seq_ids, input_ids in zip(seq_ids_list, input_ids_list):
+#         full = list(seq_ids)
+#         prompt = list(input_ids)
 
-        # Skip left padding tokens (necessary for dream)
-        pad_id = getattr(tokenizer, "pad_token_id", None)
-        if pad_id is not None:
-            while full and full[0] == pad_id:
-                full.pop(0)
+#         # Skip left padding tokens (necessary for dream)
+#         pad_id = getattr(tokenizer, "pad_token_id", None)
+#         if pad_id is not None:
+#             while full and full[0] == pad_id:
+#                 full.pop(0)
 
-        start = len(prompt)
-        end = len(full)
+#         start = len(prompt)
+#         end = len(full)
 
-        eos_id = getattr(tokenizer, "eos_token_id", None)
-        eot_id = getattr(tokenizer, "eot_token_id", None)
-        if eos_id is not None:
-            for i in range(start, len(full)):
-                if full[i] in (eos_id, eot_id):
-                    end = i
-                    break
+#         eos_id = getattr(tokenizer, "eos_token_id", None)
+#         eot_id = getattr(tokenizer, "eot_token_id", None)
+#         if eos_id is not None:
+#             for i in range(start, len(full)):
+#                 if full[i] in (eos_id, eot_id):
+#                     end = i
+#                     break
 
-        gen_ids = full[start:end]
-        text = tokenizer.decode(gen_ids, skip_special_tokens=True)
-        # in case there is no eos_id or eot_id, just strings
-        eos = getattr(tokenizer, "eos_token", None)
-        eot = getattr(tokenizer, "eot_token", None)
-        if eos:
-            text = text.split(eos)[0]
-        if eot:
-            text = text.split(eot)[0]
-        # return text.strip()
-        sequences.append(text)
-    return sequences
+#         gen_ids = full[start:end]
+#         text = tokenizer.decode(gen_ids, skip_special_tokens=True)
+#         # in case there is no eos_id or eot_id, just strings
+#         eos = getattr(tokenizer, "eos_token", None)
+#         eot = getattr(tokenizer, "eot_token", None)
+#         if eos:
+#             text = text.split(eos)[0]
+#         if eot:
+#             text = text.split(eot)[0]
+#         # return text.strip()
+#         sequences.append(text)
+#     return sequences
 
 
 def render_menu(round_idx: int):
@@ -183,7 +183,7 @@ def single_turn_generate(generator, gen_config, visualize: bool):
 
         inputs = tokenizer([user_text], add_special_tokens=False)["input_ids"]
         outputs = generator.generate(inputs, gen_config, return_dict_in_generate=True)
-        text = decode_trim(tokenizer, outputs.sequences.tolist(), inputs)[0]
+        text = dllm.core.generation.utils.decode_trim(tokenizer, outputs.sequences.tolist(), inputs)[0]
 
         print(banner_line("Output"))
         print_wrapped(text if text else "<empty>")
@@ -215,7 +215,7 @@ def multi_turn_chat(generator, gen_config, visualize: bool):
         inputs = build_chat_inputs(tokenizer, [messages], add_generation_prompt=True)
 
         outputs = generator.generate(inputs, gen_config, return_dict_in_generate=True)
-        reply = decode_trim(tokenizer, outputs.sequences.tolist(), inputs)[0]
+        reply = dllm.core.generation.utils.decode_trim(tokenizer, outputs.sequences.tolist(), inputs)[0]
 
         print(DIV)
         print_wrapped("[Assistant]: " + reply if reply else "<empty>")

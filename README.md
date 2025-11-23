@@ -235,7 +235,7 @@ inputs = tokenizer.apply_chat_template(
 )
 
 outputs = generator.generate(inputs, return_dict_in_generate=True)
-sequences = decode_trim(tokenizer, outputs.sequences.tolist(), inputs)
+sequences = dllm.core.generation.utils.decode_trim(tokenizer, outputs.sequences.tolist(), inputs)
 ```
 
 You can also try interactive chat script (for example, [`examples/llada/chat.py`](/examples/llada/chat.py)) for visualized multi-turn dialogue:
