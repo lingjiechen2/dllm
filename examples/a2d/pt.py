@@ -108,17 +108,6 @@ def train():
         if data_args.streaming:
             dataset = dataset.shuffle(seed=training_args.seed)
 
-    # ----- Collator --------------------------------------------------------------
-    data_collator = transformers.DataCollatorForSeq2Seq(
-        tokenizer,
-        return_tensors="pt",
-        padding=True,
-    )
-    if training_args.right_shift_logits:
-        data_collator = dllm.utils.PrependBOSWrapper(
-            data_collator, bos_token_id=tokenizer.bos_token_id
-        )
-
     # ----- Training --------------------------------------------------------------
     accelerate.PartialState().wait_for_everyone()
     logger.info("Start training...")
@@ -129,7 +118,11 @@ def train():
         eval_dataset=dataset.get("test", None),
         args=training_args,
         right_shift_logits=training_args.right_shift_logits,
-        data_collator=data_collator,
+        data_collator=transformers.DataCollatorForSeq2Seq(
+            tokenizer,
+            return_tensors="pt",
+            padding=True,
+        ),
     )
     trainer.train()
     trainer.save_model(os.path.join(training_args.output_dir, "checkpoint-final"))

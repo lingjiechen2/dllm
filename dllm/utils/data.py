@@ -211,3 +211,50 @@ def default_mdlm_sft_map_fn(row, *, tokenizer, mask_prompt_loss: bool = True) ->
         }
 
     return {"input_ids": prompt_response_tokens, "labels": labels}
+
+
+def prepend_bos(
+    batch: dict,
+    bos_token_id: int,
+    label_pad_token_id: int = -100,
+):
+    """
+    Prepend BOS to batch['input_ids'], and prepend the corresponding
+    padding/ones to batch['labels'] and batch['attention_mask'] if present.
+    """
+    assert bos_token_id is not None, "bos_token_id must be provided"
+
+    input_ids = batch.get("input_ids")
+    bsz, _ = input_ids.shape
+
+    # ---- input_ids ----
+    bos = torch.full(
+        (bsz, 1),
+        bos_token_id,
+        dtype=input_ids.dtype,
+        device=input_ids.device,
+    )
+    batch["input_ids"] = torch.cat([bos, input_ids], dim=1)
+
+    # ---- labels ----
+    labels = batch.get("labels")
+    if labels is not None:
+        ignore_labels = torch.full(
+            (bsz, 1),
+            label_pad_token_id,
+            dtype=labels.dtype,
+            device=labels.device,
+        )
+        batch["labels"] = torch.cat([ignore_labels, labels], dim=1)
+
+    # ---- attention_mask ----
+    attn = batch.get("attention_mask")
+    if attn is not None:
+        bos_attention = torch.ones(
+            (bsz, 1),
+            dtype=attn.dtype,
+            device=attn.device,
+        )
+        batch["attention_mask"] = torch.cat([bos_attention, attn], dim=1)
+
+    return batch
