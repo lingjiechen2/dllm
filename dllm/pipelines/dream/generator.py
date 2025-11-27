@@ -129,22 +129,22 @@ class DreamGenerator(BaseGenerator):
         T = max_length
         x = torch.full((B, T), eos_token_id, dtype=torch.long, device=self.model.device)
 
-        seq_length = []
+        seq_lens = []
         for i, p in enumerate(inputs):
             total_len = prompt_lens[i] + max_new_tokens
-            seq_length.append(total_len)
+            seq_lens.append(total_len)
             start = T - total_len
             x[i, start : start + prompt_lens[i]] = p
             x[i, start + prompt_lens[i] : T] = mask_token_id
 
         attention_mask = torch.zeros(
-            (B, T), dtype=torch.float32, device=self.model.device
+            (B, T), dtype=torch.long, device=self.model.device
         )
-        for j, L in enumerate(seq_length):
+        for j, L in enumerate(seq_lens):
             if L > 0:
-                attention_mask[j, -L:] = 1.0  # Mandate to be left-padding
+                attention_mask[j, -L:] = 1  # Mandate to be left-padding
 
-        if attention_mask is not None and torch.any(attention_mask == 0.0):
+        if attention_mask is not None and torch.any(attention_mask == 0):
             pos_id = attention_mask.long().cumsum(-1) - 1
             pos_id.masked_fill_(attention_mask == 0, 1)
         else:
@@ -328,18 +328,17 @@ class DreamGenerator(BaseGenerator):
             x[i, -L:] = t
 
         # Build 1D attention mask (valid tokens on the right)
-        attention_mask = torch.zeros((B, T), dtype=torch.bool, device=self.model.device)
+        attention_mask = torch.zeros((B, T), dtype=torch.long, device=self.model.device)
         for j, L in enumerate(seq_lens):
             if L > 0:
-                attention_mask[j, -L:] = True
+                attention_mask[j, -L:] = 1
 
         # Expand to pairwise attention if left padding is present
-        if torch.any(attention_mask == 0.0):
+        if attention_mask is not None and torch.any(attention_mask == 0):
             pos_id = attention_mask.long().cumsum(-1) - 1
             pos_id.masked_fill_(attention_mask == 0, 1)
         else:
             pos_id = None
-            attention_mask = "full"
 
         # Precompute per-sample transfer schedule (how many to commit per step)
         mask_index = x == mask_token_id
