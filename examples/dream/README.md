@@ -19,7 +19,7 @@ Resources and examples for training (finetuning & pretraining) and evaluating di
 
 ##  Files overview
 ```
-# tools relevant with Dream
+# pipeline modules relevant with Dream
 dllm/pipelines/dream
 ├── __init__.py                     # Package initialization
 ├── models/
@@ -27,14 +27,15 @@ dllm/pipelines/dream
 │   ├── generation_utils.py         # Diffusion-based generation logic
 │   ├── modeling_dream.py           # Core Dream model architecture
 │   └── tokenization_dream.py       # Tokenizer implementation for Dream
-├── generator.py                    # Inference logic
-├── trainer.py                      # Training logic (pretraining and SFT)
+├── eval.py                         # Evaluation module
+├── generator.py                    # Inference module
+├── trainer.py                      # Training module (pretraining and SFT)
 └── utils.py                        # Auxiliary utilities and helper functions
 
 # example entry points for training / inference / evaluation
 examples/dream
 ├── chat.py                         # Interactive inference example
-├── eval.sh                         # Automatic evaluation script
+├── eval.sh                         # Automatic evaluation example
 ├── generate.py                     # Inference example
 ├── pt.py                           # Pretraining example
 ├── README.md                       # Documentation (you are here)

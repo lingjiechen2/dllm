@@ -25,7 +25,7 @@ Resources and examples for training (finetuning & pretraining) and evaluating di
 
 ##  Files overview
 ```
-# tools relevant with LLaDA
+# pipeline modules relevant with LLaDA
 dllm/pipelines/llada
 ├── __init__.py                     # Package initialization
 ├── models/
@@ -33,13 +33,14 @@ dllm/pipelines/llada
 │   ├── configuration_llada.py      # LLaDA model configuration
 │   ├── modeling_lladamoe.py        # LLaDA-MoE model architecture
 │   └── modeling_llada.py           # LLaDA model architecture
-├── generator.py                    # Inference logic
-└── trainer.py                      # Training logic (pretraining and finetuning)
+├── eval.py                         # Evaluation module
+├── generator.py                    # Inference module
+└── trainer.py                      # Training module (pretraining and SFT)
 
 # example entry points for training / inference / evaluation
 examples/llada
 ├── chat.py                         # Interactive inference example
-├── eval.sh                         # Automatic evaluation script
+├── eval.sh                         # Automatic evaluation example
 ├── generate.py                     # Inference example
 ├── pt.py                           # Pretraining example
 ├── README.md                       # Documentation (you are here)

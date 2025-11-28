@@ -16,7 +16,6 @@ import transformers
 
 import dllm
 from dllm.pipelines import dream
-from dllm.core.generation.chat_utils import multi_turn_chat, single_turn_generate
 
 
 @dataclass
@@ -53,14 +52,14 @@ def main():
     generator = dream.DreamGenerator(model=model, tokenizer=tokenizer)
 
     if script_args.chat:
-        multi_turn_chat(
+        dllm.utils.multi_turn_chat(
             generator=generator,
             gen_config=gen_config,
             visualize=script_args.visualize,
         )
     else:
         print("\nSingle-turn generation (no chat template).")
-        single_turn_generate(
+        dllm.utils.single_turn_generate(
             generator=generator,
             gen_config=gen_config,
             visualize=script_args.visualize,

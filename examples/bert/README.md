@@ -22,7 +22,7 @@ This directory provides two key sets of resources:
 # example entry points for training / inference / evaluation
 examples/bert
 ├── chat.py                         # Interactive inference example
-├── eval.sh                         # Automatic evaluation script
+├── eval.sh                         # Automatic evaluation example
 ├── generate.py                     # Inference example
 ├── pt.py                           # Pretraining example
 ├── README.md                       # Documentation (you are here)

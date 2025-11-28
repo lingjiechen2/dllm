@@ -9,11 +9,11 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from dllm.core.generation.utils import get_num_transfer_tokens
-from dllm.core.generation.generator import (
+from dllm.core.generators import (
     GeneratorOutput,
     GeneratorConfig,
     BaseGenerator,
+    get_num_transfer_tokens,
 )
 
 

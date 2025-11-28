@@ -40,9 +40,7 @@ transformers.set_seed(script_args.seed)
 model = dllm.utils.get_model(model_args=script_args).eval()
 tokenizer = dllm.utils.get_tokenizer(model_args=script_args)
 generator = llada.LLaDAGenerator(model=model, tokenizer=tokenizer)
-terminal_visualizer = dllm.core.generation.visualizer.TerminalVisualizer(
-    tokenizer=tokenizer
-)
+terminal_visualizer = dllm.utils.TerminalVisualizer(tokenizer=tokenizer)
 
 # --- Example 1: Batch generation ---
 print("\n" + "=" * 80)
@@ -60,7 +58,7 @@ inputs = tokenizer.apply_chat_template(
     tokenize=True,
 )
 outputs = generator.generate(inputs, gen_config, return_dict_in_generate=True)
-sequences = dllm.core.generation.utils.decode_trim(tokenizer, outputs.sequences.tolist(), inputs)
+sequences = dllm.utils.decode_trim(tokenizer, outputs.sequences.tolist(), inputs)
 
 for iter, s in enumerate(sequences):
     print("\n" + "-" * 80)
