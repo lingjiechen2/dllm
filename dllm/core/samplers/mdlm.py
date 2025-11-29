@@ -74,9 +74,7 @@ class MDLMSampler(BaseSampler):
         stochastic_transfer = kwargs.get(
             "stochastic_transfer", config.stochastic_transfer
         )
-        return_dict = kwargs.get(
-            "return_dict", config.return_dict
-        )
+        return_dict = kwargs.get("return_dict", config.return_dict)
         right_shift_logits = kwargs.get("right_shift_logits", config.right_shift_logits)
         begin_suppress_tokens = kwargs.get(
             "begin_suppress_tokens", config.begin_suppress_tokens
@@ -171,7 +169,7 @@ class MDLMSampler(BaseSampler):
                     logits = self.model(
                         x, attention_mask=attention_mask
                     ).logits  # Use attention mask here
-                
+
                 if suppress_tokens is not None and len(suppress_tokens) > 0:
                     for token_id in suppress_tokens:
                         logits[:, :, token_id] = -torch.inf
@@ -260,9 +258,7 @@ class MDLMSampler(BaseSampler):
         stochastic_transfer = kwargs.get(
             "stochastic_transfer", config.stochastic_transfer
         )
-        return_dict = kwargs.get(
-            "return_dict", config.return_dict
-        )
+        return_dict = kwargs.get("return_dict", config.return_dict)
         right_shift_logits = kwargs.get("right_shift_logits", config.right_shift_logits)
         begin_suppress_tokens = kwargs.get(
             "begin_suppress_tokens", config.begin_suppress_tokens
@@ -366,7 +362,7 @@ class MDLMSampler(BaseSampler):
 
                 # Greedy with optional Gumbel-Max noise
                 logits_with_noise = add_gumbel_noise(logits, temperature=temperature)
-                x0 = torch.argmax(logits_with_noise, dim=-1) # [B, T]
+                x0 = torch.argmax(logits_with_noise, dim=-1)  # [B, T]
 
                 if begin_suppress_tokens is not None and len(begin_suppress_tokens) > 0:
                     for token_id in begin_suppress_tokens:

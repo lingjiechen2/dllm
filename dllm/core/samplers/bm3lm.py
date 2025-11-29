@@ -70,10 +70,10 @@ class BM3LMSampler(BaseSampler):
         cfg_scale = kwargs.get("cfg_scale", config.cfg_scale)
         cfg_keep_tokens = kwargs.get("cfg_keep_tokens", config.cfg_keep_tokens)
         remasking = kwargs.get("remasking", config.remasking)
-        stochastic_transfer = kwargs.get("stochastic_transfer", config.stochastic_transfer)
-        return_dict = kwargs.get(
-            "return_dict", config.return_dict
+        stochastic_transfer = kwargs.get(
+            "stochastic_transfer", config.stochastic_transfer
         )
+        return_dict = kwargs.get("return_dict", config.return_dict)
         right_shift_logits = kwargs.get("right_shift_logits", config.right_shift_logits)
 
         assert block_size >= 1
@@ -104,14 +104,18 @@ class BM3LMSampler(BaseSampler):
         # NEW 1: Do NOT preallocate a full mask canvas.
         #        Only keep the prompt first; future blocks will be appended.
         # ==========================================================
-        x = torch.full((B, max_prompt_len), eos_id, dtype=torch.long, device=self.model.device)
+        x = torch.full(
+            (B, max_prompt_len), eos_id, dtype=torch.long, device=self.model.device
+        )
         for b, p in enumerate(inputs):
             x[b, : prompt_lens[b]] = p
 
         # ---- unconditional CFG preparation: prompt tokens considered "fixed" ----
         unmasked_index = (x != mask_id) & (x != eos_id)
         if cfg_keep_tokens:
-            keep_mask = torch.isin(x, torch.as_tensor(cfg_keep_tokens, device=self.model.device))
+            keep_mask = torch.isin(
+                x, torch.as_tensor(cfg_keep_tokens, device=self.model.device)
+            )
             unmasked_index = unmasked_index & (~keep_mask)
 
         # ---- block scheduling ----
@@ -141,7 +145,9 @@ class BM3LMSampler(BaseSampler):
             unmasked_index = torch.cat(
                 [
                     unmasked_index,
-                    torch.zeros((B, cur_block_len), dtype=torch.bool, device=self.model.device),
+                    torch.zeros(
+                        (B, cur_block_len), dtype=torch.bool, device=self.model.device
+                    ),
                 ],
                 dim=1,
             )
@@ -149,12 +155,14 @@ class BM3LMSampler(BaseSampler):
             T = x.shape[1]
 
             # Build mask_index only for new block
-            block_mask_index = torch.zeros((B, cur_block_len), dtype=torch.bool, device=x.device)
+            block_mask_index = torch.zeros(
+                (B, cur_block_len), dtype=torch.bool, device=x.device
+            )
             for j in range(B):
                 start = prompt_lens[j] + generated
                 end = min(start + cur_block_len, T)
                 if start < end:
-                    block_mask_index[j, : (end - start)] = (x[j, start:end] == mask_id)
+                    block_mask_index[j, : (end - start)] = x[j, start:end] == mask_id
 
             # transfer schedule for diffusion steps
             num_transfer_tokens = get_num_transfer_tokens(
@@ -176,7 +184,7 @@ class BM3LMSampler(BaseSampler):
 
             # ---- inner diffusion steps ----
             for i_step in range(effective_steps):
-                mask_index = (x == mask_id)
+                mask_index = x == mask_id
 
                 # ---- classifier-free guidance ----
                 if cfg_scale > 0.0:

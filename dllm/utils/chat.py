@@ -100,9 +100,7 @@ def build_chat_inputs(tokenizer, messages: List[dict], add_generation_prompt: bo
 
 def visualize_histories(tokenizer, histories):
     try:
-        terminal_visualizer = dllm.utils.TerminalVisualizer(
-            tokenizer=tokenizer
-        )
+        terminal_visualizer = dllm.utils.TerminalVisualizer(tokenizer=tokenizer)
         terminal_visualizer.visualize(histories, rich=True)
     except Exception as e:
         print(f"(Visualization skipped: {e})")

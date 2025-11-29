@@ -340,9 +340,7 @@ def _truncate_iterabledatasetdict(
 
         # Multi-split: require explicit train/test splits
         if "train" not in base or "test" not in base:
-            raise ValueError(
-                "require 'train' and 'test' splits for train+test limits."
-            )
+            raise ValueError("require 'train' and 'test' splits for train+test limits.")
         train = base["train"].take(n_train)
         test = base["test"].take(n_test)
         return IterableDatasetDict({"train": train, "test": test})
@@ -353,9 +351,7 @@ def _truncate_iterabledatasetdict(
             train = base[single_split_name].take(n_train)
         else:
             if "train" not in base:
-                raise ValueError(
-                    "missing 'train' split for train limit."
-                )
+                raise ValueError("missing 'train' split for train limit.")
             train = base["train"].take(n_train)
         return IterableDatasetDict({"train": train})
 
@@ -365,9 +361,7 @@ def _truncate_iterabledatasetdict(
             test = base[single_split_name].take(n_test)
         else:
             if "test" not in base:
-                raise ValueError(
-                    "missing 'test' split for test limit."
-                )
+                raise ValueError("missing 'test' split for test limit.")
             test = base["test"].take(n_test)
         return IterableDatasetDict({"test": test})
 

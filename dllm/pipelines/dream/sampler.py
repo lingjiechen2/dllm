@@ -107,9 +107,7 @@ class DreamSampler(BaseSampler):
         )
         # generation_tokens_hook_func = kwargs.get("generation_tokens_hook_func", config.generation_tokens_hook_func)
         # generation_logits_hook_func = kwargs.get("generation_logits_hook_func", config.generation_logits_hook_func)
-        return_dict = kwargs.get(
-            "return_dict", config.return_dict
-        )
+        return_dict = kwargs.get("return_dict", config.return_dict)
         right_shift_logits = kwargs.get("right_shift_logits", config.right_shift_logits)
 
         # --- Initialization ---
@@ -139,9 +137,7 @@ class DreamSampler(BaseSampler):
             x[i, start : start + prompt_lens[i]] = p
             x[i, start + prompt_lens[i] : T] = mask_token_id
 
-        attention_mask = torch.zeros(
-            (B, T), dtype=torch.long, device=self.model.device
-        )
+        attention_mask = torch.zeros((B, T), dtype=torch.long, device=self.model.device)
         for j, L in enumerate(seq_lens):
             if L > 0:
                 attention_mask[j, -L:] = 1  # Mandate to be left-padding
@@ -308,9 +304,7 @@ class DreamSampler(BaseSampler):
         )
         # generation_tokens_hook_func = kwargs.get("stochastic_transfer", config.generation_tokens_hook_func)
         # generation_logits_hook_func = kwargs.get("stochastic_transfer", config.generation_logits_hook_func)
-        return_dict = kwargs.get(
-            "return_dict", config.return_dict
-        )
+        return_dict = kwargs.get("return_dict", config.return_dict)
         right_shift_logits = kwargs.get("right_shift_logits", config.right_shift_logits)
 
         # --- Initialization ---

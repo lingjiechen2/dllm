@@ -13,6 +13,7 @@ import transformers
 from typing import Any
 
 from .mdlm import MDLMTrainer
+
 # from dllm.core.schedulers import BaseAlphaScheduler, LinearAlphaScheduler
 
 
@@ -66,33 +67,28 @@ def block_diff_mask(b, h, q_idx, kv_idx, block_size=None, n=None):
     """
 
     # Indicate whether token belongs to xt or x0
-    x0_flag_q = (q_idx >= n)
-    x0_flag_kv = (kv_idx >= n)
+    x0_flag_q = q_idx >= n
+    x0_flag_kv = kv_idx >= n
 
     # Compute block indices
-    block_q = torch.where(x0_flag_q == 1,
-                        (q_idx - n) // block_size,
-                        q_idx // block_size)
-    block_kv = torch.where(x0_flag_kv == 1,
-                        (kv_idx - n) // block_size,
-                        kv_idx // block_size)
+    block_q = torch.where(
+        x0_flag_q == 1, (q_idx - n) // block_size, q_idx // block_size
+    )
+    block_kv = torch.where(
+        x0_flag_kv == 1, (kv_idx - n) // block_size, kv_idx // block_size
+    )
 
     # **1. Block Diagonal Mask (M_BD) **
     block_diagonal = (block_q == block_kv) & (x0_flag_q == x0_flag_kv)
 
     # **2. Offset Block-Causal Mask (M_OBC) **
-    offset_block_causal = (
-    (block_q > block_kv)
-    & (x0_flag_kv == 1)
-    & (x0_flag_q == 0)
-    )
+    offset_block_causal = (block_q > block_kv) & (x0_flag_kv == 1) & (x0_flag_q == 0)
 
     # **3. Block-Causal Mask (M_BC) **
     block_causal = (block_q >= block_kv) & (x0_flag_kv == 1) & (x0_flag_q == 1)
 
     # **4. Combine Masks **
     return block_diagonal | offset_block_causal | block_causal
-
 
 
 class BM3LMTrainer(MDLMTrainer):
@@ -112,11 +108,10 @@ class BM3LMTrainer(MDLMTrainer):
         super().__init__(*args, **kwargs)
         self.block_size = block_size
 
-
     def compute_loss(
         self,
         model: transformers.PreTrainedModel | nn.Module,
-        inputs: list[dict[str, Any]],   # 注意：这里现在是 list[dict]
+        inputs: list[dict[str, Any]],  # 注意：这里现在是 list[dict]
         return_outputs: bool = False,
         **kwargs,
     ):
@@ -146,7 +141,6 @@ class BM3LMTrainer(MDLMTrainer):
         )
         b, l = input_ids.shape
 
-
         # === 1. Sample diffusion timesteps ===
         t = self.time_epsilon + (1 - self.time_epsilon) * torch.rand(
             b, device=input_ids.device
@@ -171,33 +165,45 @@ class BM3LMTrainer(MDLMTrainer):
         # TODO: others like flash attention 2
         if model.config._attn_implementation == "sdpa":
             attention_mask = block_diff_mask(
-                b=None, h=None, q_idx=torch.arange(l*2)[:, None], 
-                kv_idx=torch.arange(l*2)[None, :], block_size=self.block_size, n=l,
+                b=None,
+                h=None,
+                q_idx=torch.arange(l * 2)[:, None],
+                kv_idx=torch.arange(l * 2)[None, :],
+                block_size=self.block_size,
+                n=l,
             )
-            attention_mask = attention_mask.unsqueeze(0).unsqueeze(0).expand(1, 1, 2*l, 2*l)
+            attention_mask = (
+                attention_mask.unsqueeze(0).unsqueeze(0).expand(1, 1, 2 * l, 2 * l)
+            )
             attention_mask = attention_mask.to(input_ids.device)
         elif model.config._attn_implementation == "flex_attention":
             from torch.nn.attention.flex_attention import create_block_mask
+
             attention_mask = create_block_mask(
                 partial(block_diff_mask, block_size=self.block_size, n=l),
-                B=None, H=None, Q_LEN=l*2, KV_LEN=l*2
+                B=None,
+                H=None,
+                Q_LEN=l * 2,
+                KV_LEN=l * 2,
             )
         else:
             raise NotImplementedError
 
-        base_pos = torch.arange(l, device=input_ids.device).unsqueeze(0).expand(b, l)  # [B, L]
+        base_pos = (
+            torch.arange(l, device=input_ids.device).unsqueeze(0).expand(b, l)
+        )  # [B, L]
         concat_position_ids = torch.cat([base_pos, base_pos], dim=1)  # [B, 2L]
 
         # TODO: positional id, left half and right half should have the same positional id
         outputs = model(
-            input_ids=concat_input_ids, 
+            input_ids=concat_input_ids,
             attention_mask=attention_mask,
             position_ids=concat_position_ids,
         )
         outputs = self._postprocess_outputs(outputs)
         logits = outputs.logits
 
-        logits = logits[:, :l] # we only care about the first half for computing loss
+        logits = logits[:, :l]  # we only care about the first half for computing loss
 
         # === 4. Handle degenerate cases (no tokens masked) ===
         # If no positions were masked, return a zero loss to keep gradients valid.

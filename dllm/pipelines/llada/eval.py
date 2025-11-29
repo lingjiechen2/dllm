@@ -25,6 +25,7 @@ from lm_eval.models.utils import get_dtype
 import dllm
 from dllm.core.samplers import MDLMSampler, MDLMSamplerConfig
 
+
 @dataclass
 class LLaDAEvalConfig(MDLMSamplerConfig):
     # According to LLaDA's opencompass implementation: https://github.com/ML-GSAI/LLaDA/blob/main/opencompass/opencompass/models/dllm.py
@@ -40,6 +41,7 @@ class LLaDAEvalConfig(MDLMSamplerConfig):
     is_check_greedy: bool = False
     device: str = "cuda"
 
+
 @register_model("llada")
 class LLaDAEvalHarness(LM):
     @staticmethod
@@ -47,11 +49,11 @@ class LLaDAEvalHarness(LM):
         """Parse token list from string format like '[126081;126348]' or list."""
         if isinstance(value, str):
             value = value.strip()
-            if value.startswith('[') and value.endswith(']'):
+            if value.startswith("[") and value.endswith("]"):
                 value = value[1:-1]  # Remove brackets
             if not value:  # Empty string after removing brackets
                 return []
-            return [int(x.strip()) for x in value.split(';') if x.strip()]
+            return [int(x.strip()) for x in value.split(";") if x.strip()]
         elif isinstance(value, list):
             return value
         elif value is None:
@@ -80,8 +82,12 @@ class LLaDAEvalHarness(LM):
         block_size = kwargs.get("block_size", config.block_size)
         max_length = kwargs.get("max_length", config.max_length)
         remasking = kwargs.get("remasking", config.remasking)
-        suppress_tokens = self._parse_token_list(kwargs.get("suppress_tokens", config.suppress_tokens))
-        begin_suppress_tokens = self._parse_token_list(kwargs.get("begin_suppress_tokens", config.begin_suppress_tokens))
+        suppress_tokens = self._parse_token_list(
+            kwargs.get("suppress_tokens", config.suppress_tokens)
+        )
+        begin_suppress_tokens = self._parse_token_list(
+            kwargs.get("begin_suppress_tokens", config.begin_suppress_tokens)
+        )
         right_shift_logits = kwargs.get("right_shift_logits", config.right_shift_logits)
 
         accelerator = accelerate.Accelerator()
@@ -356,7 +362,7 @@ class LLaDAEvalHarness(LM):
                 remasking=self.remasking,
                 suppress_tokens=self.suppress_tokens,
                 begin_suppress_tokens=self.begin_suppress_tokens,
-                right_shift_logits=self.right_shift_logits
+                right_shift_logits=self.right_shift_logits,
             )
             generated_answer = self.tokenizer.decode(
                 generated_ids[0][prompt[0].shape[0] :], skip_special_tokens=False

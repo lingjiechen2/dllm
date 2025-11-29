@@ -372,9 +372,7 @@ def main():
         verbose: Annotated[bool, "Whether to show intermediate decoding traces"] = True
 
         # Visualization
-        make_gif: Annotated[bool, "Render a decoding trace GIF after sampling."] = (
-            False
-        )
+        make_gif: Annotated[bool, "Render a decoding trace GIF after sampling."] = False
         gif_path: Annotated[
             str | None, "Output GIF path (default: decode_trace.gif)"
         ] = None

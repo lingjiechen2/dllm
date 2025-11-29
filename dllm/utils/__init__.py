@@ -1,8 +1,4 @@
-from . import (
-    chat, collators, configs, 
-    data, models, sampling, 
-    utils, visualizers
-)
+from . import chat, collators, configs, data, models, sampling, utils, visualizers
 from .chat import *
 from .collators import *
 from .configs import *
