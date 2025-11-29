@@ -156,7 +156,7 @@ accelerate launch --num_processes 4 \
     --model "llada" \
     --apply_chat_template \
     --num_fewshot 5 \
-    --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,max_new_tokens=512,steps=512,block_length=512,cfg=0.0,logits_eos_inf=False,confidence_eos_eot_inf=True"
+    --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,max_new_tokens=512,steps=512,block_size=512,cfg=0.0,logits_eos_inf=False,confidence_eos_eot_inf=True"
 ```
 
 To automatically evaluate [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) and [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) on all benchmarks, run:

@@ -25,7 +25,7 @@ class ScriptArguments:
 class SamplerConfig(dllm.core.samplers.MDLMSamplerConfig):
     steps: int = 128
     max_new_tokens: int = 128
-    block_length: int = 64
+    block_size: int = 64
     temperature: float = 0.0
     remasking: str = "low_confidence"
     right_shift_logits: bool = True

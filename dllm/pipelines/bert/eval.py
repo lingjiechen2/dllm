@@ -7,7 +7,7 @@ accelerate launch \
     --model bert \
     --device cuda \
     --num_fewshot 8 \
-    --model_args "pretrained=dllm-collection/ModernBERT-base-chat-v0,is_check_greedy=False,mc_num=1,max_new_tokens=1024,steps=1024,block_length=32,cfg=0.0"
+    --model_args "pretrained=dllm-collection/ModernBERT-base-chat-v0,is_check_greedy=False,mc_num=1,max_new_tokens=1024,steps=1024,block_size=32,cfg=0.0"
 """
 
 from types import SimpleNamespace
@@ -33,7 +33,7 @@ class BERTEvalConfig(MDLMSamplerConfig):
     max_new_tokens: int = 128
     max_length: int = 512
     steps: int = 128
-    block_length: int = 128
+    block_size: int = 128
 
     pretrained: str = ""
     dtype: str | torch.dtype = "auto"
@@ -66,7 +66,7 @@ class BERTEvalHarness(LM):
         cfg = kwargs.get("cfg", config.cfg_scale)
         steps = kwargs.get("steps", config.steps)
         max_new_tokens = kwargs.get("max_new_tokens", config.max_new_tokens)
-        block_length = kwargs.get("block_length", config.block_length)
+        block_size = kwargs.get("block_size", config.block_size)
         max_length = kwargs.get("max_length", config.max_length)
         remasking = kwargs.get("remasking", config.remasking)
 
@@ -110,7 +110,7 @@ class BERTEvalHarness(LM):
         self.batch_size = int(batch_size)
         self.max_length = int(max_length)
         self.max_new_tokens = int(max_new_tokens)
-        self.block_length = int(block_length)
+        self.block_size = int(block_size)
         self.steps = int(steps)
         self.cfg = float(cfg)
         self.remasking = remasking
@@ -333,7 +333,7 @@ class BERTEvalHarness(LM):
                 inputs=prompt,
                 steps=self.steps,
                 max_new_tokens=self.max_new_tokens,
-                block_length=self.block_length,
+                block_size=self.block_size,
                 temperature=0.0,
                 cfg_scale=self.cfg,
                 remasking=self.remasking,

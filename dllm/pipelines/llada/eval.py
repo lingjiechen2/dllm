@@ -5,7 +5,7 @@ accelerate launch \
     --tasks gsm8k \
     --model llada \
     --num_fewshot 8 \
-    --model_args "pretrained=GSAI-ML/LLaDA-8B-Base,is_check_greedy=False,mc_num=1,max_new_tokens=1024,steps=1024,block_length=32,cfg=0.0"
+    --model_args "pretrained=GSAI-ML/LLaDA-8B-Base,is_check_greedy=False,mc_num=1,max_new_tokens=1024,steps=1024,block_size=32,cfg=0.0"
 """
 
 from types import SimpleNamespace
@@ -31,7 +31,7 @@ class LLaDAEvalConfig(MDLMSamplerConfig):
     max_new_tokens: int = 1024
     max_length: int = 4096
     steps: int = 1024
-    block_length: int = 1024
+    block_size: int = 1024
 
     pretrained: str = ""
     dtype: str | torch.dtype = "auto"
@@ -77,7 +77,7 @@ class LLaDAEvalHarness(LM):
         cfg = kwargs.get("cfg", config.cfg_scale)
         steps = kwargs.get("steps", config.steps)
         max_new_tokens = kwargs.get("max_new_tokens", config.max_new_tokens)
-        block_length = kwargs.get("block_length", config.block_length)
+        block_size = kwargs.get("block_size", config.block_size)
         max_length = kwargs.get("max_length", config.max_length)
         remasking = kwargs.get("remasking", config.remasking)
         suppress_tokens = self._parse_token_list(kwargs.get("suppress_tokens", config.suppress_tokens))
@@ -124,7 +124,7 @@ class LLaDAEvalHarness(LM):
         self.batch_size = int(batch_size)
         self.max_length = max_length
         self.max_new_tokens = int(max_new_tokens)
-        self.block_length = int(block_length)
+        self.block_size = int(block_size)
         self.steps = int(steps)
         self.cfg = float(cfg)
         self.remasking = remasking
@@ -350,7 +350,7 @@ class LLaDAEvalHarness(LM):
                 inputs=prompt,
                 steps=self.steps,
                 max_new_tokens=self.max_new_tokens,
-                block_length=self.block_length,
+                block_size=self.block_size,
                 temperature=0.0,
                 cfg_scale=self.cfg,
                 remasking=self.remasking,

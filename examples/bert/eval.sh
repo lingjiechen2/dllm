@@ -32,15 +32,15 @@ common_args="--model bert --apply_chat_template"  # BERT model uses chat templat
 
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/bert/eval.py \
     --tasks gsm8k_bert --num_fewshot 8 ${common_args} \
-    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_length=32"
+    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32"
 
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/bert/eval.py \
     --tasks bbh --num_fewshot 3 ${common_args} \
-    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_length=32"
+    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32"
 
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/bert/eval.py \
     --tasks minerva_math --num_fewshot 4 ${common_args} \
-    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_length=32"
+    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32"
 
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/bert/eval.py \
     --tasks ceval-valid --num_fewshot 5 ${common_args} \

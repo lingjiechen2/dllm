@@ -140,7 +140,7 @@ accelerate launch --num_processes 4 \
     --model "bert" \
     --apply_chat_template \
     --num_fewshot 0 \
-    --model_args "pretrained=dllm-collection/ModernBERT-large-chat-v0,max_new_tokens=256,steps=256,block_length=32"
+    --model_args "pretrained=dllm-collection/ModernBERT-large-chat-v0,max_new_tokens=256,steps=256,block_size=32"
 ```
 
 To automatically evaluate [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0) and [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0) on all benchmarks, run:

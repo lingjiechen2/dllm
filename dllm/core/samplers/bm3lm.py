@@ -37,7 +37,7 @@ class BM3LMSamplerConfig(SamplerConfig):
     max_length: int = (
         None  # There's no explicit length_limit except for the tokenizer/model context
     )
-    block_length: int = 128
+    block_size: int = 128
     steps: int = 128
     temperature: float = 0.0
     remasking: str = "low_confidence"
@@ -65,7 +65,7 @@ class BM3LMSampler(BaseSampler):
         steps = kwargs.get("steps", config.steps)
         max_new_tokens = kwargs.get("max_new_tokens", config.max_new_tokens)
         max_length = kwargs.get("max_length", config.max_length)
-        block_length = kwargs.get("block_length", config.block_length)
+        block_size = kwargs.get("block_size", config.block_size)
         temperature = kwargs.get("temperature", config.temperature)
         cfg_scale = kwargs.get("cfg_scale", config.cfg_scale)
         cfg_keep_tokens = kwargs.get("cfg_keep_tokens", config.cfg_keep_tokens)
@@ -76,7 +76,7 @@ class BM3LMSampler(BaseSampler):
         )
         right_shift_logits = kwargs.get("right_shift_logits", config.right_shift_logits)
 
-        assert block_length >= 1
+        assert block_size >= 1
         assert steps >= 1
 
         mask_id = self.tokenizer.mask_token_id
@@ -115,7 +115,7 @@ class BM3LMSampler(BaseSampler):
             unmasked_index = unmasked_index & (~keep_mask)
 
         # ---- block scheduling ----
-        num_blocks = math.ceil(max_new_tokens / block_length)
+        num_blocks = math.ceil(max_new_tokens / block_size)
         steps = math.ceil(steps / num_blocks)
         histories = [x.clone()] if return_dict else None
 
@@ -125,7 +125,7 @@ class BM3LMSampler(BaseSampler):
         # Block-wise generation loop
         # ==========================================================
         for b in range(num_blocks):
-            cur_block_len = min(block_length, max_new_tokens - generated)
+            cur_block_len = min(block_size, max_new_tokens - generated)
             if cur_block_len <= 0:
                 break
 
@@ -171,7 +171,7 @@ class BM3LMSampler(BaseSampler):
             attention_mask = build_staircase_attention_mask(
                 x=x,
                 prompt_lens=prompt_lens,
-                block_length=block_length,
+                block_size=block_size,
             )  # [B, 1, T, T] boolean
 
             # ---- inner diffusion steps ----
@@ -212,7 +212,7 @@ class BM3LMSampler(BaseSampler):
 
                 # restrict selection to the current block region
                 for j in range(B):
-                    cutoff = prompt_lens[j] + (b + 1) * block_length
+                    cutoff = prompt_lens[j] + (b + 1) * block_size
                     if cutoff < x0_p.size(1):
                         x0_p[j, cutoff:] = -np.inf
 
