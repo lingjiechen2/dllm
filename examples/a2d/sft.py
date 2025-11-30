@@ -106,21 +106,6 @@ def train():
         # truncate / filter long sequences if needed
         dataset = dllm.utils.post_process_dataset(dataset, data_args)
 
-    # ----- Collator --------------------------------------------------------------
-    data_collator = transformers.DataCollatorForSeq2Seq(
-        tokenizer,
-        return_tensors="pt",
-        padding=True,
-        label_pad_token_id=tokenizer.pad_token_id,  # finetune on padded <eos_token>
-    )
-    data_collator = dllm.utils.NoAttentionMaskWrapper(
-        data_collator
-    )  # padded <eos_token> should be visible
-    if training_args.right_shift_logits and not data_args.mask_prompt_loss:
-        data_collator = dllm.utils.PrependBOSWrapper(
-            data_collator, bos_token_id=tokenizer.bos_token_id
-        )
-
     # ----- Training --------------------------------------------------------------
     accelerate.PartialState().wait_for_everyone()
     logger.info("Start training...")
@@ -131,7 +116,16 @@ def train():
         eval_dataset=dataset.get("test", None),
         args=training_args,
         right_shift_logits=training_args.right_shift_logits,
-        data_collator=data_collator,
+        data_collator=(
+            dllm.utils.NoAttentionMaskWrapper(  # padded <eos_token> should be visible
+                transformers.DataCollatorForSeq2Seq(
+                    tokenizer,
+                    return_tensors="pt",
+                    padding=True,
+                    label_pad_token_id=tokenizer.pad_token_id,  # finetune on padded <eos_token>
+                ),
+            )
+        ),
     )
     trainer.train()
     trainer.save_model(os.path.join(training_args.output_dir, "checkpoint-final"))

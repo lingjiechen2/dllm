@@ -1,12 +1,12 @@
-# Generative BERT
+# BERT
 
 [![Hugging Face Checkpoints](https://img.shields.io/badge/Hugging%20Face-Checkpoints-yellow)](https://huggingface.co/collections/dllm-collection/bert-chat)
 [![W&B Report](https://img.shields.io/badge/W&B-Report-white?logo=weightsandbiases)](https://api.wandb.ai/links/asap-zzhou/101h5xvg)
 
 This directory provides two key sets of resources:
 
-1.  **Toy Examples ([Warmup](#warmup)):** Scripts for pretraining and SFTing any BERT-style model on small datasets to generate text.
-2.  **Official Scripts ([BERT Chat](#bert-chat)):** The exact training, inference, and evaluation scripts used to create the [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0) and [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0) checkpoints, two BERTs finetuned as Chatbots. For a deep dive into experimental results, lessons learned, and more reproduction details, please see our full [BERT Chat W&B Report](https://api.wandb.ai/links/asap-zzhou/101h5xvg).
+-  **[Warmup](#warmup)**: Tutorial scripts for continual pretraining and SFTing any BERT-style model on small datasets to sample text.
+-  **[BERT-Chat](#bert-chat)**: The exact training, inference, and evaluation scripts used to create the [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0) and [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0) 🤗checkpoints, two BERTs finetuned as Chatbots. For a deep dive into experimental results, lessons learned, and more reproduction details, please see our full [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) BERT-Chat Report](https://api.wandb.ai/links/asap-zzhou/101h5xvg).
 
 <p align="center" style="margin-top: 15px;">
     <img src="/examples/bert/assets/chat.gif" alt="chat" width="70%">
@@ -22,8 +22,8 @@ This directory provides two key sets of resources:
 # example entry points for training / inference / evaluation
 examples/bert
 ├── chat.py                         # Interactive inference example
-├── eval.sh                         # Automatic evaluation script
-├── generate.py                     # Inference example
+├── eval.sh                         # Automatic evaluation example
+├── sample.py                       # Inference example
 ├── pt.py                           # Pretraining example
 ├── README.md                       # Documentation (you are here)
 └── sft.py                          # Supervised finetuning example
@@ -31,10 +31,10 @@ examples/bert
 
 ## Warmup
 
-In this section, we show toy examples of pretraining and SFTing [`ModernBERT-large`](https://huggingface.co/answerdotai/ModernBERT-large) on small datasets to generate text.
+In this section, we show toy examples of continual pretraining and SFTing [`ModernBERT-large`](https://huggingface.co/answerdotai/ModernBERT-large) on small datasets to sample text.
 You can use any BERT model instead for example, by `--model_name_or_path "FacebookAI/roberta-large"`.
 
-### Pretrain
+### Continual Pretraining
 
 To train [`ModernBERT-large`](https://huggingface.co/answerdotai/ModernBERT-large) on the [`tiny-shakespeare`](https://huggingface.co/datasets/Trelis/tiny-shakespeare) dataset, run:
 ```shell
@@ -53,9 +53,9 @@ accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_proces
     --output_dir "models/ModernBERT-large/tiny-shakespeare"
 ```
 
-To run inference with the model:
+To run the model for interactive inference:
 ```shell
-# just press enter (empty prompt) if you want the model to generate text from scratch 
+# just press enter (empty prompt) if you want the model to sample text from scratch 
 python -u examples/bert/chat.py \
     --model_name_or_path "models/ModernBERT-large/tiny-shakespeare/checkpoint-final" \
     --chat False --remasking "random" --steps 128 --max_new_tokens 128
@@ -84,10 +84,10 @@ python -u examples/bert/chat.py \
     --model_name_or_path "models/ModernBERT-large/alpaca/checkpoint-final" --chat True
 ```
 
-## BERT Chat
-Here we show the exact commands we use to train and interact with the BERT Chat models: 
+## BERT-Chat
+Here we show the exact commands we use to train and interact with the BERT-Chat models: 
 [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0) and [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0).
-For training curves and other details, please see [BERT Chat W&B Report](https://api.wandb.ai/links/asap-zzhou/101h5xvg).
+For training curves and other details, please see [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) BERT-Chat Report](https://api.wandb.ai/links/asap-zzhou/101h5xvg).
 
 ### Training
 
@@ -96,14 +96,14 @@ To reproduce [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
     examples/bert/sft.py \
     --model_name_or_path "answerdotai/ModernBERT-base" \
-    --dataset_args "allenai/tulu-3-sft-mixture|HuggingFaceTB/smoltalk" \
+    --dataset_args "allenai/tulu-3-sft-mixture+HuggingFaceTB/smoltalk" \
     --max_length 1024 \
     --learning_rate 1e-4 \
     --num_train_epochs 10 \
     --per_device_train_batch_size 48 \
     --per_device_eval_batch_size 48 \
     --save_steps 0.1 \
-    --output_dir "models/ModernBERT-base/tulu-3-smoltalk/epochs-10-bs-384-len-1024"
+    --output_dir "models/ModernBERT-base/tulu-3-sft-mixture+smoltalk"
 ```
 
 To reproduce [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0), run:
@@ -111,14 +111,14 @@ To reproduce [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
     examples/bert/sft.py \
     --model_name_or_path "answerdotai/ModernBERT-large" \
-    --dataset_args "allenai/tulu-3-sft-mixture|HuggingFaceTB/smoltalk" \
+    --dataset_args "allenai/tulu-3-sft-mixture+HuggingFaceTB/smoltalk" \
     --max_length 1024 \
     --learning_rate 1e-4 \
     --num_train_epochs 10 \
     --per_device_train_batch_size 48 \
     --per_device_eval_batch_size 48 \
     --save_steps 0.1 \
-    --output_dir "models/ModernBERT-large/tulu-3-smoltalk/epochs-10-bs-384-len-1024"
+    --output_dir "models/ModernBERT-large/tulu-3-sft-mixture+smoltalk"
 ```
 
 ### Inference
@@ -133,14 +133,14 @@ python -u examples/bert/chat.py --model_name_or_path "dllm-collection/ModernBERT
 
 For example, to evaluate [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0) on [`gsm8k`](https://huggingface.co/datasets/openai/gsm8k) using 4 GPUs, run:
 ```shell
-# use model_args to adjust the generation arguments for evalution.
+# use model_args to adjust the sampler arguments for evalution.
 accelerate launch --num_processes 4 \
     dllm/pipelines/bert/eval.py \
     --tasks "gsm8k_bert" \
     --model "bert" \
     --apply_chat_template \
     --num_fewshot 0 \
-    --model_args "pretrained=dllm-collection/ModernBERT-large-chat-v0,max_new_tokens=256,steps=256,block_length=32"
+    --model_args "pretrained=dllm-collection/ModernBERT-large-chat-v0,max_new_tokens=256,steps=256,block_size=32"
 ```
 
 To automatically evaluate [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0) and [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0) on all benchmarks, run:
@@ -149,7 +149,7 @@ bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-base
 bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-large-chat-v0"
 ```
 
-### Evaluation results
+### Evaluation Results
 
 |                     | LAMBADA | GSM8K | CEval | BBH | MATH | MMLU | Winogrande | HellaSwag | CMMLU |
 |:------------------------------------|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|

@@ -103,21 +103,14 @@ def train():
                 batched=True,
                 remove_columns=dataset["train"].column_names,
                 **({} if data_args.streaming else {"num_proc": data_args.num_proc}),
-                **({} if data_args.streaming else {"desc": "Mapping dataset to PT format"}),
+                **(
+                    {}
+                    if data_args.streaming
+                    else {"desc": "Mapping dataset to PT format"}
+                ),
             )
         if data_args.streaming:
             dataset = dataset.shuffle(seed=training_args.seed)
-
-    # ----- Collator --------------------------------------------------------------
-    data_collator = transformers.DataCollatorForSeq2Seq(
-        tokenizer,
-        return_tensors="pt",
-        padding=True,
-    )
-    if training_args.right_shift_logits:
-        data_collator = dllm.utils.PrependBOSWrapper(
-            data_collator, bos_token_id=tokenizer.bos_token_id
-        )
 
     # ----- Training --------------------------------------------------------------
     accelerate.PartialState().wait_for_everyone()
@@ -129,7 +122,11 @@ def train():
         eval_dataset=dataset.get("test", None),
         args=training_args,
         right_shift_logits=training_args.right_shift_logits,
-        data_collator=data_collator,
+        data_collator=transformers.DataCollatorForSeq2Seq(
+            tokenizer,
+            return_tensors="pt",
+            padding=True,
+        ),
     )
     trainer.train()
     trainer.save_model(os.path.join(training_args.output_dir, "checkpoint-final"))

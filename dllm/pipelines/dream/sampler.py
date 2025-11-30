@@ -8,13 +8,13 @@ import torch
 import torch.nn.functional as F
 import torch.distributions as dists
 
-from dllm.core.generation.utils import get_num_transfer_tokens
-from dllm.pipelines.dream.utils import top_p_logits, top_k_logits
-from dllm.core.generation.generator import (
-    GeneratorOutput,
-    GeneratorConfig,
-    BaseGenerator,
+from dllm.pipelines.dream.models.generation_utils import top_p_logits, top_k_logits
+from dllm.core.samplers.base import (
+    SamplerOutput,
+    SamplerConfig,
+    BaseSampler,
 )
+from dllm.core.samplers.utils import get_num_transfer_tokens
 
 
 def sample_tokens(
@@ -58,10 +58,10 @@ def sample_tokens(
 
 
 @dataclass
-class DreamGeneratorConfig(GeneratorConfig):
+class DreamSamplerConfig(SamplerConfig):
     max_new_tokens: int = 20
     max_length: int = (
-        None  # The max_length is set as input_ids.shape[1] + 20: generation_config.max_length = generation_config.max_length + input_ids_length
+        None  # The max_length is set as input_ids.shape[1] + 20: sampler_config.max_length = sampler_config.max_length + input_ids_length
     )
     steps: int = 512
     eps: float = 1e-3
@@ -75,22 +75,22 @@ class DreamGeneratorConfig(GeneratorConfig):
 
 
 @dataclass
-class DreamGenerator(BaseGenerator):
+class DreamSampler(BaseSampler):
     @torch.no_grad()
-    def generate(
+    def sample(
         self,
         inputs: list[torch.Tensor, list],
-        config: DreamGeneratorConfig | None = None,
+        config: DreamSamplerConfig | None = None,
         generation_tokens_hook_func=lambda step, x, logits: x,
         generation_logits_hook_func=lambda step, x, logits: logits,
         **kwargs,
-    ) -> GeneratorOutput | torch.Tensor:
+    ) -> SamplerOutput | torch.Tensor:
         """
         Diffusion-style masked decoding for *generation from inputs*.
         (docstring unchanged)
         """
         if config is None:
-            config = DreamGeneratorConfig()
+            config = DreamSamplerConfig()
 
         # ----- pull args from config, allow kwargs to override -----
         max_new_tokens = kwargs.get("max_new_tokens", config.max_new_tokens)
@@ -107,9 +107,7 @@ class DreamGenerator(BaseGenerator):
         )
         # generation_tokens_hook_func = kwargs.get("generation_tokens_hook_func", config.generation_tokens_hook_func)
         # generation_logits_hook_func = kwargs.get("generation_logits_hook_func", config.generation_logits_hook_func)
-        return_dict_in_generate = kwargs.get(
-            "return_dict_in_generate", config.return_dict_in_generate
-        )
+        return_dict = kwargs.get("return_dict", config.return_dict)
         right_shift_logits = kwargs.get("right_shift_logits", config.right_shift_logits)
 
         # --- Initialization ---
@@ -131,22 +129,20 @@ class DreamGenerator(BaseGenerator):
         T = max_length
         x = torch.full((B, T), eos_token_id, dtype=torch.long, device=self.model.device)
 
-        seq_length = []
+        seq_lens = []
         for i, p in enumerate(inputs):
             total_len = prompt_lens[i] + max_new_tokens
-            seq_length.append(total_len)
+            seq_lens.append(total_len)
             start = T - total_len
             x[i, start : start + prompt_lens[i]] = p
             x[i, start + prompt_lens[i] : T] = mask_token_id
 
-        attention_mask = torch.zeros(
-            (B, T), dtype=torch.float32, device=self.model.device
-        )
-        for j, L in enumerate(seq_length):
+        attention_mask = torch.zeros((B, T), dtype=torch.long, device=self.model.device)
+        for j, L in enumerate(seq_lens):
             if L > 0:
-                attention_mask[j, -L:] = 1.0  # Mandate to be left-padding
+                attention_mask[j, -L:] = 1  # Mandate to be left-padding
 
-        if attention_mask is not None and torch.any(attention_mask == 0.0):
+        if attention_mask is not None and torch.any(attention_mask == 0):
             pos_id = attention_mask.long().cumsum(-1) - 1
             pos_id.masked_fill_(attention_mask == 0, 1)
         else:
@@ -163,7 +159,7 @@ class DreamGenerator(BaseGenerator):
 
         # --- Iterative refinement ---
         x = generation_tokens_hook_func(None, x, None)
-        histories = [x.clone()] if return_dict_in_generate else None
+        histories = [x.clone()] if return_dict else None
         for i in range(effective_steps):
             mask_index = x == mask_token_id
 
@@ -226,10 +222,10 @@ class DreamGenerator(BaseGenerator):
             if histories is not None:
                 histories.append(x.clone())
 
-        if not return_dict_in_generate:
+        if not return_dict:
             return x
         else:
-            return GeneratorOutput(sequences=x, histories=histories)
+            return SamplerOutput(sequences=x, histories=histories)
 
     @torch.no_grad()
     def infill(
@@ -239,7 +235,7 @@ class DreamGenerator(BaseGenerator):
         generation_tokens_hook_func=lambda step, x, logits: x,
         generation_logits_hook_func=lambda step, x, logits: logits,
         **kwargs,
-    ) -> GeneratorOutput | torch.Tensor:
+    ) -> SamplerOutput | torch.Tensor:
         """
         Fill in-place the tokenizer's `<mask>` tokens contained in `inputs`.
         The whole (right-aligned) canvas is denoised iteratively: at each step, a scheduler
@@ -272,7 +268,7 @@ class DreamGenerator(BaseGenerator):
                 Optional hooks to intercept tokens/logits at each step.
             output_history (bool):
                 If True, save intermediate canvases at each step.
-            return_dict_in_generate (bool):
+            return_dict (bool):
                 If True, return `DreamModelOutput(sequences, history)`, else only `[B, T]`.
             steps (int):
                 Total reverse-diffusion steps (quality–speed trade-off).
@@ -290,7 +286,7 @@ class DreamGenerator(BaseGenerator):
 
         Returns:
             DreamModelOutput | torch.LongTensor:
-                If `return_dict_in_generate=True`, returns
+                If `return_dict=True`, returns
                 - sequences: `[B, T]` final tokens
                 - history:   optional list of intermediate canvases
                 Otherwise returns only `[B, T]`.
@@ -308,9 +304,7 @@ class DreamGenerator(BaseGenerator):
         )
         # generation_tokens_hook_func = kwargs.get("stochastic_transfer", config.generation_tokens_hook_func)
         # generation_logits_hook_func = kwargs.get("stochastic_transfer", config.generation_logits_hook_func)
-        return_dict_in_generate = kwargs.get(
-            "return_dict_in_generate", config.return_dict_in_generate
-        )
+        return_dict = kwargs.get("return_dict", config.return_dict)
         right_shift_logits = kwargs.get("right_shift_logits", config.right_shift_logits)
 
         # --- Initialization ---
@@ -334,18 +328,17 @@ class DreamGenerator(BaseGenerator):
             x[i, -L:] = t
 
         # Build 1D attention mask (valid tokens on the right)
-        attention_mask = torch.zeros((B, T), dtype=torch.bool, device=self.model.device)
+        attention_mask = torch.zeros((B, T), dtype=torch.long, device=self.model.device)
         for j, L in enumerate(seq_lens):
             if L > 0:
-                attention_mask[j, -L:] = True
+                attention_mask[j, -L:] = 1
 
         # Expand to pairwise attention if left padding is present
-        if torch.any(attention_mask == 0.0):
+        if attention_mask is not None and torch.any(attention_mask == 0):
             pos_id = attention_mask.long().cumsum(-1) - 1
             pos_id.masked_fill_(attention_mask == 0, 1)
         else:
             pos_id = None
-            attention_mask = "full"
 
         # Precompute per-sample transfer schedule (how many to commit per step)
         mask_index = x == mask_token_id
@@ -359,7 +352,7 @@ class DreamGenerator(BaseGenerator):
 
         # Optional initial token hook
         x = generation_tokens_hook_func(None, x, None)
-        histories = [x.clone()] if return_dict_in_generate else None
+        histories = [x.clone()] if return_dict else None
         for i in range(effective_steps):
             mask_index = x == mask_token_id
 
@@ -428,7 +421,7 @@ class DreamGenerator(BaseGenerator):
             if histories is not None:
                 histories.append(x.clone())
 
-        if not return_dict_in_generate:
+        if not return_dict:
             return x
         else:
-            return GeneratorOutput(sequences=x, histories=histories)
+            return SamplerOutput(sequences=x, histories=histories)

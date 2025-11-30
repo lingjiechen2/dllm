@@ -9,12 +9,12 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from dllm.core.generation.utils import get_num_transfer_tokens
-from dllm.core.generation.generator import (
-    GeneratorOutput,
-    GeneratorConfig,
-    BaseGenerator,
+from dllm.core.samplers.base import (
+    SamplerOutput,
+    SamplerConfig,
+    BaseSampler,
 )
+from dllm.core.samplers.utils import get_num_transfer_tokens
 
 
 def add_gumbel_noise(logits: torch.Tensor, temperature: float) -> torch.Tensor:
@@ -32,12 +32,12 @@ def add_gumbel_noise(logits: torch.Tensor, temperature: float) -> torch.Tensor:
 
 
 @dataclass
-class LLaDAGeneratorConfig(GeneratorConfig):
+class MDLMSamplerConfig(SamplerConfig):
     max_new_tokens: int = 128
     max_length: int = (
         None  # There's no explicit length_limit except for the tokenizer/model context
     )
-    block_length: int = 128
+    block_size: int = 128
     steps: int = 128
     temperature: float = 0.0
     remasking: str = "low_confidence"
@@ -50,22 +50,22 @@ class LLaDAGeneratorConfig(GeneratorConfig):
 
 
 @dataclass
-class LLaDAGenerator(BaseGenerator):
+class MDLMSampler(BaseSampler):
     @torch.no_grad()
-    def generate(
+    def sample(
         self,
         inputs: list[torch.Tensor | list],
-        config: LLaDAGeneratorConfig | None = None,
+        config: MDLMSamplerConfig | None = None,
         **kwargs,
-    ) -> GeneratorOutput | torch.Tensor:
+    ) -> SamplerOutput | torch.Tensor:
         if config is None:
-            config = LLaDAGeneratorConfig()
+            config = MDLMSamplerConfig()
 
         # ----- pull args from config, allow kwargs to override -----
         steps = kwargs.get("steps", config.steps)
         max_new_tokens = kwargs.get("max_new_tokens", config.max_new_tokens)
         max_length = kwargs.get("max_length", config.max_length)
-        block_length = kwargs.get("block_length", config.block_length)
+        block_size = kwargs.get("block_size", config.block_size)
         temperature = kwargs.get("temperature", config.temperature)
         cfg_scale = kwargs.get("cfg_scale", config.cfg_scale)
         cfg_keep_tokens = kwargs.get("cfg_keep_tokens", config.cfg_keep_tokens)
@@ -74,15 +74,13 @@ class LLaDAGenerator(BaseGenerator):
         stochastic_transfer = kwargs.get(
             "stochastic_transfer", config.stochastic_transfer
         )
-        return_dict_in_generate = kwargs.get(
-            "return_dict_in_generate", config.return_dict_in_generate
-        )
+        return_dict = kwargs.get("return_dict", config.return_dict)
         right_shift_logits = kwargs.get("right_shift_logits", config.right_shift_logits)
         begin_suppress_tokens = kwargs.get(
             "begin_suppress_tokens", config.begin_suppress_tokens
         )
 
-        assert 1 <= block_length
+        assert 1 <= block_size
         assert 1 <= steps
         mask_id = self.tokenizer.mask_token_id
         eos_id = self.tokenizer.eos_token_id
@@ -123,19 +121,19 @@ class LLaDAGenerator(BaseGenerator):
             unmasked_index = unmasked_index & ~keep_mask
 
         # ----- Block scheduling over the appended mask tail -----
-        num_blocks = math.ceil(max_new_tokens / block_length)
+        num_blocks = math.ceil(max_new_tokens / block_size)
         steps = math.ceil(steps / num_blocks)  # per-block step budget
-        histories = [x.clone()] if return_dict_in_generate else None
+        histories = [x.clone()] if return_dict else None
 
         for b in range(num_blocks):
             # Build a per-sample mask *within this block* (aligned to each prompt's tail)
             block_mask_index = torch.zeros(
-                (B, block_length), dtype=torch.bool, device=x.device
+                (B, block_size), dtype=torch.bool, device=x.device
             )
 
             for j in range(B):
-                start = prompt_lens[j] + b * block_length
-                end = min(start + block_length, prompt_lens[j] + max_new_tokens, T)
+                start = prompt_lens[j] + b * block_size
+                end = min(start + block_size, prompt_lens[j] + max_new_tokens, T)
                 if start < end:
                     width = end - start
                     block_mask_index[j, :width] = (
@@ -176,6 +174,10 @@ class LLaDAGenerator(BaseGenerator):
                     for token_id in suppress_tokens:
                         logits[:, :, token_id] = -torch.inf
 
+                if suppress_tokens is not None and len(suppress_tokens) > 0:
+                    for token_id in suppress_tokens:
+                        logits[:, :, token_id] = -torch.inf
+
                 if right_shift_logits:
                     logits = torch.cat([logits[:, :1], logits[:, :-1]], dim=1)
 
@@ -204,7 +206,7 @@ class LLaDAGenerator(BaseGenerator):
 
                 # Restrict selection window to the *current block's* tail region
                 for j in range(B):
-                    x0_p[j, prompt_lens[j] + (b + 1) * block_length :] = -np.inf
+                    x0_p[j, prompt_lens[j] + (b + 1) * block_size :] = -np.inf
 
                 # Only allow updates at currently masked positions; keep others fixed
                 x0 = torch.where(mask_index, x0, x)
@@ -228,19 +230,19 @@ class LLaDAGenerator(BaseGenerator):
                     histories.append(x.clone())
 
         # ----- Output format -----
-        if not return_dict_in_generate:
+        if not return_dict:
             return x
         else:
-            return GeneratorOutput(sequences=x, histories=histories)
+            return SamplerOutput(sequences=x, histories=histories)
 
     @torch.no_grad()
     def infill(
         self, inputs: list[torch.Tensor | list], config, **kwargs
-    ) -> GeneratorOutput | torch.Tensor:
+    ) -> SamplerOutput | torch.Tensor:
         """
         Fill in-place the <|mdm_mask|> tokens contained in `inputs`.
         The whole (padded) sequence is split into block windows of length
-        `block_length`; within each window we progressively "unmask" positions
+        `block_size`; within each window we progressively "unmask" positions
         according to the scheduler and chosen remasking strategy.
 
         Notes:
@@ -251,7 +253,7 @@ class LLaDAGenerator(BaseGenerator):
         """
         # ----- pull args from config, allow kwargs to override -----
         steps = kwargs.get("steps", config.steps)
-        block_length = kwargs.get("block_length", config.block_length)
+        block_size = kwargs.get("block_size", config.block_size)
         temperature = kwargs.get("temperature", config.temperature)
         cfg_scale = kwargs.get("cfg_scale", config.cfg_scale)
         cfg_keep_tokens = kwargs.get("cfg_keep_tokens", config.cfg_keep_tokens)
@@ -260,9 +262,7 @@ class LLaDAGenerator(BaseGenerator):
         stochastic_transfer = kwargs.get(
             "stochastic_transfer", config.stochastic_transfer
         )
-        return_dict_in_generate = kwargs.get(
-            "return_dict_in_generate", config.return_dict_in_generate
-        )
+        return_dict = kwargs.get("return_dict", config.return_dict)
         right_shift_logits = kwargs.get("right_shift_logits", config.right_shift_logits)
         begin_suppress_tokens = kwargs.get(
             "begin_suppress_tokens", config.begin_suppress_tokens
@@ -283,10 +283,10 @@ class LLaDAGenerator(BaseGenerator):
         T = max(seq_lens)
 
         # Default to a single block spanning the whole sequence
-        if block_length is None:
-            block_length = T
+        if block_size is None:
+            block_size = T
 
-        assert 1 <= block_length
+        assert 1 <= block_size
         assert 1 <= steps
 
         x = torch.full((B, T), eos_id, dtype=torch.long, device=self.model.device)
@@ -305,20 +305,20 @@ class LLaDAGenerator(BaseGenerator):
             unmasked_index = unmasked_index & ~keep_mask
 
         # ----- Blockwise schedule over the *entire* (padded) sequence -----
-        num_blocks = math.ceil(T / block_length)
+        num_blocks = math.ceil(T / block_size)
         steps_per_block = math.ceil(steps / num_blocks)
-        histories = [x.clone()] if return_dict_in_generate else None
+        histories = [x.clone()] if return_dict else None
 
         # Create attention mask where eos_token_id is masked (set to 0)
         attention_mask = (x != eos_id).long()
 
         for b in range(num_blocks):
-            start = b * block_length
-            stop = min(start + block_length, T)
+            start = b * block_size
+            stop = min(start + block_size, T)
 
             # Per-sample view of which positions in this block are masks
             block_mask_index = torch.zeros(
-                (B, block_length), dtype=torch.bool, device=self.model.device
+                (B, block_size), dtype=torch.bool, device=self.model.device
             )
             widths = []
             for j in range(B):
@@ -372,6 +372,10 @@ class LLaDAGenerator(BaseGenerator):
                     for token_id in begin_suppress_tokens:
                         logits[:, :, token_id] = -torch.inf
 
+                if begin_suppress_tokens is not None and len(begin_suppress_tokens) > 0:
+                    for token_id in begin_suppress_tokens:
+                        logits[:, :, token_id] = -torch.inf
+
                 # Confidence used for choosing which masks to commit this step
                 if remasking == "low_confidence":
                     p = F.softmax(logits, dim=-1)
@@ -408,7 +412,7 @@ class LLaDAGenerator(BaseGenerator):
                     histories.append(x.clone())
 
         # ----- Output format -----
-        if not return_dict_in_generate:
+        if not return_dict:
             return x
         else:
-            return GeneratorOutput(sequences=x, histories=histories)
+            return SamplerOutput(sequences=x, histories=histories)

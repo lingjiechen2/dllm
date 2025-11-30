@@ -1,3 +1,4 @@
+import re
 from datasets import (
     Dataset,
     DatasetDict,
@@ -21,12 +22,12 @@ def load_sft_dataset(
       - "tatsu-lab/alpaca"
       - "OpenCoder-LLM/opc-sft-stage2[name:educational_instruct,lang:python]"
       - "tatsu-lab/alpaca[train:5000]"
-      - "tatsu-lab/alpaca[train:5000] | HuggingFaceH4/ultrachat_200k[train:5000]"
+      - "tatsu-lab/alpaca[train:5000] + HuggingFaceH4/ultrachat_200k[train:5000]"
     """
     from dllm.data.alpaca import load_dataset_alpaca
     from dllm.data.opc import load_dataset_opc_sft
 
-    specs = [p.strip() for p in dataset_args.split("|") if p.strip()]
+    specs = [p.strip() for p in re.split(r"[|+]", dataset_args) if p.strip()]
     all_parts = []
 
     for raw in specs:
@@ -89,7 +90,7 @@ def load_pt_dataset(
     """
     from dllm.data.opc import load_dataset_opc_annealing
 
-    specs = [p.strip() for p in dataset_args.split("|") if p.strip()]
+    specs = [p.strip() for p in re.split(r"[|+]", dataset_args) if p.strip()]
     if not specs:
         raise ValueError("Empty dataset_args for load_pt_dataset.")
 
@@ -339,9 +340,7 @@ def _truncate_iterabledatasetdict(
 
         # Multi-split: require explicit train/test splits
         if "train" not in base or "test" not in base:
-            raise ValueError(
-                "require 'train' and 'test' splits for train+test limits."
-            )
+            raise ValueError("require 'train' and 'test' splits for train+test limits.")
         train = base["train"].take(n_train)
         test = base["test"].take(n_test)
         return IterableDatasetDict({"train": train, "test": test})
@@ -352,9 +351,7 @@ def _truncate_iterabledatasetdict(
             train = base[single_split_name].take(n_train)
         else:
             if "train" not in base:
-                raise ValueError(
-                    "missing 'train' split for train limit."
-                )
+                raise ValueError("missing 'train' split for train limit.")
             train = base["train"].take(n_train)
         return IterableDatasetDict({"train": train})
 
@@ -364,9 +361,7 @@ def _truncate_iterabledatasetdict(
             test = base[single_split_name].take(n_test)
         else:
             if "test" not in base:
-                raise ValueError(
-                    "missing 'test' split for test limit."
-                )
+                raise ValueError("missing 'test' split for test limit.")
             test = base["test"].take(n_test)
         return IterableDatasetDict({"test": test})
 

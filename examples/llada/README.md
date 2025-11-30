@@ -25,7 +25,7 @@ Resources and examples for training (finetuning & pretraining) and evaluating di
 
 ##  Files overview
 ```
-# tools relevant with LLaDA
+# pipeline modules relevant with LLaDA
 dllm/pipelines/llada
 ├── __init__.py                     # Package initialization
 ├── models/
@@ -33,14 +33,15 @@ dllm/pipelines/llada
 │   ├── configuration_llada.py      # LLaDA model configuration
 │   ├── modeling_lladamoe.py        # LLaDA-MoE model architecture
 │   └── modeling_llada.py           # LLaDA model architecture
-├── generator.py                    # Inference logic
-└── trainer.py                      # Training logic (pretraining and finetuning)
+├── eval.py                         # Evaluation module
+├── sampler.py                      # Inference module
+└── trainer.py                      # Training module (pretraining and SFT)
 
 # example entry points for training / inference / evaluation
 examples/llada
 ├── chat.py                         # Interactive inference example
-├── eval.sh                         # Automatic evaluation script
-├── generate.py                     # Inference example
+├── eval.sh                         # Automatic evaluation example
+├── sample.py                       # Inference example
 ├── pt.py                           # Pretraining example
 ├── README.md                       # Documentation (you are here)
 └── sft.py                          # Supervised finetuning example
@@ -58,19 +59,19 @@ examples/llada
 > ``` -->
 
 ## Training
-### Finetuning
+### SFT
 
-For example, to SFT [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) for instruction following on 8 GPUs, run:
+For example, to SFT [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset for instruction following on 8 GPUs, run:
 ```shell
 accelerate launch \
     --config_file scripts/accelerate_configs/fsdp.yaml \
     examples/llada/sft.py \
     --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
-    --dataset_args "allenai/tulu-3-sft-mixture" \
-    --output_dir "models/LLaDA-8B-Base/tulu-3-sft-mixture" \
+    --dataset_args "tatsu-lab/alpaca" \
     --max_length 1024 \ 
     --num_train_epochs 4 \
-    --learning_rate 2e-5
+    --learning_rate 2e-5 \
+    --output_dir "models/LLaDA-8B-Base/alpaca"
 ```
 If you are using slurm and want to train across, for example, 2 nodes (16 GPUs total), run:
 ```shell
@@ -78,17 +79,17 @@ sbatch --nodes=2 --gres=gpu:8 scripts/train.slurm.sh \
     --accelerate_config "fsdp" \
     --script_path "examples/llada/sft.py" \
     --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
-    --dataset_args "allenai/tulu-3-sft-mixture" \
-    --output_dir "models/LLaDA-8B-Base/tulu-3-sft-mixture" \
+    --dataset_args "tatsu-lab/alpaca" \
     --max_length 1024 \ 
     --num_train_epochs 4 \
-    --learning_rate 2e-5
+    --learning_rate 2e-5 \
+    --output_dir "models/LLaDA-8B-Base/alpaca"
 ```
 
 <!-- **Reproducing [LLaDA-8B-Instruct](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct)**. Though LLaDA is trained on proprietary data, we tried our best to reproduce LLaDA-8B-Instruct by finetuning LLaDA-8B-Base using our training pipeline on public instruction-following dataset [allenai/tulu-3-sft-mixture](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture): -->
 
-#### Reproducing [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct)
-Though LLaDA is trained on proprietary data, we tried our best to reproduce [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) by finetuning [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) using our training pipeline on public instruction-following dataset [`allenai/tulu-3-sft-mixture`](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture):
+#### Reproducing [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) with SFT
+Though LLaDA is trained on proprietary data, we tried our best to reproduce [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) by finetuning [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) with SFT on the [`allenai/tulu-3-sft-mixture`](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture) dataset:
 
 ```shell
 # preprocessing SFT data (optional, but can avoid redundant preprocessing for multi-node training)
@@ -106,14 +107,14 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
     --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
     --dataset_args "data/sft/llada/tulu-3-sft-mixture" \
     --load_preprocessed_data True \
-    --output_dir "models/LLaDA-8B-Base/tulu-3-sft-mixture/fsdp-bs4-len2048-ep5-lr1e-5" \
     --max_length 2048 \
     --num_train_epochs 5 \
     --learning_rate 1e-5 \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
     --eval_steps 0.1 \
-    --save_steps 0.05
+    --save_steps 0.05 \
+    --output_dir "models/LLaDA-8B-Base/tulu-3-sft-mixture"
 ```
 <!-- [TODO] Training curves are on Wandb; checkpoints with evaluation results are available on Hugging Face. See the [Evaluation](#evaluation) section below for evaluation instructions. -->
 
@@ -127,20 +128,18 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
     --script_path "examples/llada/pt.py" \
     --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
     --dataset_args "mlfoundations/dclm-baseline-1.0" \
-    --output_dir "models/LLaDA-8B-Base/dclm-baseline-1.0" \
     --max_length 1024 \ 
     --max_steps 2000 \
-    --learning_rate 3e-4
+    --learning_rate 3e-4 \
+    --output_dir "models/LLaDA-8B-Base/dclm-baseline-1.0"
 ```
 
 ## Inference
-We support batch inference for standard generation and infilling:
-<!-- See [`examples/llada/generate.py`](/examples/llada/generate.py) for a full example: -->
+We support batch inference for standard sampling and infilling:
 ```shell
-python examples/llada/generate.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct"
+python examples/llada/sample.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct"
 ```
 We also support interactive multi-turn dialogue with visualization:
-<!-- See [`examples/llada/chat.py`](/examples/llada/chat.py) for a full example. -->
 ```shell
 python examples/llada/chat.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct"
 ```
@@ -150,14 +149,14 @@ python examples/llada/chat.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct"
 
 For example, to evaluate [LLaDA-8B-Instruct](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) on [gsm8k](https://huggingface.co/datasets/openai/gsm8k) using 4 GPUs, run:
 ```shell
-# Use model_args to adjust the generation arguments for evalution.
+# Use model_args to adjust the sampling arguments for evalution.
 accelerate launch --num_processes 4 \
     dllm/pipelines/llada/eval.py \
     --tasks "gsm8k_cot" \
     --model "llada" \
     --apply_chat_template \
     --num_fewshot 5 \
-    --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,max_new_tokens=512,steps=512,block_length=512,cfg=0.0,logits_eos_inf=False,confidence_eos_eot_inf=True"
+    --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,max_new_tokens=512,steps=512,block_size=512,cfg=0.0,logits_eos_inf=False,confidence_eos_eot_inf=True"
 ```
 
 To automatically evaluate [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) and [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) on all benchmarks, run:
@@ -166,7 +165,7 @@ bash examples/llada/eval.sh --model_name_or_path GSAI-ML/LLaDA-8B-Instruct --ins
 bash examples/llada/eval.sh --model_name_or_path GSAI-ML/LLaDA-8B-Base --instruct False
 ```
 
-### Evaluation results
+### Evaluation Results
 
 >  Results (evaluated) are evaluated using our framework, while results (reported) come from the original [paper](https://arxiv.org/abs/2502.09992). All evaluation settings follow the configurations in the [LLaDA](https://github.com/ML-GSAI/LLaDA) repository, with minor adjustments. 
 

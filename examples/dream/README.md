@@ -19,7 +19,7 @@ Resources and examples for training (finetuning & pretraining) and evaluating di
 
 ##  Files overview
 ```
-# tools relevant with Dream
+# pipeline modules relevant with Dream
 dllm/pipelines/dream
 ├── __init__.py                     # Package initialization
 ├── models/
@@ -27,15 +27,16 @@ dllm/pipelines/dream
 │   ├── generation_utils.py         # Diffusion-based generation logic
 │   ├── modeling_dream.py           # Core Dream model architecture
 │   └── tokenization_dream.py       # Tokenizer implementation for Dream
-├── generator.py                    # Inference logic
-├── trainer.py                      # Training logic (pretraining and SFT)
+├── eval.py                         # Evaluation module
+├── sampler.py                      # Inference module
+├── trainer.py                      # Training module (pretraining and SFT)
 └── utils.py                        # Auxiliary utilities and helper functions
 
 # example entry points for training / inference / evaluation
 examples/dream
 ├── chat.py                         # Interactive inference example
-├── eval.sh                         # Automatic evaluation script
-├── generate.py                     # Inference example
+├── eval.sh                         # Automatic evaluation example
+├── sample.py                       # Inference example
 ├── pt.py                           # Pretraining example
 ├── README.md                       # Documentation (you are here)
 └── sft.py                          # Supervised finetuning example
@@ -47,18 +48,18 @@ examples/dream
 
 ## Training
 
-### Finetuning
-For example, to SFT [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) for instruction following on 8 GPUs, run:
+### SFT
+For example, to SFT [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset for instruction following on 8 GPUs, run:
 ```shell
 accelerate launch \
     --config_file scripts/accelerate_configs/fsdp.yaml \
     examples/dream/sft.py \
     --model_name_or_path "Dream-org/Dream-v0-Base-7B" \
-    --dataset_args "allenai/tulu-3-sft-mixture" \
-    --output_dir "models/Dream-v0-Base-7B/tulu-3-sft-mixture" \
+    --dataset_args "tatsu-lab/alpaca" \
     --max_length 1024 \
     --num_train_epochs 4 \
-    --learning_rate 2e-5
+    --learning_rate 2e-5 \
+    --output_dir "models/Dream-v0-Base-7B/alpaca"
 ```
 If you are using slurm and want to train across, for example, 2 nodes (16 GPUs total), run:
 ```shell
@@ -66,16 +67,16 @@ sbatch --nodes=2 --gres=gpu:8 scripts/train.slurm.sh \
     --accelerate_config "fsdp" \
     --script_path "examples/dream/sft.py" \
     --model_name_or_path "Dream-org/Dream-v0-Base-7B" \
-    --dataset_args "allenai/tulu-3-sft-mixture" \
-    --output_dir "models/Dream-v0-Base-7B/tulu-3-sft-mixture" \
+    --dataset_args "tatsu-lab/alpaca" \
     --max_length 1024 \
     --num_train_epochs 4 \
-    --learning_rate 2e-5
+    --learning_rate 2e-5 \
+    --output_dir "models/Dream-v0-Base-7B/alpaca"
 ```
 
 <!-- **Reproducing [Dream-v0-Instruct-7B](https://huggingface.co/Dream-org/Dream-v0-Base-7B)**. We tried our best to reproduce Dream-v0-Instruct-7B by finetuning Dream-v0-Base-7B using our training pipeline on the public instruction-following dataset [allenai/tulu-3-sft-mixture](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture): -->
-#### Reproducing [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B)
-We tried our best to reproduce [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B) by finetuning [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) using our training pipeline on the public instruction-following dataset [`allenai/tulu-3-sft-mixture`](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture):
+#### Reproducing [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B) with SFT
+We tried our best to reproduce [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B) by finetuning [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) with SFT on the [`allenai/tulu-3-sft-mixture`](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture) dataset:
 
 ```shell
 # preprocessing SFT data (optional, but can avoid redundant preprocessing for multi-node training)
@@ -93,7 +94,6 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
     --model_name_or_path "Dream-org/Dream-v0-Base-7B" \
     --dataset_args "data/sft/dream/tulu-3-sft-mixture" \
     --load_preprocessed_data True \
-    --output_dir "models/Dream-v0-Base-7B/tulu-3-sft-mixture/fsdp-bs4-len2048-ep5-lr1e-5" \
     --max_length 2048 \
     --num_train_epochs 5 \
     --learning_rate 1e-5 \
@@ -101,7 +101,8 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
     --gradient_accumulation_steps 2 \
     --per_device_eval_batch_size 2 \
     --eval_steps 0.1 \
-    --save_steps 0.05
+    --save_steps 0.05 \
+    --output_dir "models/Dream-v0-Base-7B/tulu-3-sft-mixture"
 ```
 <!-- [TODO] Training curves are on Wandb; checkpoints with evaluation results are available on Hugging Face. See the [Evaluation](#evaluation) section below for evaluation instructions. -->
 
@@ -114,17 +115,16 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
     --script_path "examples/dream/pt.py" \
     --model_name_or_path "Dream-org/Dream-v0-Base-7B" \
     --dataset_args "mlfoundations/dclm-baseline-1.0" \
-    --output_dir "models/Dream-v0-Base-7B/dclm-baseline-1.0" \
     --max_length 1024 \
     --max_steps 2000 \
-    --learning_rate 3e-4
+    --learning_rate 3e-4 \
+    --output_dir "models/Dream-v0-Base-7B/dclm-baseline-1.0"
 ```
 
 ## Inference
-We support batch inference for standard generation and infilling:
-<!-- See [`examples/dream/generate.py`](/examples/dream/generate.py) for a full example: -->
+We support batch inference for standard sampling and infilling:
 ```shell
-python examples/dream/generate.py --model_name_or_path "Dream-org/Dream-v0-Instruct-7B"
+python examples/dream/sample.py --model_name_or_path "Dream-org/Dream-v0-Instruct-7B"
 ```
 We also support interactive multi-turn dialogue with visualization:
 ```shell
@@ -136,7 +136,7 @@ python examples/dream/chat.py --model_name_or_path "Dream-org/Dream-v0-Instruct-
 
 For example, to evaluate [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B) on [`gsm8k`](https://huggingface.co/datasets/openai/gsm8k) using 4 GPUs, run:
 ```shell
-# Use model_args to adjust the generation arguments for evalution.
+# Use model_args to adjust the sampler arguments for evalution.
 accelerate launch --num_processes 4 \
     dllm/pipelines/dream/eval.py \
     --tasks "gsm8k_cot" \
@@ -152,7 +152,7 @@ bash examples/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Instruct-7B
 bash examples/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --instruct False
 ```
 
-### Evaluation results
+### Evaluation Results
 
 >  Results (evaluated) are evaluated using our framework, while results (reported) come from the original [paper](https://arxiv.org/abs/2508.15487). All evaluation settings follow the configurations in the [Dream](https://github.com/DreamLM/Dream) repository, with minor adjustments.
 
