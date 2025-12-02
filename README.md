@@ -204,14 +204,16 @@ See [Features](#features) for specific training recipes.
 
 <!-- Here are some useful tips for training: -->
 > #### Here are some useful tips for training:
-> - Use a subset of data:
+> 1. Use a subset of data:
 > `--dataset_args "allenai/tulu-3-sft-mixture[train:10000,test:1000]"`
-> - Concatenate datasets:
+> 2. Concatenate datasets:
 > `--dataset_args "allenai/tulu-3-sft-mixture+HuggingFaceTB/smoltalk"`
-> - Train with LoRA and 4bit quantization:
+> 3. Train with LoRA and 4bit quantization:
 > `--load_in_4bit True --lora True`
-> - Train with different distributed training methods:
+> 4. Train with different distributed training methods:
 > `--accelerate_config "ddp,zero-{1,2,3},fsdp"`
+> 5. Preprocesss dataset before training:
+> [TODO]
 
 ## Inference
 
