@@ -1,4 +1,4 @@
-# A2D (Autoregressive-to-Diffusion)
+# A2D (AR-to-Diffusion)
 
 [![Hugging Face Checkpoints](https://img.shields.io/badge/Hugging%20Face-Checkpoints-yellow)](https://huggingface.co/collections/dllm-collection/tiny-a2d)
 [![W&B Report](https://img.shields.io/badge/W&B-Report-white?logo=weightsandbiases)]([TODO])
@@ -6,7 +6,8 @@
 
 This directory provides two key sets of resources:
 
--  **[Warmup](#warmup)**: Tutorials for continual pretraining and SFTing any autoregressive model on small datasets to generate text.
+- **Warmup ([MDLM](#warmup-mdlm) and [BM3LM](#warmup-bm3lm))**: Tutorials for continual pretraining and SFTing any autoregressive model on small datasets to generate text with masked diffusion or block diffusion.
+- **[Tiny-A2D](#tiny-a2d)**: The exact training, inference, and evaluation scripts used to create [TODO].
 <!-- -  **[BERT-Chat](#bert-chat)**: The exact training, inference, and evaluation scripts used to create the [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0) and [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0) checkpoints, two BERTs finetuned as Chatbots. For a deep dive into experimental results, lessons learned, and more reproduction details, please see our full [BERT-Chat W&B Report](https://api.wandb.ai/links/asap-zzhou/101h5xvg). -->
 
 ## Files overview
@@ -28,16 +29,25 @@ examples/a2d
 └── README.md
 ```
 
-## [TODO]
+## Setup 
 
-[TODO]: modeling files
+**Customize modeling files**: Although the pipeline can adapt any model, but you must first modify the original autoregressive modeling file to support non-causal attention. See [`modeling_qwen3.py`](/dllm/pipelines/a2d/models/qwen3/modeling_qwen3.py#L77-L108) for an example, and update [`__init__.py`](/dllm/pipelines/a2d/__init__.py) accordingly to register the new model config and architecture.
 
+**Run unit tests**: Before proceeding with your customized models, ensure they pass:
 ```shell
+pytes scripts/tests/test_attention.py::test_a2d_attention_mask_invariance
+pytes scripts/tests/test_attention.py::test_a2d_fullmask_future_affects_past
+# [TODO]: bm3lm unit test
+```
 
+**Convert an AR model with customized attention**: For example, to convert `Qwen/Qwen3-0.6B` using its original weights but with the customized attention defined in [`modeling_qwen3.py`](/dllm/pipelines/a2d/models/qwen3/modeling_qwen3.py):
+```shell
 python dllm/pipelines/a2d/convert.py --model_name_or_path "Qwen/Qwen3-0.6B" --output_dir "models/a2d/Qwen3-0.6B"
 ```
 
-## Warmup: MDLM
+## Warmup: [MDLM](https://arxiv.org/abs/2406.07524)
+
+In this section, we show toy examples of continual pretraining and SFTing [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on small datasets to generate text with [MDLM](https://arxiv.org/abs/2406.07524) (masked diffuions).
 
 ### Continual Pretraining
 
@@ -58,7 +68,14 @@ accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_proces
     --output_dir "models/a2d/Qwen3-0.6B/mdlm/tiny-shakespeare"
 ```
 
+To sample from the model interactively:
+```shell
+[TODO]
+```
+
 ### SFT
+
+To adapat [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset with MDLM, run:
 
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
@@ -75,12 +92,15 @@ accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_proc
     --output_dir "models/a2d/Qwen3-0.6B/mdlm/alpaca"
 ```
 
+To chat with the model:
 ```shell
 python -u examples/a2d/mdlm/chat.py \
     --model_name_or_path "models/a2d/Qwen3-0.6B/mdlm/alpaca/checkpoint-final" --block_size 32
 ```
 
-## Warmup: BM3LM
+## Warmup: [BM3LM](https://arxiv.org/abs/2503.09573)
+
+In this section, we show toy examples of continual pretraining and SFTing [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on small datasets to generate text with [BD3-LM](https://arxiv.org/abs/2503.09573) (block diffuions).
 
 ### Continual Pretraining
 
@@ -102,7 +122,14 @@ accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_proces
     --output_dir "models/a2d/Qwen3-0.6B/bm3lm/tiny-shakespeare"
 ```
 
+To sample from the model interactively:
+```shell
+[TODO]
+```
+
 ### SFT
+
+To adapat [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset with BM3LM, run:
 
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
@@ -120,7 +147,13 @@ accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_proc
     --output_dir "models/a2d/Qwen3-0.6B/bm3lm/alpaca"
 ```
 
+To chat with the model:
 ```shell
 python -u examples/a2d/bm3lm/chat.py \
     --model_name_or_path "models/a2d/Qwen3-0.6B/bm3lm/alpaca/checkpoint-final" --block_size 32
 ```
+
+
+## Tiny-A2D
+
+### Evaluation

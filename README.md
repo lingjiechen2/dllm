@@ -18,7 +18,7 @@ Simple Diffusion Language Modeling
 
 - dLLM provides unified evaluation pipelines (based on [`lm-evaluation-harness`](https://github.com/EleutherAI/lm-evaluation-harness)) that abstracts away inference details and making customization simple.
 
-- Built on these components, dLLM provide the minimal **pretraining / finetuning / evaluation** recipes for open-weight models (e.g., [LLaDA](https://arxiv.org/abs/2502.09992) and [Dream](https://arxiv.org/abs/2508.15487)), and implementations of training algorithms (e.g., [Edit Flows](https://arxiv.org/abs/2506.09018)).
+- Built on these components, dLLM provide the minimal **pretraining / finetuning / evaluation** recipes for open-weight models (e.g., [LLaDA](https://arxiv.org/abs/2502.09992) and [Dream](https://arxiv.org/abs/2508.15487)), and implementations of training algorithms (e.g., [MDLM](https://arxiv.org/abs/2406.07524) (masked diffusion), [BD3-LM](https://arxiv.org/abs/2503.09573) (block diffusion), [Edit Flows](https://arxiv.org/abs/2506.09018) and so on).
 
 <!-- > [!NOTE]
 > This repository is primarily for educational purposes and does not aim for 100% exact reproduction of official models (which is impossible). We hope it serves as a helpful reference for the community — contributions and improvements are always welcome! -->
@@ -43,6 +43,7 @@ Simple Diffusion Language Modeling
 ## Features
 - [`examples/llada`](/examples/llada): Pretraining, finetuning and evaluating LLaDA [LLaDA](https://arxiv.org/abs/2502.09992) / [LLaDA-MoE](https://arxiv.org/abs/2509.24389).
 - [`examples/dream`](/examples/dream): Pretraining, finetuning and evaluating Dream [Dream](https://arxiv.org/abs/2508.15487).
+- [`examples/a2d`](/examples/a2d): Finetuning any autoregressive model to generate text with [masked diffusion](https://arxiv.org/abs/2406.07524) / [block diffusion](https://arxiv.org/abs/2503.09573).
 - [`examples/bert`](/examples/bert): Finetuning any [BERT](https://arxiv.org/abs/1810.04805) to be lightweight Chatbots.
     <!-- <details>
     <summary>🎬 Click to show BERT-Chat Demo</summary>
@@ -201,14 +202,15 @@ sbatch --nodes=2 --gres=gpu:8 scripts/train.slurm.sh \
 See [Features](#features) for specific training recipes.
 
 
-> Here are some useful tips for training:
-> 1. Use a subset of data:
+<!-- Here are some useful tips for training: -->
+> #### Here are some useful tips for training:
+> - Use a subset of data:
 > `--dataset_args "allenai/tulu-3-sft-mixture[train:10000,test:1000]"`
-> 2. Concatenate datasets:
+> - Concatenate datasets:
 > `--dataset_args "allenai/tulu-3-sft-mixture+HuggingFaceTB/smoltalk"`
-> 3. Train with LoRA and 4bit quantization:
+> - Train with LoRA and 4bit quantization:
 > `--load_in_4bit True --lora True`
-> 4. Train with different distributed training methods:
+> - Train with different distributed training methods:
 > `--accelerate_config "ddp,zero-{1,2,3},fsdp"`
 
 ## Inference

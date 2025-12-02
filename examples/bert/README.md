@@ -54,7 +54,7 @@ accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_proces
     --output_dir "models/ModernBERT-large/tiny-shakespeare"
 ```
 
-To run the model for interactive inference:
+To sample from the model interactively:
 ```shell
 # just press enter (empty prompt) if you want the model to generate text from scratch 
 python -u examples/bert/chat.py \

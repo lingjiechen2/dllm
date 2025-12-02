@@ -11,10 +11,10 @@ Resources and examples for training (finetuning & pretraining) and evaluating di
 - [Inference](#inference)
 - [Evaluation](#evaluation)
 
-## Setup
+<!-- ## Setup
 > [!IMPORTANT]  
 > **Slurm users:** Update `scripts/train.slurm.sh` and `mkdir logps`: see [(optional) Slurm setup](/README.md/#optional-slurm-setup) for details.
->
+> -->
 
 
 ##  Files overview
@@ -47,6 +47,8 @@ examples/dream
 > We fixed bugs in `chat_template` and standardize `mask_token` through `dllm.utils.get_tokenizer`. If you use `AutoTokenizer`, keep in mind to set `chat_template` and `mask_token` appropriately yourselves. -->
 
 ## Training
+  
+> **Slurm users:** Update `scripts/train.slurm.sh` and `mkdir logps`: see [(optional) Slurm setup](/README.md/#optional-slurm-setup) for details.
 
 ### SFT
 For example, to SFT [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset for instruction following on 8 GPUs, run:

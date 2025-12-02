@@ -11,7 +11,7 @@ Resources and examples for training (finetuning & pretraining) and evaluating di
 - [Inference](#inference)
 - [Evaluation](#evaluation)
 
-## Setup
+<!-- ## Setup
 > [!IMPORTANT]  
 > **Slurm users:** Update `scripts/train.slurm.sh` and `mkdir logps`: see [(optional) Slurm setup](/README.md/#optional-slurm-setup) for details.
 >
@@ -20,7 +20,7 @@ Resources and examples for training (finetuning & pretraining) and evaluating di
 > - "model_type": "llada",
 > + "model_type": "lladamoe",
 > ```
->
+> -->
 
 
 ##  Files overview
@@ -59,6 +59,16 @@ examples/llada
 > ``` -->
 
 ## Training
+
+> **Slurm users:** Update `scripts/train.slurm.sh` and `mkdir logps`: see [(optional) Slurm setup](/README.md/#optional-slurm-setup) for details.
+>
+> **MoE checkpoints:** For models like [`LLaDA-MoE-7B-A1B-Base`](https://huggingface.co/inclusionAI/LLaDA-MoE-7B-A1B-Base), set `"model_type"` to `"lladamoe"` in the checkpoint’s `config.json`:
+<!-- > ```diff
+> - "model_type": "llada",
+> + "model_type": "lladamoe",
+> ```
+> -->
+
 ### SFT
 
 For example, to SFT [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset for instruction following on 8 GPUs, run:
