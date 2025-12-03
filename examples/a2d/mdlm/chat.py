@@ -1,10 +1,10 @@
 """
-Interactive chat / sampling script for Bert models.
+Interactive chat / sampling script for A2D models.
 
 Examples
 --------
 # Raw multi-turn sampling (default)
-python -u examples/bert/chat.py --model_name_or_path "YOUR_MODEL_PATH"
+python -u examples/a2d/mdlm/chat.py --model_name_or_path "YOUR_MODEL_PATH"
 """
 
 import sys
@@ -16,7 +16,7 @@ import dllm
 
 @dataclass
 class ScriptArguments:
-    model_name_or_path: str = "/mnt/lustrenew/mllm_aligned/shared/models/tmp/ModernBERT-large/tulu-3-smoltalk/epochs-10-bs-384-len-1024/checkpoint-final"
+    model_name_or_path: str = "[TODO]"
     seed: int = 42
     chat_template: bool = True
     visualize: bool = True
@@ -35,6 +35,7 @@ class SamplerConfig(dllm.core.samplers.MDLMSamplerConfig):
     block_size: int = 32
     temperature: float = 0.0
     remasking: str = "low_confidence"
+    right_shift_logits: bool = False
 
 
 def main():

@@ -1,5 +1,5 @@
 """
-python -u examples/bert/sample.py --model_name_or_path "YOUR_MODEL_PATH"
+python -u examples/a2d/bm3lm/sample.py --model_name_or_path "YOUR_MODEL_PATH"
 """
 
 from dataclasses import dataclass
@@ -11,7 +11,7 @@ import dllm
 
 @dataclass
 class ScriptArguments:
-    model_name_or_path: str = "/mnt/lustrenew/mllm_aligned/shared/models/tmp/ModernBERT-large/tulu-3-smoltalk/epochs-10-bs-384-len-1024/checkpoint-final"
+    model_name_or_path: str = "[TODO]"
     seed: int = 42
     visualize: bool = True
 
@@ -28,6 +28,7 @@ class SamplerConfig(dllm.core.samplers.MDLMSamplerConfig):
     block_size: int = 32
     temperature: float = 0.0
     remasking: str = "low_confidence"
+    right_shift_logits: bool = False
 
 
 parser = transformers.HfArgumentParser((ScriptArguments, SamplerConfig))
@@ -37,17 +38,17 @@ transformers.set_seed(script_args.seed)
 # Load model & tokenizer
 model = dllm.utils.get_model(model_args=script_args).eval()
 tokenizer = dllm.utils.get_tokenizer(model_args=script_args)
-sampler = dllm.core.samplers.MDLMSampler(model=model, tokenizer=tokenizer)
+sampler = dllm.core.samplers.BM3LMSampler(model=model, tokenizer=tokenizer)
 terminal_visualizer = dllm.utils.TerminalVisualizer(tokenizer=tokenizer)
 
 # --- Example 1: Batch sampling ---
 print("\n" + "=" * 80)
-print("TEST: bert.sample()".center(80))
+print("TEST: sample()".center(80))
 print("=" * 80)
 
 messages = [
     [{"role": "user", "content": "Lily runs 12 km/h for 4 hours. How far in 8 hours?"}],
-    # [{"role": "user", "content": "Please write an educational python function."}],
+    [{"role": "user", "content": "Please write an educational python function."}],
 ]
 
 inputs = tokenizer.apply_chat_template(

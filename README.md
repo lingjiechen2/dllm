@@ -14,11 +14,11 @@ Simple Diffusion Language Modeling
 ## Overview
 **dLLM** is a library that unifies the training and evaluation of **diffusion language models**, bringing transparency and reproducibility to the entire development pipeline:
 
-- dLLM provides scalable training pipelines (inspired by [`transformers`](https://github.com/huggingface/transformers/blob/main/src/transformers) [Trainer](https://github.com/huggingface/transformers/blob/main/src/transformers/trainer.py)), with support for [LoRA](https://github.com/huggingface/peft), [DeepSpeed](https://github.com/deepspeedai/DeepSpeed), [FSDP](https://pytorch.org/blog/introducing-pytorch-fully-sharded-data-parallel-api/) and beyond.
+- dLLM provides scalable training pipelines (based on [`transformers`](https://github.com/huggingface/transformers/blob/main/src/transformers) [Trainer](https://github.com/huggingface/transformers/blob/main/src/transformers/trainer.py)), with support for [LoRA](https://github.com/huggingface/peft), [DeepSpeed](https://github.com/deepspeedai/DeepSpeed), [FSDP](https://pytorch.org/blog/introducing-pytorch-fully-sharded-data-parallel-api/) and beyond.
 
-- dLLM provides unified evaluation pipelines (inspired by [`lm-evaluation-harness`](https://github.com/EleutherAI/lm-evaluation-harness)) that abstracts away inference details and making customization simple.
+- dLLM provides unified evaluation pipelines (based on [`lm-evaluation-harness`](https://github.com/EleutherAI/lm-evaluation-harness)) that abstracts away inference details and making customization simple.
 
-- Built on these components, dLLM provide the minimal **pretraining / finetuning / evaluation** recipes for open-weight models (e.g., [LLaDA](https://arxiv.org/abs/2502.09992) and [Dream](https://arxiv.org/abs/2508.15487)), and implementations of training algorithms (e.g., [Edit Flows](https://arxiv.org/abs/2506.09018)).
+- Built on these components, dLLM provide the minimal **pretraining / finetuning / evaluation** recipes for open-weight models (e.g., [LLaDA](https://arxiv.org/abs/2502.09992) and [Dream](https://arxiv.org/abs/2508.15487)), and implementations of training algorithms (e.g., [MDLM](https://arxiv.org/abs/2406.07524) (masked diffusion), [BD3-LM](https://arxiv.org/abs/2503.09573) (block diffusion), [Edit Flows](https://arxiv.org/abs/2506.09018) and so on).
 
 <!-- > [!NOTE]
 > This repository is primarily for educational purposes and does not aim for 100% exact reproduction of official models (which is impossible). We hope it serves as a helpful reference for the community — contributions and improvements are always welcome! -->
@@ -43,6 +43,7 @@ Simple Diffusion Language Modeling
 ## Features
 - [`examples/llada`](/examples/llada): Pretraining, finetuning and evaluating LLaDA [LLaDA](https://arxiv.org/abs/2502.09992) / [LLaDA-MoE](https://arxiv.org/abs/2509.24389).
 - [`examples/dream`](/examples/dream): Pretraining, finetuning and evaluating Dream [Dream](https://arxiv.org/abs/2508.15487).
+- [`examples/a2d`](/examples/a2d): Finetuning any autoregressive model to generate text with [masked diffusion](https://arxiv.org/abs/2406.07524) / [block diffusion](https://arxiv.org/abs/2503.09573).
 - [`examples/bert`](/examples/bert): Finetuning any [BERT](https://arxiv.org/abs/1810.04805) to be lightweight Chatbots.
     <!-- <details>
     <summary>🎬 Click to show BERT-Chat Demo</summary>
@@ -123,7 +124,7 @@ dllm
 │   ├── editflow
 │   └── llada
 │       ├── models         # Model architecture and configs 
-│       ├── sampler.py   # Inference module
+│       ├── sampler.py     # Inference module
 │       ├── trainer.py     # Training module
 │       └── eval.py        # Evaluation module
 ├── tools
@@ -201,15 +202,37 @@ sbatch --nodes=2 --gres=gpu:8 scripts/train.slurm.sh \
 See [Features](#features) for specific training recipes.
 
 
-> Here are some useful tips for training:
-> 1. Use a subset of data:
-> `--dataset_args "allenai/tulu-3-sft-mixture[train:10000,test:1000]"`
-> 2. Concatenate datasets:
-> `--dataset_args "allenai/tulu-3-sft-mixture+HuggingFaceTB/smoltalk"`
-> 3. Train with LoRA and 4bit quantization:
-> `--load_in_4bit True --lora True`
-> 4. Train with different distributed training methods:
-> `--accelerate_config "ddp,zero-{1,2,3},fsdp"`
+<!-- Here are some useful tips for training: -->
+#### Useful tips for training:
+- Use a subset of data:
+`--dataset_args "allenai/tulu-3-sft-mixture[train:10000,test:1000]"`
+- Concatenate datasets:
+`--dataset_args "allenai/tulu-3-sft-mixture+HuggingFaceTB/smoltalk"`
+- Train with LoRA and 4bit quantization:
+`--load_in_4bit True --lora True`
+- Train with different distributed training methods:
+`--accelerate_config "ddp,zero-{1,2,3},fsdp"`
+- Load pretraining dataset in streaming mode:
+`--streaming True`
+- Preprocesss SFT dataset before training (e.g., LLaDA):
+  ```shell
+  # Preprocess SFT data
+  python dllm/tools/preprocess_sft_dataset.py \
+      --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
+      --sft_map_fn_path "dllm.utils.default_mdlm_sft_map_fn" \
+      --dataset_args "allenai/tulu-3-sft-mixture" \
+      --output_dir "data/sft/llada/tulu-3-sft-mixture" \
+      --num_proc 64
+  
+  # SFT with preprocessed data
+  accelerate launch \
+      --config_file scripts/accelerate_configs/fsdp.yaml \
+      examples/llada/sft.py \
+      --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
+      --dataset_args "data/sft/llada/tulu-3-sft-mixture" \
+      --load_preprocessed_data True \
+      ...
+  ```
 
 ## Inference
 
@@ -238,6 +261,9 @@ sequences = dllm.utils.decode_trim(tokenizer, outputs.sequences.tolist(), inputs
 ```
 
 You can also try interactive chat script (for example, [`examples/llada/chat.py`](/examples/llada/chat.py)) for visualized multi-turn dialogue:
+```shell
+python -u examples/llada/chat.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct"
+```
 
 <p align="center">
     <img src="/assets/chat.gif" alt="chat" width="80%">

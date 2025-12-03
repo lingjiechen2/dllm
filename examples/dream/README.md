@@ -11,10 +11,10 @@ Resources and examples for training (finetuning & pretraining) and evaluating di
 - [Inference](#inference)
 - [Evaluation](#evaluation)
 
-## Setup
+<!-- ## Setup
 > [!IMPORTANT]  
 > **Slurm users:** Update `scripts/train.slurm.sh` and `mkdir logps`: see [(optional) Slurm setup](/README.md/#optional-slurm-setup) for details.
->
+> -->
 
 
 ##  Files overview
@@ -47,6 +47,8 @@ examples/dream
 > We fixed bugs in `chat_template` and standardize `mask_token` through `dllm.utils.get_tokenizer`. If you use `AutoTokenizer`, keep in mind to set `chat_template` and `mask_token` appropriately yourselves. -->
 
 ## Training
+  
+> Read [Useful tips for training](/README.md/#useful-tips-for-training) and [(optional) Slurm setup](/README.md/#optional-slurm-setup) before training.
 
 ### SFT
 For example, to SFT [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset for instruction following on 8 GPUs, run:
@@ -79,7 +81,7 @@ sbatch --nodes=2 --gres=gpu:8 scripts/train.slurm.sh \
 We tried our best to reproduce [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B) by finetuning [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) with SFT on the [`allenai/tulu-3-sft-mixture`](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture) dataset:
 
 ```shell
-# preprocessing SFT data (optional, but can avoid redundant preprocessing for multi-node training)
+# Preprocessing SFT data (optional, but can avoid redundant preprocessing for multi-node training)
 python dllm/tools/preprocess_sft_dataset.py \
     --model_name_or_path "Dream-org/Dream-v0-Base-7B" \
     --sft_map_fn_path "dllm.utils.default_mdlm_sft_map_fn" \
@@ -87,7 +89,7 @@ python dllm/tools/preprocess_sft_dataset.py \
     --output_dir "data/sft/dream/tulu-3-sft-mixture" \
     --num_proc 64
 
-# train on 24*8=192 A100s with FSDP, take about 8 hours
+# Train on 24*8=192 A100s with FSDP, take about 8 hours
 sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
     --accelerate_config "fsdp" \
     --script_path "examples/dream/sft.py" \

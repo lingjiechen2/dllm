@@ -6,18 +6,23 @@ Local users
         --config_file scripts/accelerate_configs/ddp.yaml --num_processes 1 \
         examples/bert/pt.py
 
-- 8 GPUs (DDP):
+- 8 GPUs (ZeRO-2):
     accelerate launch \
-        --config_file scripts/accelerate_configs/ddp.yaml \
+        --config_file scripts/accelerate_configs/zero2.yaml \
         examples/bert/pt.py
 
 Slurm users
 # Note: run `mkdir logs` before running sbatch; and adjust 
 #       `partition` and `quotatype` in `scripts/train.slurm.sh` for your cluster.
 ------------
-- 8 GPUs (DDP):
+- 1 Node, 8 GPUs (ZeRO-2):
     sbatch --gres=gpu:8 scripts/train.slurm.sh \
-        --accelerate_config "ddp" \
+        --accelerate_config "zero2" \
+        --script_path "examples/bert/pt.py"
+
+- 2 Nodes, 16 GPUs (ZeRO-2):
+    sbatch --nodes=2 --gres=gpu:8 scripts/train.slurm.sh \
+        --accelerate_config "zero2" \
         --script_path "examples/bert/pt.py"
 """
 
@@ -51,6 +56,7 @@ class DataArguments(dllm.utils.DataArguments):
             "help": "False when adjacent samples from the datasets are semantically coherent."
         },
     )
+    load_preprocessed_data: bool = False
 
 
 @dataclass
@@ -58,8 +64,8 @@ class TrainingArguments(dllm.utils.TrainingArguments):
     output_dir: str = "models/ModernBERT-base/tiny-shakespeare"
     num_train_epochs: int = 20
     learning_rate: float = 1e-4
-    per_device_train_batch_size: int = 64
-    per_device_eval_batch_size: int = 64
+    per_device_train_batch_size: int = 16
+    per_device_eval_batch_size: int = 16
     eval_steps: float = 0.1
     save_steps: float = 0.1
 
@@ -83,21 +89,27 @@ def train():
         dataset = dllm.data.load_pt_dataset(
             data_args.dataset_args,
             streaming=data_args.streaming,
+            load_preprocessed_data=data_args.load_preprocessed_data,
         )
-        dataset = dataset.map(
-            functools.partial(
-                dllm.utils.tokenize_and_group,
-                tokenizer=tokenizer,
-                text_field=data_args.text_field,
-                seq_length=data_args.max_length,
-                insert_eos=data_args.insert_eos,
-                drop_tail=data_args.drop_tail,
-            ),
-            batched=True,
-            remove_columns=dataset["train"].column_names,
-            **({} if data_args.streaming else {"num_proc": data_args.num_proc}),
-            **({} if data_args.streaming else {"desc": "Mapping dataset to PT format"}),
-        )
+        if not data_args.load_preprocessed_data:
+            dataset = dataset.map(
+                functools.partial(
+                    dllm.utils.tokenize_and_group,
+                    tokenizer=tokenizer,
+                    text_field=data_args.text_field,
+                    seq_length=data_args.max_length,
+                    insert_eos=data_args.insert_eos,
+                    drop_tail=data_args.drop_tail,
+                ),
+                batched=True,
+                remove_columns=dataset["train"].column_names,
+                **({} if data_args.streaming else {"num_proc": data_args.num_proc}),
+                **(
+                    {}
+                    if data_args.streaming
+                    else {"desc": "Mapping dataset to PT format"}
+                ),
+            )
         if data_args.streaming:
             dataset = dataset.shuffle(seed=training_args.seed)
 

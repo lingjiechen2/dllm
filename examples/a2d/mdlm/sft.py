@@ -4,12 +4,12 @@ Local users
 - 1 GPU:
     accelerate launch \
         --config_file scripts/accelerate_configs/ddp.yaml --num_processes 1 \
-        examples/bert/sft.py
+        examples/a2d/mdlm/sft.py
     
 - 8 GPUs (ZeRO-2):
     accelerate launch \
         --config_file scripts/accelerate_configs/zero2.yaml \
-        examples/bert/sft.py
+        examples/a2d/mdlm/sft.py
 
 Slurm users
 # Note: run `mkdir logs` before running sbatch; and adjust 
@@ -18,12 +18,12 @@ Slurm users
 - 1 Node, 8 GPUs (ZeRO-2):
     sbatch --gres=gpu:8 scripts/train.slurm.sh \
         --accelerate_config "zero2" \
-        --script_path "examples/bert/sft.py"
+        --script_path "examples/a2d/mdlm/sft.py"
 
 - 2 Nodes, 16 GPUs (ZeRO-2):
     sbatch --nodes=2 --gres=gpu:8 scripts/train.slurm.sh \
         --accelerate_config "zero2" \
-        --script_path "examples/bert/sft.py"
+        --script_path "examples/a2d/mdlm/sft.py"
 """
 
 import os
@@ -40,7 +40,7 @@ logger = dllm.utils.get_default_logger(__name__)
 
 @dataclass
 class ModelArguments(dllm.utils.ModelArguments):
-    model_name_or_path: str = "answerdotai/ModernBERT-large"
+    model_name_or_path: str = "models/a2d/Qwen3-0.6B"
 
 
 @dataclass
@@ -56,7 +56,7 @@ class DataArguments(dllm.utils.DataArguments):
 
 @dataclass
 class TrainingArguments(dllm.utils.TrainingArguments):
-    output_dir: str = "models/ModernBERT-large/alpaca"
+    output_dir: str = "models/a2d/Qwen3-0.6B/mdlm/alpaca"
     group_by_length: bool = True
     learning_rate: float = 1e-4
     num_train_epochs: int = 20
@@ -64,6 +64,8 @@ class TrainingArguments(dllm.utils.TrainingArguments):
     per_device_eval_batch_size: int = 16
     eval_steps: float = 0.1
     save_steps: float = 0.1
+    # a2d-specific
+    right_shift_logits: bool = False
 
 
 def train():
@@ -109,6 +111,7 @@ def train():
         train_dataset=dataset["train"],
         eval_dataset=dataset.get("test", None),
         args=training_args,
+        right_shift_logits=training_args.right_shift_logits,
         data_collator=(
             dllm.utils.NoAttentionMaskWrapper(  # padded <eos_token> should be visible
                 transformers.DataCollatorForSeq2Seq(
