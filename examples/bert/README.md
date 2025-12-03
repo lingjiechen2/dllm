@@ -93,6 +93,7 @@ Here we show the exact commands we use to train and interact with the BERT-Chat 
 For training curves and other details, please see [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) BERT-Chat Report](https://api.wandb.ai/links/asap-zzhou/101h5xvg).
 
 ### Training
+> Read [Useful tips for training](/README.md/#useful-tips-for-training) before training.
 
 To reproduce [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0), run:
 ```shell
@@ -134,7 +135,7 @@ python -u examples/bert/chat.py --model_name_or_path "dllm-collection/ModernBERT
 ```
 
 ## Evaluation
-> Read [(optional) Evaluation setup](/README.md/#optional-evaluation-setup) before running evaluation. 
+> Read [(optional) Evaluation setup](/README.md/#optional-evaluation-setup) before running evaluation.
 
 For example, to evaluate [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0) on [`gsm8k`](https://huggingface.co/datasets/openai/gsm8k) using 4 GPUs, run:
 ```shell

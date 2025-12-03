@@ -203,17 +203,36 @@ See [Features](#features) for specific training recipes.
 
 
 <!-- Here are some useful tips for training: -->
-> #### Here are some useful tips for training:
-> 1. Use a subset of data:
-> `--dataset_args "allenai/tulu-3-sft-mixture[train:10000,test:1000]"`
-> 2. Concatenate datasets:
-> `--dataset_args "allenai/tulu-3-sft-mixture+HuggingFaceTB/smoltalk"`
-> 3. Train with LoRA and 4bit quantization:
-> `--load_in_4bit True --lora True`
-> 4. Train with different distributed training methods:
-> `--accelerate_config "ddp,zero-{1,2,3},fsdp"`
-> 5. Preprocesss dataset before training:
-> [TODO]
+#### Useful tips for training:
+- Use a subset of data:
+`--dataset_args "allenai/tulu-3-sft-mixture[train:10000,test:1000]"`
+- Concatenate datasets:
+`--dataset_args "allenai/tulu-3-sft-mixture+HuggingFaceTB/smoltalk"`
+- Train with LoRA and 4bit quantization:
+`--load_in_4bit True --lora True`
+- Train with different distributed training methods:
+`--accelerate_config "ddp,zero-{1,2,3},fsdp"`
+- Load pretraining dataset in streaming mode:
+`--streaming True`
+- Preprocesss SFT dataset before training (e.g., LLaDA):
+  ```shell
+  # Preprocess SFT data
+  python dllm/tools/preprocess_sft_dataset.py \
+      --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
+      --sft_map_fn_path "dllm.utils.default_mdlm_sft_map_fn" \
+      --dataset_args "allenai/tulu-3-sft-mixture" \
+      --output_dir "data/sft/llada/tulu-3-sft-mixture" \
+      --num_proc 64
+  
+  # SFT with preprocessed data
+  accelerate launch \
+      --config_file scripts/accelerate_configs/fsdp.yaml \
+      examples/llada/sft.py \
+      --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
+      --dataset_args "data/sft/llada/tulu-3-sft-mixture" \
+      --load_preprocessed_data True \
+      ...
+  ```
 
 ## Inference
 
