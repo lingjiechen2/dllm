@@ -56,7 +56,8 @@ accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_proces
 
 To sample from the model interactively:
 ```shell
-# just press enter (empty prompt) if you want the model to generate text from scratch 
+# Enter a prompt (e.g., "First citizen: Before we proceed any further, hear me speak."),
+# or press Enter to let the model generate text from scratch.
 python -u examples/bert/chat.py \
     --model_name_or_path "models/ModernBERT-large/tiny-shakespeare/checkpoint-final" \
     --chat_template False --remasking "random" --steps 128 --max_new_tokens 128
@@ -137,7 +138,7 @@ python -u examples/bert/chat.py --model_name_or_path "dllm-collection/ModernBERT
 
 For example, to evaluate [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0) on [`gsm8k`](https://huggingface.co/datasets/openai/gsm8k) using 4 GPUs, run:
 ```shell
-# use model_args to adjust the sampler arguments for evalution.
+# Use model_args to adjust the sampler arguments for evalution.
 accelerate launch --num_processes 4 \
     dllm/pipelines/bert/eval.py \
     --tasks "gsm8k_bert" \

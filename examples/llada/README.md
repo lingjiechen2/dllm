@@ -102,7 +102,7 @@ sbatch --nodes=2 --gres=gpu:8 scripts/train.slurm.sh \
 Though LLaDA is trained on proprietary data, we tried our best to reproduce [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) by finetuning [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) with SFT on the [`allenai/tulu-3-sft-mixture`](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture) dataset:
 
 ```shell
-# preprocessing SFT data (optional, but can avoid redundant preprocessing for multi-node training)
+# Preprocessing SFT data (optional, but can avoid redundant preprocessing for multi-node training)
 python dllm/tools/preprocess_sft_dataset.py \
     --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
     --sft_map_fn_path "dllm.utils.default_mdlm_sft_map_fn" \
@@ -110,7 +110,7 @@ python dllm/tools/preprocess_sft_dataset.py \
     --output_dir "data/sft/llada/tulu-3-sft-mixture" \
     --num_proc 64
 
-# train on 24*8=192 A100s with FSDP, take about 8 hours
+# Train on 24*8=192 A100s with FSDP, take about 8 hours
 sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
     --accelerate_config "fsdp" \
     --script_path "examples/llada/sft.py" \

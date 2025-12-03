@@ -35,9 +35,10 @@ examples/a2d
 
 **Run unit tests**: Before proceeding with your customized models, ensure they pass:
 ```shell
-pytes scripts/tests/test_attention.py::test_a2d_attention_mask_invariance
-pytes scripts/tests/test_attention.py::test_a2d_fullmask_future_affects_past
-# [TODO]: bm3lm unit test
+pytest scripts/tests/test_attention.py::test_a2d_attention_mask_invariance
+pytest scripts/tests/test_attention.py::test_a2d_fullmask_future_affects_past
+# Optional: only needed for BM3LM
+pytest scripts/tests/test_attention.py::test_a2d_staircase_attention_kvcache_equivalence
 ```
 
 **Convert an AR model with customized attention**: For example, to convert `Qwen/Qwen3-0.6B` using its original weights but with the customized attention defined in [`modeling_qwen3.py`](/dllm/pipelines/a2d/models/qwen3/modeling_qwen3.py):
@@ -70,7 +71,11 @@ accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_proces
 
 To sample from the model interactively:
 ```shell
-[TODO]
+# Enter a prompt (e.g., "First citizen: Before we proceed any further, hear me speak."),
+# or press Enter to let the model generate text from scratch.
+python -u examples/a2d/mdlm/chat.py \
+    --model_name_or_path "models/a2d/Qwen3-0.6B/mdlm/tiny-shakespeare/checkpoint-final" \
+    --chat_template False --remasking "random" --steps 128 --max_new_tokens 128
 ```
 
 ### SFT
@@ -100,7 +105,7 @@ python -u examples/a2d/mdlm/chat.py \
 
 ## Warmup: [BM3LM](https://arxiv.org/abs/2503.09573)
 
-In this section, we show toy examples of continual pretraining and SFTing [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on small datasets to generate text with [BD3-LM](https://arxiv.org/abs/2503.09573) (block diffuions).
+In this section, we show toy examples of continual pretraining and SFTing [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on small datasets to generate text with [BD3LM](https://arxiv.org/abs/2503.09573) (block diffuions).
 
 ### Continual Pretraining
 
@@ -124,12 +129,16 @@ accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_proces
 
 To sample from the model interactively:
 ```shell
-[TODO]
+# Enter a prompt (e.g., "First citizen: Before we proceed any further, hear me speak."),
+# or press Enter to let the model generate text from scratch.
+python -u examples/a2d/bm3lm/chat.py \
+    --model_name_or_path "models/a2d/Qwen3-0.6B/bm3lm/tiny-shakespeare/checkpoint-final" \
+    --chat_template False --block_size 32 --remasking "random" --steps 128 --max_new_tokens 128
 ```
 
 ### SFT
 
-To adapat [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset with BM3LM, run:
+To adapat [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset with [BD3LM](https://arxiv.org/abs/2503.09573) (block diffuions), run:
 
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \

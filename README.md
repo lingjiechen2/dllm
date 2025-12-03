@@ -124,7 +124,7 @@ dllm
 │   ├── editflow
 │   └── llada
 │       ├── models         # Model architecture and configs 
-│       ├── sampler.py   # Inference module
+│       ├── sampler.py     # Inference module
 │       ├── trainer.py     # Training module
 │       └── eval.py        # Evaluation module
 ├── tools
