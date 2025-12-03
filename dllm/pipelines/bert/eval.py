@@ -1,13 +1,11 @@
 """
-accelerate launch \
-    --num_processes 2 \
+accelerate launch --num_processes 4 \
     dllm/pipelines/bert/eval.py \
-    --tasks gsm8k \
-    --batch_size 1 \
-    --model bert \
-    --device cuda \
-    --num_fewshot 8 \
-    --model_args "pretrained=dllm-collection/ModernBERT-base-chat-v0,is_check_greedy=False,mc_num=1,max_new_tokens=1024,steps=1024,block_size=32,cfg=0.0"
+    --tasks "gsm8k_bert" \
+    --model "bert" \
+    --apply_chat_template \
+    --num_fewshot 0 \
+    --model_args "pretrained=dllm-collection/ModernBERT-large-chat-v0,max_new_tokens=256,steps=256,block_size=32"
 """
 
 from types import SimpleNamespace

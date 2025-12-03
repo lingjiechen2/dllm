@@ -1,11 +1,11 @@
 """
-accelerate launch \
-    --num_processes 2 \
+accelerate launch --num_processes 4 \
     dllm/pipelines/llada/eval.py \
-    --tasks gsm8k \
-    --model llada \
-    --num_fewshot 8 \
-    --model_args "pretrained=GSAI-ML/LLaDA-8B-Base,is_check_greedy=False,mc_num=1,max_new_tokens=1024,steps=1024,block_size=32,cfg=0.0"
+    --tasks "gsm8k_cot" \
+    --model "llada" \
+    --apply_chat_template \
+    --num_fewshot 5 \
+    --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,max_new_tokens=512,steps=512,block_size=512,cfg=0.0,logits_eos_inf=False,confidence_eos_eot_inf=True"
 """
 
 from types import SimpleNamespace

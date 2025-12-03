@@ -16,7 +16,7 @@ import dllm
 
 @dataclass
 class ScriptArguments:
-    model_name_or_path: str = "dllm-collection/ModernBERT-large-chat-v0"
+    model_name_or_path: str = "/mnt/lustrenew/mllm_aligned/shared/models/tmp/ModernBERT-large/tulu-3-smoltalk/epochs-10-bs-384-len-1024/checkpoint-final"
     seed: int = 42
     chat: bool = True
     visualize: bool = True
