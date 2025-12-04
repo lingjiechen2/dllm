@@ -1,7 +1,7 @@
 # A2D (AR-to-Diffusion)
 
 [![Hugging Face Checkpoints](https://img.shields.io/badge/Hugging%20Face-Checkpoints-yellow)](https://huggingface.co/collections/dllm-collection/tiny-a2d)
-[![W&B Report](https://img.shields.io/badge/W&B-Report-white?logo=weightsandbiases)]([https://wandb.ai/asap-zzhou/dllm/reports/dLLM-Tiny-A2D--VmlldzoxNTI2NTEzOA])
+[![W&B Report](https://img.shields.io/badge/W&B-Report-white?logo=weightsandbiases)](https://wandb.ai/asap-zzhou/dllm/reports/dLLM-Tiny-A2D--VmlldzoxNTI2NTEzOA)
 
 
 This directory provides two key sets of resources:
