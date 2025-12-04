@@ -219,11 +219,6 @@ mmlu: 41.3%
 humaneval_instruct: 34.2%
 mbpp_instruct: 30.4%
 
-opendCoder
-humaneval_instruct: 20.8%
-mbpp-instruct: 35.2%
-
-
 Qwen3-0.6B-right-shift-tulu-3-smoltalk-opc-sft-stage1&2-epochs-10-bs-2048-len-1024
 gsm8k: 28.7%
 MATH: 9.3%
@@ -234,17 +229,40 @@ mmlu: 40.1%
 humaneval_instruct: 28.1%
 mbpp_instruct: 31.4%
 
+Qwen3-0.6B-non-shift-tulu-3-smoltalk-opc-sft-stage1&2-epochs-10-bs-2048-len-512-bls-32
+gsm8k: 46.6% 
+bbh: 27.0% 
+mmlu_pro: 14.1%
+hellaswag: 40.0%
+mmlu: 38.8%
+humaneval_instruct: 47.6%
+mbpp_instruct:32.0%
+
 Qwen3-0.6B-non-shift-opc-sft-stage1&2-epochs-10-bs-2048-len-1024
 humaneval_instruct: 31.7%
 mbpp_instruct: 29.0%
+
+Qwen2.5-Coder-0.5B-Instruct-non-shift-opc-sft-stage1&2-epochs-10-bs-1536-len-512-bls-32
+humaneval_instruct: 41.5%
+mbpp_instruct: 33.6%
 
 Qwen3-0.6B-right-shift-opc-sft-stage1&2-epochs-10-bs-2048-len-1024
 humaneval_instruct: 29.9%
 mbpp_instruct: 25.2%
 
-Qwen3-0.6B-right-shift-opc-sft-stage1&2-epochs-10-bs-2048-len-1024
+Qwen3-0.6B-right-shift-opc-sft-stage1&2-epochs-20-bs-2048-len-1024
 humaneval_instruct: 32.9%
 mbpp_instruct: 27.4%
+
+Qwen2.5-Coder-0.5B-Instruct-right-shift-opc-sft-stage1&2-epochs-10-bs-1536-len-512-bls-32
+humaneval_instruct: 38.4%
+mbpp_instruct: 31.6%
+
+
+opendCoder
+humaneval_instruct: 20.8%
+mbpp-instruct: 35.2%
+
 
 Qwen2.5-0.5B-Instruct-non-shift-tulu-3-smoltalk-epochs-10-bs-384-len-1024
 gsm8k: 15.2%
