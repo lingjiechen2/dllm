@@ -210,193 +210,154 @@ WANDB_MODE=online sbatch --nodes=8 --gres=gpu:8 scripts/train.slurm.sh \
     --output_dir "models/a2d/Qwen3-0.6B/tulu-3-sft-mixture+smoltalk+opc-sft-stage1&2/epochs-10-bs-2048-len-512-bls-32"
 ```
 
+
+
 ### Evaluation
 
+> Read [(optional) Evaluation setup](/README.md/#optional-evaluation-setup) before running evaluation. 
 
-|                     | LAMBADA | GSM8K | CEval | BBH | MATH | MMLU | Winogrande | HellaSwag | CMMLU |
-|:------------------------------------|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|
-| [`ModernBERT-base-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0)(evaluated) | 49.3 | 5.9 | 25.0 | 17.9 | 3.1 | 26.1 | 49.7 | 41.0 | 24.3 |
-| [`ModernBERT-large-chat-v0`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0)(evaluated) | 46.3 | 17.1 | 24.6 | 25.1 | 3.8 | 33.5 | 53.1 | 45.0 | 27.5 |
-| [`Qwen1.5-0.5B`](https://huggingface.co/Qwen/Qwen1.5-0.5B)(<ins>reported</ins> & evaluated) | 48.6 | <ins>22.0</ins> | <ins>50.5</ins> | <ins>18.3</ins> | <ins>3.1</ins> | <ins>39.2</ins> | 55.0 | 48.2 | <ins>46.6</ins> |
-| [`Qwen1.5-0.5B-Chat`](https://huggingface.co/Qwen/Qwen1.5-0.5B-Chat)(<ins>reported</ins> & evaluated) | 41.2 | <ins>11.3</ins> | <ins>37.2</ins> | 18.2 | 2.1 | <ins>35.0</ins> | 52.0 | 36.9 | 32.2 |
-| [`gpt2`](https://huggingface.co/openai-community/gpt2)(<ins>reported</ins> & evaluated) | <ins>46.0</ins> | 0.7 | 24.7 | 6.9 | 1.8 | 22.9 | 51.6 | 31.1  | 25.2 |
-| [`gpt2-medium`](https://huggingface.co/openai-community/gpt2-medium)(<ins>reported</ins> & evaluated) | <ins>55.5</ins> | 2.1 | 24.6 | 17.8 | 1.4 | 22.9 |53.1  | 39.4  | 0.3  |
+For example, to evaluate [`Qwen3-0.6B-diffusion-v1.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-v1.1) on [`gsm8k`](https://huggingface.co/datasets/openai/gsm8k) using 4 GPUs, run:
+```shell
+# Use model_args to adjust the sampler arguments for evalution.
+accelerate launch --num_processes 4 \
+    dllm/pipelines/a2d/eval.py \
+    --tasks "gsm8k_cot" \
+    --model "bm3lm" \
+    --apply_chat_template \
+    --num_fewshot 0 \
+    --model_args "pretrained=dllm-collection/Qwen3-0.6B-diffusion-v1.1,max_new_tokens=256,steps=256,block_size=32,cfg=0.0,temperature=0.0"
+```
 
-
-
-Qwen3-0.6B-non-shift-tulu-3-smoltalk-epochs-10-bs-256-len-1024
-gsm8k: 22.9%
-MATH: 7.9%
-bbh: 23.7%
-mmlu_pro: 15.3%
-hellaswag: 35.9
-mmlu: 36.0%
-humaneval_instruct: 14.6%
-mbpp_instruct: 15.2%
-
-Qwen3-0.6B-right-shift-tulu-3-smoltalk-epochs-10-bs-256-len-1024
-gsm8k: 26.5%
-MATH: 7.7%
-bbh: 30.1%
-mmlu_pro: 14.9%
-hellaswag: 36.4
-mmlu: 36.6%
-humaneval_instruct: 8.5%
-mbpp_instruct: 13.6%
-
-Qwen3-0.6B-non-shift-tulu-3-smoltalk-opc-sft-stage1&2-epochs-10-bs-2048-len-1024
-gsm8k: 29.8%
-MATH:8.8%
-bbh: 27.0%
-mmlu_pro: 17.6%
-hellaswag: 42.1%
-mmlu: 40.0%
-humaneval_instruct: 30.5%
-mbpp_instruct: 29.2%
-
-Qwen3-0.6B-non-shift-tulu-3-smoltalk-opc-sft-stage1&2-epochs-20-bs-2048-len-1024
-gsm8k: 33.4%
-MTH:9.5%
-bbh: 27.8%
-mmlu_pro: 16.7%
-hellaswag: 42.9%
-mmlu: 41.3%
-humaneval_instruct: 34.2%
-mbpp_instruct: 30.4%
-
-Qwen3-0.6B-right-shift-tulu-3-smoltalk-opc-sft-stage1&2-epochs-10-bs-2048-len-1024
-gsm8k: 28.7%
-MATH: 9.3%
-bbh: 28.6%
-mmlu_pro: 16.2%
-hellaswag: 42.2%
-mmlu: 40.1%
-humaneval_instruct: 28.1%
-mbpp_instruct: 31.4%
-
-Qwen3-0.6B-non-shift-tulu-3-smoltalk-opc-sft-stage1&2-epochs-10-bs-2048-len-512-bls-32
-gsm8k: 46.6% 
-bbh: 27.0% 
-mmlu_pro: 14.1%
-hellaswag: 40.0%
-mmlu: 38.8%
-humaneval_instruct: 47.6%
-mbpp_instruct:32.0%
-
-Qwen3-0.6B-non-shift-opc-sft-stage1&2-epochs-10-bs-2048-len-1024
-humaneval_instruct: 31.7%
-mbpp_instruct: 29.0%
-
-Qwen2.5-Coder-0.5B-Instruct-non-shift-opc-sft-stage1&2-epochs-10-bs-1536-len-512-bls-32
-humaneval_instruct: 41.5%
-mbpp_instruct: 33.6%
-
-Qwen3-0.6B-right-shift-opc-sft-stage1&2-epochs-10-bs-2048-len-1024
-humaneval_instruct: 29.9%
-mbpp_instruct: 25.2%
-
-Qwen3-0.6B-right-shift-opc-sft-stage1&2-epochs-20-bs-2048-len-1024
-humaneval_instruct: 32.9%
-mbpp_instruct: 27.4%
-
-Qwen2.5-Coder-0.5B-Instruct-right-shift-opc-sft-stage1&2-epochs-10-bs-1536-len-512-bls-32
-humaneval_instruct: 38.4%
-mbpp_instruct: 31.6%
+To automatically evaluate [`Qwen3-0.6B-diffusion-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-v0.1) and [`Qwen3-0.6B-diffusion-v1.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-v1.1) on all benchmarks, run:
+```shell
+bash examples/a2d/bm3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B-diffusion-v0.1" 
+bash examples/a2d/bm3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B-diffusion-v1.1" 
+```
 
 
-opendCoder
-humaneval_instruct: 20.8%
-mbpp-instruct: 35.2%
+#### Evaluation Results
+
+>  Results (evaluated) are evaluated using our framework, while results (reported) come from the [Qwen3 Technical Report](https://arxiv.org/pdf/2505.09388), [Qwen2.5-Coder Technical Report](https://arxiv.org/pdf/2409.12186) and [Open-dLLM](https://github.com/pengzhangzhi/Open-dLLM?tab=readme-ov-file#-benchmarking). **Bolded rows** represent diffusion language models, while non-bold rows correspond to autoregressive models.
 
 
-Qwen2.5-0.5B-Instruct-non-shift-tulu-3-smoltalk-epochs-10-bs-384-len-1024
-gsm8k: 15.2%
-MATH: 6.0%
-bbh: 26.5%
-mmlu_pro: 11.3%
-hellaswag: 28.9%
-mmlu: 31.3%
-humaneval_instruct: 2.4%
-mbpp_instruct: 7.6%
+<table style="border-collapse: collapse; width: 100%; text-align: center; table-layout: fixed;">
+  <colgroup>
+    <col style="width: 32%;">   <!-- FIRST COLUMN WIDENED -->
+    <col style="width: 8%;">
+    <col style="width: 8%;">
+    <col style="width: 8%;">
+    <col style="width: 8%;">
+    <col style="width: 8%;">
+    <col style="width: 8%;">
+    <col style="width: 8%;">
+    <col style="width: 8%;">
+  </colgroup>
 
-Qwen2.5-0.5B-Instruct-right-shift-tulu-3-smoltalk-epochs-10-bs-384-len-1024
-gsm8k: 15.0%
-MATH: 5.4%
-bbh: 24.5%
-mmlu_pro: 11.8%
-hellaswag: 30.1%
-mmlu: 30.0%
-humaneval_instruct: 2.4%
-mbpp_instruct: 7.8%
+  <thead>
+    <tr style="border-bottom: 3px solid #333;">
+      <th style="padding: 8px; text-align: left;">Model                        </th>
+      <th style="padding: 8px;">GSM8K</th>
+      <th style="padding: 8px;">MATH</th>
+      <th style="padding: 8px;">BBH</th>
+      <th style="padding: 8px;">MMLU&#8209;Pro</th>
+      <th style="padding: 8px;">Hellaswag</th>
+      <th style="padding: 8px;">MMLU</th>
+      <th style="padding: 8px;">HumanEval</th>
+      <th style="padding: 8px;">MBPP</th>
+    </tr>
+  </thead>
 
-Qwen2.5-0.5B-non-shift-tulu-3-smoltalk-epochs-10-bs-384-len-1024
-gsm8k: 15.6%
-MATH: 6.4%
-bbh: 23.5%
-mmlu_pro: 8.8%
-hellaswag: 30.1%
-mmlu: 30.4
-humaneval_instruct: 4.3%
-mbpp_instruct: 7.6%
+  <!-- Diffusion v1.1 -->
+  <tr>
+    <td style="padding: 8px;">
+      <strong><a href="https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-v1.1"><code>Qwen3-0.6B-diffusion-v1.1</code></a> (evaluated)</strong>
+    </td>
+    <td><strong>46.6</strong></td><td><strong>13.9</strong></td><td><strong>27.0</strong></td>
+    <td><strong>14.1</strong></td><td><strong>40.0</strong></td><td><strong>38.8</strong></td>
+    <td><strong>47.6</strong></td><td><strong>32.0</strong></td>
+  </tr>
 
-Qwen2.5-0.5B-right-shift-tulu-3-smoltalk-epochs-10-bs-384-len-1024
-gsm8k: 15.6%
-MATH: 6.2%
-bbh: 22.5%
-mmlu_pro: 6.9%
-hellaswag: 30.7%
-mmlu: 30.2%
-humaneval_instruct: 3.7%
-mbpp_instruct: 9.6%
+  <!-- Diffusion v0.1 -->
+  <tr>
+    <td style="padding: 8px;">
+      <strong><a href="https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-v0.1"><code>Qwen3-0.6B-diffusion-v0.1</code></a> (evaluated)</strong>
+    </td>
+    <td><strong>29.8</strong></td><td><strong>8.8</strong></td><td><strong>27.0</strong></td>
+    <td><strong>17.6</strong></td><td><strong>42.1</strong></td><td><strong>40.0</strong></td>
+    <td><strong>30.5</strong></td><td><strong>29.2</strong></td>
+  </tr>
+
+  <!-- Divider -->
+  <tr>
+    <td colspan="9" style="padding: 0; border-top: 3px double #666;"></td>
+  </tr>
+
+  <!-- AR model -->
+  <tr>
+    <td style="padding: 8px;">
+      <a href="https://huggingface.co/Qwen/Qwen3-0.6B"><code>Qwen3-0.6B</code></a> (reported)
+    </td>
+    <td>59.6</td><td>32.4</td><td>41.5</td>
+    <td>24.7</td><td>47.4</td><td>52.8</td>
+    <td>32.3</td><td>36.6</td>
+  </tr>
+
+</table>
 
 
-Qwen2.5-Coder-0.5B-Instruct-right-shift-opc-sft-stage1&2-epochs-10-bs-1536-len-1024
-humaneval_instruct: 26.2%
-mbpp-instruct: 19.0%
 
-Qwen2.5-Coder-0.5B-Instruct-non-shift-opc-sft-stage1&2-epochs-10-bs-1536-len-1024
-humaneval_instruct: 28.1%
-mbpp-instruct: 23%
+<table style="border-collapse: collapse; width: 60%; text-align: center;">
+  <thead>
+    <tr style="border-bottom: 3px solid #333;">
+      <th style="padding: 8px; min-width: 320px; text-align: left;">Model</th>
+      <th style="padding: 8px;">HumanEval</th>
+      <th style="padding: 8px;">MBPP</th>
+    </tr>
+  </thead>
 
-Qwen2.5-Coder-0.5B-right-shift-opc-annealing-corpus->opc-sft-stage1&2-epochs-10-bs-1536-len-1024
-humaneval_instruct: 12.2%
-mbpp-instruct: 9.6%
+  <!-- Diffusion model v1.1 (bold) -->
+  <tr>
+    <td style="padding: 8px;">
+      <strong><a href="https://huggingface.co/dllm-collection/Qwen2.5-Coder-0.5B-Instruct-diffusion-v1.1"><code>Qwen2.5-Coder-0.5B-Instruct-diffusion-v1.1</code></a> (evaluated)</strong>
+    </td>
+    <td><strong>41.5</strong></td>
+    <td><strong>33.6</strong></td>
+  </tr>
 
-Qwen2.5-Coder-0.5B-non-shift-opc-annealing-corpus->opc-sft-stage1&2-epochs-10-bs-1536-len-1024
-humaneval_instruct: 10.4%
-mbpp-instruct: 15.7%
+  <!-- Diffusion model v0.1 (bold) -->
+  <tr>
+    <td style="padding: 8px;">
+      <strong><a href="https://huggingface.co/dllm-collection/Qwen2.5-Coder-0.5B-Instruct-diffusion-v0.1"><code>Qwen2.5-Coder-0.5B-Instruct-diffusion-v0.1</code></a> (evaluated)</strong>
+    </td>
+    <td><strong>28.1</strong></td>
+    <td><strong>23.0</strong></td>
+  </tr>
 
-Qwen2.5-Coder-0.5B-right-shift-opc-sft-stage1&2-epochs-10-bs-1536-len-1024
-humaneval_instruct: 11.6%
-mbpp-instruct: 20.1%
+  <!-- open-dcoder (bold) -->
+  <tr>
+    <td style="padding: 8px;">
+      <strong><a href="https://huggingface.co/fredzzp/open-dcoder-0.5B"><code>open-dcoder-0.5B</code></a> (reported)</strong>
+    </td>
+    <td><strong>20.8</strong></td>
+    <td><strong>35.2</strong></td>
+  </tr>
 
-Qwen2.5-Coder-0.5B-non-shift-opc-sft-stage1&2-epochs-10-bs-1536-len-1024
-humaneval_instruct: 15.9%
-mbpp-instruct: 19%
+  <!-- Double-line separator -->
+  <tr>
+    <td colspan="3" style="padding: 0; border-top: 3px double #666;"></td>
+  </tr>
+
+  <!-- AR model (NOT bold) -->
+  <tr>
+    <td style="padding: 8px;">
+      <a href="https://huggingface.co/Qwen/Qwen2.5-Coder-0.5B-Instruct"><code>Qwen2.5-Coder-0.5B-Instruct</code></a> (reported)
+    </td>
+    <td>28.0</td>
+    <td>52.9</td>
+  </tr>
+
+</table>
 
 
 
 
-|                Model                   | GSM8K | MATH | BBH | MMLU-Pro | HellaSwag | MMLU | HumanEval-Instruct | MBPP-Instruct |
-|:------|:----:|:----:|:---:|:--------:|:---------:|:----:|:------------------:|:--------------:|
-| **Qwen3-0.6B-non-shift-tulu-3-smoltalk-epochs-10-bs-256-len-1024** | 22.9 | 7.9 | 23.7 | 15.3 | 35.9 | 36.0 | 14.6 | 15.2 |
-| **Qwen3-0.6B-right-shift-tulu-3-smoltalk-epochs-10-bs-256-len-1024** | 26.5 | 7.7 | 30.1 | 14.9 | 36.4 | 36.6 | 8.5 | 13.6 |
-| **Qwen3-0.6B-non-shift-tulu-3-smoltalk-opc-sft-stage1&2-epochs-10-bs-2048-len-1024** | 29.8 | 8.8 | 27.0 | 17.6 | 42.1 | 40.0 | 30.5 | 29.2 |
-| **Qwen3-0.6B-right-shift-tulu-3-smoltalk-opc-sft-stage1&2-epochs-10-bs-2048-len-1024** | 28.7 | 9.3 | 28.6 | 16.2 | 42.2 | 40.1 | 28.1 | 31.4 |
-| **Qwen2.5-0.5B-Instruct-non-shift-tulu-3-smoltalk-epochs-10-bs-384-len-1024** | 15.2 | 6.0 | 26.5 | 11.3 | 28.9 | 31.3 | 2.4 | 7.6 |
-| **Qwen2.5-0.5B-Instruct-right-shift-tulu-3-smoltalk-epochs-10-bs-384-len-1024** | 15.0 | 5.4 | 24.5 | 11.8 | 30.1 | 30.0 | 2.4 | 7.8 |
-| **Qwen2.5-0.5B-non-shift-tulu-3-smoltalk-epochs-10-bs-384-len-1024** | 15.6 | 6.4 | 23.5 | 8.8 | 30.1 | 30.4 | 4.3 | 7.6 |
-| **Qwen2.5-0.5B-right-shift-tulu-3-smoltalk-epochs-10-bs-384-len-1024** | 15.6 | 6.2 | 22.5 | 6.9 | 30.7 | 30.2 | 3.7 | 9.6 |
-
-|                Model                   | HumanEval-Instruct | MBPP-Instruct |
-|:---------------------------------------|:------------------:|:--------------:|
-| **Qwen3-0.6B-non-shift-opc-sft-stage1&2-epochs-10-bs-2048-len-1024** | 31.7 | 29.0 |
-| **Qwen3-0.6B-right-shift-opc-sft-stage1&2-epochs-10-bs-2048-len-1024** | 29.9 | 25.2 |
-| **Qwen3-0.6B-non-shift-tulu-3-smoltalk-opc-sft-stage1&2-epochs-10-bs-2048-len-1024** | 30.5 | 29.2 |
-| **Qwen3-0.6B-right-shift-tulu-3-smoltalk-opc-sft-stage1&2-epochs-10-bs-2048-len-1024** | 28.1 | 31.4 |
-| **Qwen2.5-Coder-0.5B-Instruct-non-shift-opc-sft-stage1&2-epochs-10-bs-1536-len-1024**  | 28.1 | 23.0 |
-| **Qwen2.5-Coder-0.5B-Instruct-right-shift-opc-sft-stage1&2-epochs-10-bs-1536-len-1024** | 26.2 | 19.0 |
-| **Qwen2.5-Coder-0.5B-non-shift-opc-annealing-corpus->opc-sft-stage1&2-epochs-10-bs-1536-len-1024**    | 10.4 | 15.7 |
-| **Qwen2.5-Coder-0.5B-right-shift-opc-annealing-corpus->opc-sft-stage1&2-epochs-10-bs-1536-len-1024**  | 12.2 | 9.6 |
-| **Qwen2.5-Coder-0.5B-non-shift-opc-sft-stage1&2-epochs-10-bs-1536-len-1024**       | 15.9 | 19.0 |
-| **Qwen2.5-Coder-0.5B-right-shift-opc-sft-stage1&2-epochs-10-bs-1536-len-1024**     | 11.6 | 20.1 |
