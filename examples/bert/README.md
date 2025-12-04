@@ -6,7 +6,7 @@
 This directory provides two key sets of resources:
 
 -  **[Warmup](#warmup)**: Tutorials for continual pretraining and SFTing any BERT-style model on small datasets to generate text with diffusion.
--  **[BERT-Chat](#bert-chat)**: The exact training, inference, and evaluation scripts used to create the [`ModernBERT-base-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0.1) and [`ModernBERT-large-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0.1) 🤗checkpoints, two BERTs finetuned as Chatbots. For a deep dive into experimental results, lessons learned, and more reproduction details, please see our full [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) BERT-Chat Report](https://api.wandb.ai/links/asap-zzhou/101h5xvg).
+-  **[`BERT-Chat`](#bert-chat)**: The exact training, inference, and evaluation scripts used to develop the 🤗checkpoints: [`ModernBERT-base-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0.1) and [`ModernBERT-large-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0.1), two BERTs finetuned as Chatbots via SFT. For a deep dive into experimental results, lessons learned, and more reproduction details, please see our full [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) BERT-Chat Report](https://api.wandb.ai/links/asap-zzhou/101h5xvg).
 
 <p align="center" style="margin-top: 15px;">
     <img src="/examples/bert/assets/chat.gif" alt="chat" width="70%">
@@ -87,15 +87,17 @@ python -u examples/bert/chat.py \
     --model_name_or_path "models/ModernBERT-large/alpaca/checkpoint-final"
 ```
 
-## BERT-Chat
-Here we show the exact commands we use to train and interact with the BERT-Chat models: 
+## `BERT-Chat`
+Here we show the exact commands we use to train / interact with / evaluation the [`BERT-Chat`](https://huggingface.co/collections/dllm-collection/bert-chat) models: 
 [`ModernBERT-base-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0.1) and [`ModernBERT-large-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0.1).
 For training curves and other details, please see [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) BERT-Chat Report](https://api.wandb.ai/links/asap-zzhou/101h5xvg).
 
 ### Training
 > Read [Useful tips for training](/README.md/#useful-tips-for-training) before training.
 
-To reproduce [`ModernBERT-base-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0.1), run:
+The [`BERT-Chat`](https://huggingface.co/collections/dllm-collection/bert-chat) models are trained purely with SFT on the [`tulu-3-sft-mixture`](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture) and [`smoltalk`](https://huggingface.co/datasets/HuggingFaceTB/smoltalk) dataset.
+
+To reproduce [`ModernBERT-base-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0.1), run the command below (about 4 hours on 8 GPUs):
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
     examples/bert/sft.py \
@@ -111,7 +113,7 @@ accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_proc
     --output_dir "models/ModernBERT-base/tulu-3-sft-mixture+smoltalk"
 ```
 
-To reproduce [`ModernBERT-large-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0.1), run:
+To reproduce [`ModernBERT-large-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0.1), run the command below (about 7 hours on 8 GPUs):
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
     examples/bert/sft.py \

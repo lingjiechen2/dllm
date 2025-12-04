@@ -1,14 +1,14 @@
 # A2D (AR-to-Diffusion)
 
 [![Hugging Face Checkpoints](https://img.shields.io/badge/Hugging%20Face-Checkpoints-yellow)](https://huggingface.co/collections/dllm-collection/tiny-a2d)
-[![W&B Report](https://img.shields.io/badge/W&B-Report-white?logo=weightsandbiases)]([TODO])
+[![W&B Report](https://img.shields.io/badge/W&B-Report-white?logo=weightsandbiases)]([https://wandb.ai/asap-zzhou/dllm/reports/dLLM-Tiny-A2D--VmlldzoxNTI2NTEzOA])
 
 
 This directory provides two key sets of resources:
 
 - **Warmup ([MDLM](#warmup-mdlm) and [BM3LM](#warmup-bm3lm))**: Tutorials for continual pretraining and SFTing any autoregressive model on small datasets to generate text with MDLM (masked diffusion) or BM3LM (block diffusion).
-- **[Tiny-A2D](#tiny-a2d)**: The exact training, inference, and evaluation scripts used to create [TODO].
-<!-- -  **[BERT-Chat](#bert-chat)**: The exact training, inference, and evaluation scripts used to create the [`ModernBERT-base-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0.1) and [`ModernBERT-large-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0.1) checkpoints, two BERTs finetuned as Chatbots. For a deep dive into experimental results, lessons learned, and more reproduction details, please see our full [BERT-Chat W&B Report](https://api.wandb.ai/links/asap-zzhou/101h5xvg). -->
+- **[`Tiny-A2D`](#tiny-a2d)**: The exact training, inference, and evaluation scripts used to develop the 🤗checkpoints: [`Qwen3-0.6B-diffusion-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-v0.1) (MDLM, global masked diffusion) and [`Qwen3-0.6B-diffusion-v1.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-v1.1) (BM3LM, blockwise masked diffusion with KV cache).
+For a deep dive into experimental results, lessons learned, and more reproduction details, please see our full [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) Tiny-A2D Report](https://wandb.ai/asap-zzhou/dllm/reports/dLLM-Tiny-A2D--VmlldzoxNTI2NTEzOA).
 
 ## Files overview
 ```
@@ -48,9 +48,11 @@ examples/a2d
 
 ## Warmup: [MDLM](https://arxiv.org/abs/2406.07524)
 
-In this section, we show toy examples of continual pretraining and SFTing [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on small datasets to generate text with [MDLM](https://arxiv.org/abs/2406.07524) (masked diffuions).
+In this section, we show toy examples of continual pretraining and SFTing [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on small datasets to generate text with [MDLM](https://arxiv.org/abs/2406.07524).
 
 ### Continual Pretraining
+
+To adapat [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`tiny-shakespeare`](https://huggingface.co/datasets/Trelis/tiny-shakespeare) dataset with [MDLM](https://arxiv.org/abs/2406.07524), run:
 
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_processes 1 \
@@ -80,7 +82,7 @@ python -u examples/a2d/mdlm/chat.py \
 
 ### SFT
 
-To adapat [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset with MDLM, run:
+To adapat [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset with [MDLM](https://arxiv.org/abs/2406.07524), run:
 
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
@@ -105,9 +107,11 @@ python -u examples/a2d/mdlm/chat.py \
 
 ## Warmup: [BM3LM](https://arxiv.org/abs/2503.09573)
 
-In this section, we show toy examples of continual pretraining and SFTing [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on small datasets to generate text with [BD3LM](https://arxiv.org/abs/2503.09573) (block diffuions).
+In this section, we show toy examples of continual pretraining and SFTing [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on small datasets to generate text with [BD3LM](https://arxiv.org/abs/2503.09573).
 
 ### Continual Pretraining
+
+To adapat [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`tiny-shakespeare`](https://huggingface.co/datasets/Trelis/tiny-shakespeare) dataset with [BD3LM](https://arxiv.org/abs/2503.09573), run:
 
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_processes 1 \
@@ -138,7 +142,7 @@ python -u examples/a2d/bm3lm/chat.py \
 
 ### SFT
 
-To adapat [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset with [BD3LM](https://arxiv.org/abs/2503.09573) (block diffuions), run:
+To adapat [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset with [BD3LM](https://arxiv.org/abs/2503.09573), run:
 
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
@@ -162,7 +166,48 @@ python -u examples/a2d/bm3lm/chat.py \
     --model_name_or_path "models/a2d/Qwen3-0.6B/bm3lm/alpaca/checkpoint-final" --block_size 32
 ```
 
+## `Tiny-A2D`
 
-## Tiny-A2D
+Here we show the exact commands we use to train / interact with / evaluation the [`Tiny-A2D`](https://huggingface.co/collections/dllm-collection/tiny-a2d) models:
+[`Qwen3-0.6B-diffusion-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-v0.1) and [`Qwen3-0.6B-diffusion-v1.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-v0.1).
+For training curves and other details, please see [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) Tiny-A2D Report](https://wandb.ai/asap-zzhou/dllm/reports/dLLM-Tiny-A2D--VmlldzoxNTI2NTEzOA).
+
+### Training
+> Read [Useful tips for training](/README.md/#useful-tips-for-training) and [(optional) Slurm setup](/README.md/#optional-slurm-setup) before training.
+
+The [`Tiny-A2D`](https://huggingface.co/collections/dllm-collection/tiny-a2d) models are trained purely with SFT.
+
+To reproduce [`Qwen3-0.6B-diffusion-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-v0.1) (with MDLM & SFT), run the command below (about 10 hours on 64 GPUs):
+```shell
+WANDB_MODE=online sbatch --nodes=8 --gres=gpu:8 scripts/train.slurm.sh \
+    --accelerate_config "zero2" \
+    --script_path "examples/a2d/mdlm/sft.py" \
+    --model_name_or_path "models/a2d/Qwen3-0.6B" \
+    --dataset_args "allenai/tulu-3-sft-mixture+HuggingFaceTB/smoltalk+OpenCoder-LLM/opc-sft-stage1[lang:python]+OpenCoder-LLM/opc-sft-stage2[lang:python]" \
+    --max_length 1024 \
+    --num_train_epochs 10 \
+    --per_device_train_batch_size 16 \
+    --per_device_eval_batch_size 16 \
+    --gradient_accumulation_steps 2 \
+    --save_steps 0.1 \
+    --output_dir "models/a2d/Qwen3-0.6B/tulu-3-sft-mixture+smoltalk+opc-sft-stage1&2/epochs-10-bs-2048-len-1024"
+```
+
+To reproduce [`Qwen3-0.6B-diffusion-v1.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-v0.1) (with BM3LM & SFT), run the command below (about 10 hours on 64 GPUs):
+```shell
+WANDB_MODE=online sbatch --nodes=8 --gres=gpu:8 scripts/train.slurm.sh \
+    --accelerate_config "zero2" \
+    --script_path "examples/a2d/bm3lm/sft.py" \
+    --model_name_or_path "models/a2d/Qwen3-0.6B" \
+    --dataset_args "allenai/tulu-3-sft-mixture+HuggingFaceTB/smoltalk+OpenCoder-LLM/opc-sft-stage1[lang:python]+OpenCoder-LLM/opc-sft-stage2[lang:python]" \
+    --max_length 512 \
+    --block_size 32 \
+    --num_train_epochs 10 \
+    --per_device_train_batch_size 16 \
+    --per_device_eval_batch_size 16 \
+    --gradient_accumulation_steps 2 \
+    --save_steps 0.1 \
+    --output_dir "models/a2d/Qwen3-0.6B/tulu-3-sft-mixture+smoltalk+opc-sft-stage1&2/epochs-10-bs-2048-len-512-bls-32"
+```
 
 ### Evaluation
