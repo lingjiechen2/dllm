@@ -165,10 +165,6 @@ class MDLMSampler(BaseSampler):
                     logits = self.model(
                         x, attention_mask=attention_mask
                     ).logits  # Use attention mask here
-                
-                if suppress_tokens is not None and len(suppress_tokens) > 0:
-                    for token_id in suppress_tokens:
-                        logits[:, :, token_id] = -torch.inf
 
                 if suppress_tokens is not None and len(suppress_tokens) > 0:
                     for token_id in suppress_tokens:
@@ -370,11 +366,7 @@ class MDLMSampler(BaseSampler):
 
                 # Greedy with optional Gumbel-Max noise
                 logits_with_noise = add_gumbel_noise(logits, temperature=temperature)
-                x0 = torch.argmax(logits_with_noise, dim=-1) # [B, T]
-
-                if begin_suppress_tokens is not None and len(begin_suppress_tokens) > 0:
-                    for token_id in begin_suppress_tokens:
-                        logits[:, :, token_id] = -torch.inf
+                x0 = torch.argmax(logits_with_noise, dim=-1)  # [B, T]
 
                 if begin_suppress_tokens is not None and len(begin_suppress_tokens) > 0:
                     for token_id in begin_suppress_tokens:

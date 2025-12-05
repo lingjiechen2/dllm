@@ -1,8 +1,9 @@
 """
-accelerate launch --num_processes 4 \
+accelerate launch \
+    --num_processes 4 \
     dllm/pipelines/bert/eval.py \
-    --tasks "gsm8k_bert" \
-    --model "bert" \
+    --tasks gsm8k_bert \
+    --model bert \
     --apply_chat_template \
     --num_fewshot 0 \
     --model_args "pretrained=dllm-collection/ModernBERT-base-chat-v0.1,max_new_tokens=256,steps=256,block_size=32"

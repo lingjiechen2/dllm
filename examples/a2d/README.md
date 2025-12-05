@@ -211,33 +211,41 @@ WANDB_MODE=online sbatch --nodes=8 --gres=gpu:8 scripts/train.slurm.sh \
 ```
 
 
-
 ### Evaluation
 
 > Read [(optional) Evaluation setup](/README.md/#optional-evaluation-setup) before running evaluation. 
 
-For example, to evaluate [`Qwen3-0.6B-diffusion-v1.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-v1.1) on [`gsm8k`](https://huggingface.co/datasets/openai/gsm8k) using 4 GPUs, run:
+To evaluate [`Qwen3-0.6B-diffusion-mdlm-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1) and [`Qwen3-0.6B-diffusion-bd3lm-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-bd3lm-v0.1) on [`gsm8k`](https://huggingface.co/datasets/openai/gsm8k) using 4 GPUs, run:
 ```shell
 # Use model_args to adjust the sampler arguments for evalution.
 accelerate launch --num_processes 4 \
     dllm/pipelines/a2d/eval.py \
     --tasks "gsm8k_cot" \
-    --model "bm3lm" \
+    --model "mdlm" \
     --apply_chat_template \
     --num_fewshot 0 \
-    --model_args "pretrained=dllm-collection/Qwen3-0.6B-diffusion-v1.1,max_new_tokens=256,steps=256,block_size=32,cfg=0.0,temperature=0.0"
+    --model_args "pretrained=dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1,max_new_tokens=256,steps=256,block_size=256,cfg=0.0,temperature=0.0"
+
+accelerate launch --num_processes 4 \
+    dllm/pipelines/a2d/eval.py \
+    --tasks "gsm8k_cot" \
+    --model "bd3lm" \
+    --apply_chat_template \
+    --num_fewshot 0 \
+    --model_args "pretrained=dllm-collection/Qwen3-0.6B-diffusion-bd3lm-v0.1,max_new_tokens=256,steps=256,block_size=32,cfg=0.0,temperature=0.0"
 ```
 
-To automatically evaluate [`Qwen3-0.6B-diffusion-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-v0.1) and [`Qwen3-0.6B-diffusion-v1.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-v1.1) on all benchmarks, run:
+To automatically evaluate [`Qwen3-0.6B-diffusion-mdlm-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1) and [`Qwen3-0.6B-diffusion-bd3lm-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-bd3lm-v0.1) on all benchmarks, run:
 ```shell
-bash examples/a2d/bm3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B-diffusion-v0.1" 
-bash examples/a2d/bm3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B-diffusion-v1.1" 
+bash examples/a2d/bd3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1" 
+bash examples/a2d/bd3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B-diffusion-bd3lm-v0.1" 
 ```
 
 
 #### Evaluation Results
 
->  Results (evaluated) are evaluated using our framework, while results (reported) come from the [Qwen3 Technical Report](https://arxiv.org/pdf/2505.09388), [Qwen2.5-Coder Technical Report](https://arxiv.org/pdf/2409.12186) and [Open-dLLM](https://github.com/pengzhangzhi/Open-dLLM?tab=readme-ov-file#-benchmarking). **Bolded rows** represent diffusion language models, while non-bold rows correspond to autoregressive models.
+>  Results (evaluated) are evaluated using our framework, while results (reported) come from the [Qwen3 Technical Report](https://arxiv.org/pdf/2505.09388), [Qwen2.5-Coder Technical Report](https://arxiv.org/pdf/2409.12186) and [Open-dLLM](https://github.com/pengzhangzhi/Open-dLLM?tab=readme-ov-file#-benchmarking). 
+> **Bolded rows** denote diffusion language models, whereas non-bold rows refer to autoregressive models.
 
 
 <table style="border-collapse: collapse; width: 100%; text-align: center; table-layout: fixed;">
@@ -267,24 +275,24 @@ bash examples/a2d/bm3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B
     </tr>
   </thead>
 
-  <!-- Diffusion v1.1 -->
+  <!-- mdlm v0.1 -->
   <tr>
     <td style="padding: 8px;">
-      <strong><a href="https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-v1.1"><code>Qwen3-0.6B-diffusion-v1.1</code></a> (evaluated)</strong>
-    </td>
-    <td><strong>46.6</strong></td><td><strong>13.9</strong></td><td><strong>27.0</strong></td>
-    <td><strong>14.1</strong></td><td><strong>40.0</strong></td><td><strong>38.8</strong></td>
-    <td><strong>47.6</strong></td><td><strong>32.0</strong></td>
-  </tr>
-
-  <!-- Diffusion v0.1 -->
-  <tr>
-    <td style="padding: 8px;">
-      <strong><a href="https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-v0.1"><code>Qwen3-0.6B-diffusion-v0.1</code></a> (evaluated)</strong>
+      <strong><a href="https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1"><code>Qwen3-0.6B-diffusion-mdlm-v0.1</code></a> (evaluated)</strong>
     </td>
     <td><strong>29.8</strong></td><td><strong>8.8</strong></td><td><strong>27.0</strong></td>
     <td><strong>17.6</strong></td><td><strong>42.1</strong></td><td><strong>40.0</strong></td>
     <td><strong>30.5</strong></td><td><strong>29.2</strong></td>
+  </tr>
+
+  <!-- bd3lm v0.1 -->
+  <tr>
+    <td style="padding: 8px;">
+      <strong><a href="https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-bd3lm-v0.1"><code>Qwen3-0.6B-diffusion-bd3lm-v0.1</code></a> (evaluated)</strong>
+    </td>
+    <td><strong>46.6</strong></td><td><strong>13.9</strong></td><td><strong>27.0</strong></td>
+    <td><strong>14.1</strong></td><td><strong>40.0</strong></td><td><strong>38.8</strong></td>
+    <td><strong>47.6</strong></td><td><strong>32.0</strong></td>
   </tr>
 
   <!-- Divider -->
@@ -315,22 +323,22 @@ bash examples/a2d/bm3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B
     </tr>
   </thead>
 
-  <!-- Diffusion model v1.1 (bold) -->
+  <!-- mdlm v0.1  -->
   <tr>
     <td style="padding: 8px;">
-      <strong><a href="https://huggingface.co/dllm-collection/Qwen2.5-Coder-0.5B-Instruct-diffusion-v1.1"><code>Qwen2.5-Coder-0.5B-Instruct-diffusion-v1.1</code></a> (evaluated)</strong>
-    </td>
-    <td><strong>41.5</strong></td>
-    <td><strong>33.6</strong></td>
-  </tr>
-
-  <!-- Diffusion model v0.1 (bold) -->
-  <tr>
-    <td style="padding: 8px;">
-      <strong><a href="https://huggingface.co/dllm-collection/Qwen2.5-Coder-0.5B-Instruct-diffusion-v0.1"><code>Qwen2.5-Coder-0.5B-Instruct-diffusion-v0.1</code></a> (evaluated)</strong>
+      <strong><a href="https://huggingface.co/dllm-collection/"><code>Qwen2.5-Coder-0.5B-Instruct-diffusion-mdlm-v0.1</code></a> (evaluated)</strong>
     </td>
     <td><strong>28.1</strong></td>
     <td><strong>23.0</strong></td>
+  </tr>
+
+  <!-- bd3lm v0.1  -->
+  <tr>
+    <td style="padding: 8px;">
+      <strong><a href="https://huggingface.co/dllm-collection/"><code>Qwen2.5-Coder-0.5B-Instruct-diffusion-bd3lm-v0.1</code></a> (evaluated)</strong>
+    </td>
+    <td><strong>41.5</strong></td>
+    <td><strong>33.6</strong></td>
   </tr>
 
   <!-- open-dcoder (bold) -->

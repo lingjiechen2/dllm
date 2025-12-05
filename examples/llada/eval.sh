@@ -131,7 +131,7 @@ else
         --tasks mmlu --num_fewshot 5 ${common_args} \
         --model_args "pretrained=${model_name_or_path},mc_num=1,cfg=0.0"
 
-    accelerate launch --num_processes ""${num_gpu}"" dllm/pipelines/llada/eval.py \
+    accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/eval.py \
         --tasks cmmlu --num_fewshot 5 ${common_args} \
         --model_args "pretrained=${model_name_or_path},mc_num=1,cfg=0.0"
 

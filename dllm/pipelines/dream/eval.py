@@ -1,8 +1,9 @@
 """
-accelerate launch --num_processes 4 \
+accelerate launch \
+    --num_processes 4 \
     dllm/pipelines/dream/eval.py \
-    --tasks "gsm8k_cot" \
-    --model "dream" \
+    --tasks gsm8k_cot \
+    --model dream \
     --apply_chat_template \
     --num_fewshot 0 \
     --model_args "pretrained=Dream-org/Dream-v0-Instruct-7B,max_new_tokens=256,steps=256,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False,escape_until=False"
@@ -43,7 +44,7 @@ class DreamEvalConfig(DreamSamplerConfig):
     batch_size: int = 1
     device: str = "cuda"
     dtype: str | torch.dtype = "auto"
-    add_bos_token: ebool = False
+    add_bos_token: bool = False
     nll_type: str = "mc"
     log_type: str = "ftb"
     mc_num: int = 128

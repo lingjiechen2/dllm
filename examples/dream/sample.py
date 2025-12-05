@@ -30,7 +30,6 @@ class SamplerConfig(dream.DreamSamplerConfig):
     top_p: float = 0.95
     alg: str = "entropy"
     alg_temp: float = 0.0
-    right_shift_logits: bool = True
 
 
 parser = transformers.HfArgumentParser((ScriptArguments, SamplerConfig))
@@ -69,8 +68,9 @@ for iter, s in enumerate(sequences):
     print(s.strip() if s.strip() else "<empty>")
 print("\n" + "=" * 80 + "\n")
 
-# if script_args.visualize:
-#     terminal_visualizer.visualize(outputs.histories, rich=True)
+if script_args.visualize:
+    terminal_visualizer.visualize(outputs.histories, rich=True)
+
 # --- Example 2: Batch fill-in-the-blanks ---
 print("\n" + "=" * 80)
 print("TEST: dream.infilling()".center(80))

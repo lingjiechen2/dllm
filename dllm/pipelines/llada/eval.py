@@ -1,8 +1,9 @@
 """
-accelerate launch --num_processes 4 \
+accelerate launch \
+    --num_processes 4 \
     dllm/pipelines/llada/eval.py \
-    --tasks "gsm8k_cot" \
-    --model "llada" \
+    --tasks gsm8k_cot \
+    --model llada \
     --apply_chat_template \
     --num_fewshot 5 \
     --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,max_new_tokens=512,steps=512,block_size=512,cfg=0.0,logits_eos_inf=False,confidence_eos_eot_inf=True"
@@ -40,6 +41,7 @@ class LLaDAEvalConfig(MDLMSamplerConfig):
     mc_num: int = 128
     is_check_greedy: bool = False
     device: str = "cuda"
+
 
 @register_model("llada")
 class LLaDAEvalHarness(LM):

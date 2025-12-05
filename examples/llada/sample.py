@@ -46,8 +46,8 @@ print("TEST: llada.sample()".center(80))
 print("=" * 80)
 
 messages = [
-    [{"role": "user", "content": "Complete the following python code:\n\n\ndef truncate_number(number: float) -> float:\n    \"\"\" Given a positive floating point number, it can be decomposed into\n    and integer part (largest integer smaller than given number) and decimals\n    (leftover part always smaller than 1).\n\n    Return the decimal part of the number.\n    >>> truncate_number(3.5)\n    0.5\n    \"\"\""}],
-    # [{"role": "user", "content": "Please write an educational python function."}],
+    [{"role": "user", "content": "Lily runs 12 km/h for 4 hours. How far in 8 hours?"}],
+    [{"role": "user", "content": "Please write an educational python function."}],
 ]
 
 inputs = tokenizer.apply_chat_template(
@@ -65,9 +65,9 @@ for iter, s in enumerate(sequences):
     print("-" * 80)
     print(s.strip() if s.strip() else "<empty>")
 print("\n" + "=" * 80 + "\n")
-breakpoint()
-# if script_args.visualize:
-#     terminal_visualizer.visualize(outputs.histories, rich=True)
+
+if script_args.visualize:
+    terminal_visualizer.visualize(outputs.histories, rich=True)
 
 # --- Example 2: Batch fill-in-the-blanks ---
 print("\n" + "=" * 80)
