@@ -1,13 +1,12 @@
 """
 accelerate launch \
-    --num_processes 2 \
+    --num_processes 4 \
     dllm/pipelines/dream/eval.py \
-    --tasks gsm8k \
-    --batch_size 1 \
+    --tasks gsm8k_cot \
     --model dream \
-    --device cuda
+    --apply_chat_template \
     --num_fewshot 0 \
-    --model_args "pretrained=Dream-org/Dream-v0-Base-7B,mc_num=1,max_new_tokens=512,max_length=512,steps=512,temperature=0.2,top_p=0.95,add_bos_token=true,escape_until=true"
+    --model_args "pretrained=Dream-org/Dream-v0-Instruct-7B,max_new_tokens=256,steps=256,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False,escape_until=False"
 """
 
 import logging
