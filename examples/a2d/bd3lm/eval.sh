@@ -56,43 +56,35 @@ fi
 # Normal model → Run all tasks (full list)
 # =========================================================
 
-# mmlu generative
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/eval.py \
     --tasks mmlu_generative --num_fewshot 0 ${common_args} \
     --model_args "pretrained=${model_name_or_path},max_new_tokens=3,steps=3,block_size=32,cfg=0.0"
 
-# mmlu_pro
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/eval.py \
     --tasks mmlu_pro --num_fewshot 0 ${common_args} \
     --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0"
 
-# hellaswag
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/eval.py \
     --tasks hellaswag_gen --num_fewshot 0 ${common_args} \
     --model_args "pretrained=${model_name_or_path},max_new_tokens=3,steps=3,block_size=32,cfg=0.0"
 
-# gsm8k cot
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/eval.py \
     --tasks gsm8k_cot --num_fewshot 5 ${common_args} \
     --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0"
 
-# bbh
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/eval.py \
     --tasks bbh --num_fewshot 3 ${common_args} \
     --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0"
 
-# minerva math
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/eval.py \
     --tasks minerva_math --num_fewshot 4 ${common_args} \
     --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0"
 
-# human eval
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/eval.py \
     --tasks humaneval_instruct --num_fewshot 0 ${common_args} \
     --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0" \
     --confirm_run_unsafe_code
 
-# mbpp
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/eval.py \
     --tasks mbpp_instruct --num_fewshot 3 ${common_args} \
     --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0" \
