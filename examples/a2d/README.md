@@ -211,6 +211,7 @@ WANDB_MODE=online sbatch --nodes=8 --gres=gpu:8 scripts/train.slurm.sh \
 ```
 
 
+
 ### Evaluation
 
 > Read [(optional) Evaluation setup](/README.md/#optional-evaluation-setup) before running evaluation. 
@@ -368,7 +369,7 @@ bash examples/a2d/bd3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B
 </table>
 
 <p align="left" style="color: #808080; font-size: 0.9em;">
-Table X. Results (evaluated) are obtained using our framework, while results (reported) come from the 
+Table 1. Results (evaluated) are obtained using our framework, while results (reported) come from the 
 <a href="https://arxiv.org/pdf/2505.09388" style="color: #808080; text-decoration: none;">Qwen3 Technical Report</a>, 
 <a href="https://arxiv.org/pdf/2409.12186" style="color: #808080; text-decoration: none;">Qwen2.5-Coder Technical Report</a>, 
 <a href="https://qwenlm.github.io/blog/qwen2.5-llm/" style="color: #808080; text-decoration: none;">Qwen2.5 Blog</a>, and 
