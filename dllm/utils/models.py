@@ -85,6 +85,7 @@ def get_tokenizer(model_args) -> transformers.PreTrainedTokenizer:
     # Lazy imports to avoid circular dependencies
     from dllm.pipelines.llada.models.modeling_llada import LLaDAModelLM
     from dllm.pipelines.llada.models.modeling_lladamoe import LLaDAMoEModelLM
+    from dllm.pipelines.llada.models.modeling_llada2_moe import LLaDA2MoeModelLM
     from dllm.pipelines.dream.models.modeling_dream import DreamModel
     from dllm.pipelines.a2d import (
         A2DLlamaLMHeadModel,
@@ -139,6 +140,10 @@ def get_tokenizer(model_args) -> transformers.PreTrainedTokenizer:
 {% endif %}
 """
     elif issubclass(model_cls, LLaDAMoEModelLM):
+        tokenizer.add_special_tokens({"mask_token": "<|mask|>"})
+        tokenizer.eot_token = "<|role_end|>"
+        tokenizer.eot_token_id = tokenizer.convert_tokens_to_ids(tokenizer.eot_token)
+    elif issubclass(model_cls, LLaDA2MoeModelLM):
         tokenizer.add_special_tokens({"mask_token": "<|mask|>"})
         tokenizer.eot_token = "<|role_end|>"
         tokenizer.eot_token_id = tokenizer.convert_tokens_to_ids(tokenizer.eot_token)
