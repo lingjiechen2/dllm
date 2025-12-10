@@ -34,6 +34,7 @@ class LLaDAEvalConfig(MDLMSamplerConfig):
     max_length: int = 4096
     steps: int = 1024
     block_size: int = 1024
+    enable_thinking: bool | None = None
 
     pretrained: str = ""
     dtype: str | torch.dtype = "auto"
@@ -90,6 +91,7 @@ class LLaDAEvalHarness(LM):
             kwargs.get("begin_suppress_tokens", config.begin_suppress_tokens)
         )
         right_shift_logits = kwargs.get("right_shift_logits", config.right_shift_logits)
+        enable_thinking = kwargs.get("enable_thinking", config.enable_thinking)
 
         accelerator = accelerate.Accelerator()
 
@@ -139,6 +141,7 @@ class LLaDAEvalHarness(LM):
         self.suppress_tokens = suppress_tokens
         self.begin_suppress_tokens = begin_suppress_tokens
         self.right_shift_logits = right_shift_logits
+        self.enable_thinking = enable_thinking
 
         # loglikelihood params
         self.mc_num = int(mc_num)
@@ -151,11 +154,15 @@ class LLaDAEvalHarness(LM):
         """
         Method to apply a chat template to a list of chat history between user and model.
         """
+        template_kwargs = {
+            "tokenize": False,
+            "add_generation_prompt": add_generation_prompt,
+            "continue_final_message": not add_generation_prompt,
+        }
+        if self.enable_thinking is not None:
+            template_kwargs["enable_thinking"] = self.enable_thinking
         chat_templated = self.tokenizer.apply_chat_template(
-            chat_history,
-            tokenize=False,
-            add_generation_prompt=add_generation_prompt,
-            continue_final_message=not add_generation_prompt,
+            chat_history, **template_kwargs
         )
         return chat_templated
 

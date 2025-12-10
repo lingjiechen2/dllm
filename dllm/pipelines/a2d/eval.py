@@ -33,6 +33,7 @@ class BD3LMEvalConfig(BD3LMSamplerConfig):
     max_length: int = 2048
     steps: int = 128
     block_size: int = 32
+    enable_thinking: bool | None = None
 
     pretrained: str = ""
     dtype: str | torch.dtype = "auto"
@@ -68,6 +69,7 @@ class BD3LMEvalHarness(LM):
         max_length = kwargs.get("max_length", config.max_length)
         remasking = kwargs.get("remasking", config.remasking)
         right_shift_logits = kwargs.get("right_shift_logits", config.right_shift_logits)
+        enable_thinking = kwargs.get("enable_thinking", config.enable_thinking)
 
         accelerator = accelerate.Accelerator()
 
@@ -115,6 +117,7 @@ class BD3LMEvalHarness(LM):
         self.remasking = remasking
         self.is_check_greedy = is_check_greedy
         self.right_shift_logits = right_shift_logits
+        self.enable_thinking = enable_thinking
 
         # loglikelihood params
         self.mc_num = int(mc_num)
@@ -127,11 +130,15 @@ class BD3LMEvalHarness(LM):
         """
         Method to apply a chat template to a list of chat history between user and model.
         """
+        template_kwargs = {
+            "tokenize": False,
+            "add_generation_prompt": add_generation_prompt,
+            "continue_final_message": not add_generation_prompt,
+        }
+        if self.enable_thinking is not None:
+            template_kwargs["enable_thinking"] = self.enable_thinking
         chat_templated = self.tokenizer.apply_chat_template(
-            chat_history,
-            tokenize=False,
-            add_generation_prompt=add_generation_prompt,
-            continue_final_message=not add_generation_prompt,
+            chat_history, **template_kwargs
         )
         return chat_templated
 
