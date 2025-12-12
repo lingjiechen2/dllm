@@ -374,5 +374,5 @@ Table 1. Results (evaluated) are obtained using our framework, while results (re
 <a href="https://arxiv.org/pdf/2409.12186" style="color: #808080; text-decoration: none;">Qwen2.5-Coder Technical Report</a>, 
 <a href="https://qwenlm.github.io/blog/qwen2.5-llm/" style="color: #808080; text-decoration: none;">Qwen2.5 Blog</a>, and 
 <a href="https://github.com/pengzhangzhi/Open-dLLM?tab=readme-ov-file#-benchmarking" style="color: #808080; text-decoration: none;">Open-dLLM</a>. 
-<i>Italic rows</i> denote autoregressive models, whereas non-italic rows refer to diffusion language models.
+<i>Italic rows</i> denote autoregressive models, whereas non-italic rows denote diffusion language models.
 </p>

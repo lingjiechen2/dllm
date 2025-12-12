@@ -3,14 +3,12 @@
 export PYTHONPATH=.:$PYTHONPATH             
 export HF_ALLOW_CODE_EVAL=1                 # Allow code evaluation
 export HF_DATASETS_TRUST_REMOTE_CODE=True   # For cmmlu dataset
-export HF_DATASETS_TRUST_REMOTE_CODE=True   # For cmmlu dataset
 
 # ===== Optional but recommended for stability and debugging =====
 export TORCH_NCCL_ASYNC_ERROR_HANDLING=1    # Enable async error handling for multi-GPU communication to avoid deadlocks
 export NCCL_DEBUG=warn                      # Show NCCL warnings for better diagnosis without flooding logs
 export TORCH_DISTRIBUTED_DEBUG=DETAIL       # Provide detailed logging for PyTorch distributed debugging
 
-model_name_or_path="dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1"
 model_name_or_path="dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1"
 num_gpu=1
 model_type="normal"   # normal | coder
@@ -23,9 +21,6 @@ while [[ $# -gt 0 ]]; do
       model_name_or_path="$2"; shift 2 ;;
     --num_gpu)
       num_gpu="$2"; shift 2 ;;
-    --model_type)
-      model_type="$2"; shift 2 ;;
-    *)
     --model_type)
       model_type="$2"; shift 2 ;;
     *)
