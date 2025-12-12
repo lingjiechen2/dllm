@@ -220,7 +220,7 @@ To evaluate [`Qwen3-0.6B-diffusion-mdlm-v0.1`](https://huggingface.co/dllm-colle
 ```shell
 # Use model_args to adjust the sampler arguments for evalution.
 accelerate launch --num_processes 4 \
-    dllm/pipelines/a2d/eval.py \
+    dllm/pipelines/llada/eval.py \
     --tasks "gsm8k_cot" \
     --model "mdlm" \
     --apply_chat_template \
