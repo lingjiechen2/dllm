@@ -28,6 +28,7 @@ import torch.nn.functional as F
 from torch import einsum
 from transformers import PreTrainedModel
 from transformers.modeling_outputs import CausalLMOutputWithPast
+from transformers.models.auto import AutoModel
 from transformers.cache_utils import Cache
 
 from .configuration_llada import (
@@ -60,6 +61,7 @@ __all__ = [
     "SwiGLU",
     "LLaDABlock",
     "LLaDASequentialBlock",
+    "LLaDAPreTrainedModel",
     "LLaDAModel",
     "LLaDAOutput",
     "LLaDAGenerateOutput",
@@ -86,7 +88,6 @@ def init_weights(
 ) -> None:
     """
     Initialize weights of a linear or embedding module.
-
     :param config: The model config.
     :param module: The linear or embedding submodule to initialize.
     :param d: The effective input dimensionality of the weights. This could be smaller than the actual dimensions
@@ -648,7 +649,7 @@ class LLaDABlock(nn.Module):
                 k = k.repeat_interleave(num_q_heads // num_kv_heads, dim=1, output_size=num_q_heads)
                 v = v.repeat_interleave(num_q_heads // num_kv_heads, dim=1, output_size=num_q_heads)
 
-            # Modify: MDM set causal to False, and with no attn_mask.
+            # Modify: MDM set causal to False.
             return F.scaled_dot_product_attention(
                 q,
                 k,
@@ -1020,10 +1021,70 @@ class LLaDABlockGroup(nn.ModuleList):
             block.set_activation_checkpointing(strategy)
 
 
-class LLaDAModel(nn.Module):
-    def __init__(self, config: ModelConfig, init_params: bool = True):
-        super().__init__()
-        self.config = config
+class LLaDAPreTrainedModel(PreTrainedModel):
+    """
+    Minimal HF-compatible base to enable gradient checkpointing hooks and centralize
+    parameter initialization.
+    """
+
+    config_class = LLaDAConfig
+    base_model_prefix = "model"
+    _no_split_modules = ["LLaDALlamaBlock"]
+    _supports_gradient_checkpointing = True  # backward compat
+    supports_gradient_checkpointing = True   # transformers >=4.38
+
+    def __init__(self, config, *model_args, **model_kwargs):
+        hf_config = config
+        if not hasattr(hf_config, "to_dict"):
+            hf_config = LLaDAConfig(**config.__dict__)
+        super().__init__(hf_config, *model_args, **model_kwargs)
+
+    def _init_weights(self, module):
+        # Avoid double-initializing by short-circuiting once a module (and its children)
+        # have been reset.
+        if getattr(module, "_llada_params_initialized", False):
+            return
+        if hasattr(module, "reset_parameters"):
+            module.reset_parameters()
+            for child in module.modules():
+                setattr(child, "_llada_params_initialized", True)
+
+    def _set_gradient_checkpointing(
+        self, enable: bool = True, gradient_checkpointing_func: Callable = None
+    ):
+        """
+        New-format hook expected by `PreTrainedModel.gradient_checkpointing_enable`.
+        Only LLaDAModel (the heavy transformer) actually toggles checkpointing.
+        """
+        from torch.utils.checkpoint import checkpoint  # local import to avoid hard dep at import time
+
+        if gradient_checkpointing_func is None:
+            gradient_checkpointing_func = checkpoint
+
+        # When called on the HF wrapper (LLaDAModelLM), reach into the inner LLaDAModel.
+        target = self.model if isinstance(self, LLaDAModelLM) else self
+
+        if isinstance(target, LLaDAModel):
+            target._gradient_checkpointing_func = gradient_checkpointing_func
+            target.gradient_checkpointing = enable
+            strategy = ActivationCheckpointingStrategy.whole_layer if enable else None
+            target.set_activation_checkpointing(strategy)
+            return
+
+        # Fallback: walk modules to find the core model.
+        for module in self.modules():
+            if isinstance(module, LLaDAModel):
+                module._gradient_checkpointing_func = gradient_checkpointing_func
+                module.gradient_checkpointing = enable
+                strategy = ActivationCheckpointingStrategy.whole_layer if enable else None
+                module.set_activation_checkpointing(strategy)
+                break
+
+
+class LLaDAModel(LLaDAPreTrainedModel):
+    def __init__(self, config: LLaDAConfig | ModelConfig, init_params: bool = True):
+        super().__init__(config)
+        self.gradient_checkpointing: bool = False
         self.__cache = BufferCache()
 
         # Validate config.
@@ -1092,7 +1153,7 @@ class LLaDAModel(nn.Module):
             )
         # When `init_device="meta"` FSDP will call `reset_parameters()` to initialize weights.
         if init_params and self.config.init_device != "meta":
-            self.reset_parameters()
+            self.post_init()
         self.__num_fwd_flops: Optional[int] = None
 
         # Warm up cache.
@@ -1156,7 +1217,20 @@ class LLaDAModel(nn.Module):
             alibi_bias = alibi_attention_bias(seq_len, self.config, device)
         self.__cache["alibi_attention_bias"] = alibi_bias
         return alibi_bias
-
+    
+    def get_bidirectional_attention_bias(self, seq_len: int, device: torch.device) -> torch.Tensor:
+        if (bidirectional_bias := self.__cache.get("bidirectional_attention_bias")) is not None and bidirectional_bias.shape[
+            -1
+        ] >= seq_len:
+            if bidirectional_bias.device != device:
+                bidirectional_bias = bidirectional_bias.to(device)
+                self.__cache["bidirectional_attention_bias"] = bidirectional_bias
+            return bidirectional_bias
+        with torch.autocast(device.type, enabled=False):
+            bidirectional_bias = torch.zeros((1, 1, seq_len, seq_len), device=device, dtype=torch.float)
+        self.__cache["bidirectional_attention_bias"] = bidirectional_bias
+        return bidirectional_bias
+    
     def forward(
         self,
         input_ids: torch.LongTensor,
@@ -1176,20 +1250,16 @@ class LLaDAModel(nn.Module):
             which input IDs are masked. A `1` value in the mask means that
             the corresponding input ID should *not* be ignored. A `0` means
             that the corresponding input ID is masked.
-
             This has the same meaning as the `attention_mask` in HuggingFace's `transformers`
             library.
         :param attention_bias: A tensor of shape `(batch_size, 1, seq_len, seq_len)`,
             `(1, 1, seq_len, seq_len)`, or `(seq_len, seq_len)`. This is used
             to introduce causal or other biases.
-
             If the tensor is a bool or byte tensor, a `True` or `1` at `attention_bias[:, :, i, j]`
             indicates that the i-th element in the sequence is allowed to attend to the j-th
             element in the sequence.
-
             If the tensor is a float tensor, it will just be added to the attention
             scores before the softmax.
-
             The default is causal, which corresponds to a lower-diagonal byte matrix of ones.
         :param past_key_values: Pre-computed keys and values for each attention block.
             Can be used to speed up sequential decoding. The `input_ids` which have
@@ -1241,11 +1311,42 @@ class LLaDAModel(nn.Module):
         else:
             attention_mask = None
 
-        if attention_mask is not None:
-            attention_bias = attention_mask.to(dtype=torch.float)
-        else:
-            attention_bias = None
-            
+        # Merge attention mask with attention bias.
+        if (
+            attention_bias is not None
+            or attention_mask is not None
+            or self.config.alibi
+            # NOTE (epwalsh): we need to initialize the attn bias in order for attn to work properly
+            # with key+value cache. Otherwise `F.scaled_dot_product_attention()` doesn't seem to compute
+            # scores correctly.
+            or past_key_values is not None
+        ):
+            if attention_bias is None and self.config.alibi:
+                attention_bias = get_causal_attention_bias(
+                    self.__cache, past_length + seq_len, x.device
+                ) + self.get_alibi_attention_bias(past_length + seq_len, x.device)
+            elif attention_bias is None:
+                attention_bias = self.get_bidirectional_attention_bias(past_length + seq_len, x.device)
+            elif attention_bias.dtype in (torch.int8, torch.bool):
+                attention_bias = attention_bias.to(dtype=torch.float)
+                attention_bias.masked_fill_(attention_bias == 0.0, torch.finfo(attention_bias.dtype).min)
+
+            # Transform to the right shape and data type.
+            mask_len = seq_len
+            if attention_mask is not None:
+                mask_len = attention_mask.shape[-1]
+            elif past_key_values is not None:
+                mask_len = past_key_values[0][0].shape[-2] + seq_len
+            attention_bias = attention_bias[:, :, :mask_len, :mask_len].to(dtype=torch.float)
+
+            # Add in the masking bias.
+            if attention_mask is not None:
+                attention_bias = attention_bias + attention_mask
+                # Might get -infs after adding attention mask, since dtype.min + dtype.min = -inf.
+                # `F.scaled_dot_product_attention()` doesn't handle -inf like you'd expect, instead
+                # it can produce NaNs.
+                ensure_finite_(attention_bias, check_neg_inf=True, check_pos_inf=False)
+
         attn_key_values: Optional[List[Tuple[torch.Tensor, torch.Tensor]]] = [] if use_cache else None
 
         # decoder layers
@@ -1340,13 +1441,14 @@ def create_model_config_from_pretrained_config(config: LLaDAConfig):
     return model_config
 
 
-class LLaDAModelLM(PreTrainedModel):
+class LLaDAModelLM(LLaDAPreTrainedModel):
     """
     Extremely barebones HF model wrapper.
     """
 
     config_class = LLaDAConfig
     base_model_prefix = "model"
+    # _no_split_modules = ["LLaDABlock", "LLaDASequentialBlock", "LLaDALlamaBlock"]
     _no_split_modules = ["LLaDALlamaBlock"]
 
     def __init__(self, config: LLaDAConfig, model: Optional[LLaDAModel] = None, init_params: bool = False):

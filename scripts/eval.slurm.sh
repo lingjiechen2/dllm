@@ -31,7 +31,7 @@ declare -A eval_bert_configs
 # ============================================================
 # ====================  LLaDA CONFIGS  ========================
 # ============================================================
-#   eval_llada_configs["<dataset>"]="num_fewshot|max_new_tokens|steps|block_length|seed|mc_num|cfg"
+#   eval_llada_configs["<dataset>"]="num_fewshot|max_new_tokens|steps|block_size|seed|mc_num|cfg"
 # ============================================================
 
 # ---------- Base Generation ----------
@@ -103,7 +103,7 @@ eval_dream_instruct_configs["ifeval"]="0|1280|1280|0.1|0.9|1234|1"
 # ============================================================
 # ====================  BERT CONFIGS  =========================
 # ============================================================
-#   eval_bert_configs["<dataset>"]="num_fewshot|max_new_tokens|steps|block_length|seed|mc_num"
+#   eval_bert_configs["<dataset>"]="num_fewshot|max_new_tokens|steps|block_size|seed|mc_num"
 # ============================================================
 
 eval_bert_configs["mmlu"]="5|512|512|32|1234|128"
@@ -196,11 +196,11 @@ case "${MODEL_CLASS}" in
       exit 1
     fi
 
-    IFS="|" read -r NUM_FEWSHOT MAX_NEW_TOKENS STEPS BLOCK_LENGTH SEED MC_NUM CFG <<< "${CONFIG}"
+    IFS="|" read -r NUM_FEWSHOT MAX_NEW_TOKENS STEPS BLOCK_SIZE SEED MC_NUM CFG <<< "${CONFIG}"
 
     MODEL_TYPE="llada"
     SCRIPT_PATH="dllm/pipelines/llada/eval.py"
-    MODEL_ARGS="pretrained=${MODEL_PATH},is_check_greedy=False,mc_num=${MC_NUM},max_new_tokens=${MAX_NEW_TOKENS},steps=${STEPS},block_length=${BLOCK_LENGTH},cfg=${CFG},confidence_eos_eot_inf=${CONFIDENCE_EOS_EOT_INF}"
+    MODEL_ARGS="pretrained=${MODEL_PATH},is_check_greedy=False,mc_num=${MC_NUM},max_new_tokens=${MAX_NEW_TOKENS},steps=${STEPS},block_size=${BLOCK_SIZE},cfg=${CFG}"
     ;;
 
   dream)
@@ -234,11 +234,11 @@ case "${MODEL_CLASS}" in
       exit 1
     fi
 
-    IFS="|" read -r NUM_FEWSHOT MAX_NEW_TOKENS STEPS BLOCK_LENGTH SEED MC_NUM <<< "${CONFIG}"
+    IFS="|" read -r NUM_FEWSHOT MAX_NEW_TOKENS STEPS BLOCK_SIZE SEED MC_NUM <<< "${CONFIG}"
 
     MODEL_TYPE="bert"
     SCRIPT_PATH="dllm/pipelines/bert/eval.py"
-    MODEL_ARGS="pretrained=${MODEL_PATH},is_check_greedy=False,mc_num=${MC_NUM},max_new_tokens=${MAX_NEW_TOKENS},steps=${STEPS},block_length=${BLOCK_LENGTH}"
+    MODEL_ARGS="pretrained=${MODEL_PATH},is_check_greedy=False,mc_num=${MC_NUM},max_new_tokens=${MAX_NEW_TOKENS},steps=${STEPS},block_size=${BLOCK_SIZE}"
     ;;
 
   *)

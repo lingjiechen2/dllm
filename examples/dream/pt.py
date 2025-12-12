@@ -33,6 +33,8 @@ import accelerate
 import dllm
 from dllm.pipelines import dream
 
+logger = dllm.utils.get_default_logger(__name__)
+
 
 @dataclass
 class ModelArguments(dllm.utils.ModelArguments):
@@ -64,7 +66,9 @@ class DataArguments(dllm.utils.DataArguments):
 
 @dataclass
 class TrainingArguments(dllm.utils.TrainingArguments):
-    output_dir: str = "models/Dream-7B-PT/dclm-baseline-1.0[train:10_000_000,test:10_000]"
+    output_dir: str = (
+        "models/Dream-v0-Base-7B/dclm-baseline-1.0[train:10_000_000,test:10_000]"
+    )
     learning_rate: float = 3e-4
     max_steps: int = 2_000
     per_device_train_batch_size: int = 4
@@ -92,7 +96,8 @@ def train():
     )
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
     # necessary for streaming dataset
-    if data_args.streaming: training_args.accelerator_config.dispatch_batches = False
+    if data_args.streaming:
+        training_args.accelerator_config.dispatch_batches = False
     dllm.utils.print_args_main(model_args, data_args, training_args)
     dllm.utils.initial_training_setup(model_args, data_args, training_args)
 
@@ -110,28 +115,29 @@ def train():
     # ----- Dataset -------------------------------------------------------------
     with accelerate.PartialState().local_main_process_first():
         dataset = dllm.data.load_pt_dataset(
-            data_args.dataset_args, 
+            data_args.dataset_args,
             streaming=data_args.streaming,
-            load_preprocessed_data=data_args.load_preprocessed_data,
         )
-        if not data_args.load_preprocessed_data:
-            dataset = dataset.map(
-                functools.partial(
-                    dllm.utils.tokenize_and_group, 
-                    tokenizer=tokenizer, 
-                    text_field=data_args.text_field, 
-                    seq_length=data_args.max_length, 
-                    insert_eos=data_args.insert_eos,
-                    drop_tail=data_args.drop_tail),
-                batched=True,
-                num_proc=None if data_args.streaming else data_args.num_proc,
-                remove_columns=dataset["train"].column_names,
-            )
-        if data_args.streaming: dataset = dataset.shuffle(seed=training_args.seed)
+        dataset = dataset.map(
+            functools.partial(
+                dllm.utils.tokenize_and_group,
+                tokenizer=tokenizer,
+                text_field=data_args.text_field,
+                seq_length=data_args.max_length,
+                insert_eos=data_args.insert_eos,
+                drop_tail=data_args.drop_tail,
+            ),
+            batched=True,
+            remove_columns=dataset["train"].column_names,
+            **({} if data_args.streaming else {"num_proc": data_args.num_proc}),
+            **({} if data_args.streaming else {"desc": "Mapping dataset to PT format"}),
+        )
+        if data_args.streaming:
+            dataset = dataset.shuffle(seed=training_args.seed)
 
     # ----- Training --------------------------------------------------------------
     accelerate.PartialState().wait_for_everyone()
-    dllm.utils.print_main("start training...")
+    logger.info("Start training...")
     trainer = dream.DreamTrainer(
         model=model,
         tokenizer=tokenizer,
@@ -139,11 +145,10 @@ def train():
         eval_dataset=dataset.get("test", None),
         args=training_args,
         loss_weight_type=training_args.loss_weight_type,
-        data_collator=dream.utils.DreamPTCollator(
+        data_collator=transformers.DataCollatorForSeq2Seq(
             tokenizer,
             return_tensors="pt",
             padding=True,
-            random_length_ratio=data_args.random_length_ratio,
         ),
     )
     trainer.train()

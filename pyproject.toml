@@ -1,3 +1,10 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["dllm"]
+
 [project]
 name = "dllm"
 version = "0.1.0"
@@ -31,10 +38,10 @@ optional = [
 line-length = 88
 exclude = '''
 (
-  dllm/pipelines/llada/models/
-  dllm/pipelines/dream/models/
-  dllm/pipelines/rnd/models/
-  dllm/pipelines/qwen2/models/
+    (^|/)dllm/pipelines/llada/models(/|$)|
+    (^|/)dllm/pipelines/dream/models(/|$)|
+    (^|/)dllm/pipelines/a2d/models(/|$)|
+    (^|/)lm-evaluation-harness(/|$)
 )
 '''
 

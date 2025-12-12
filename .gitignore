@@ -131,13 +131,10 @@ dmypy.json
 .pyre/
 
 # Others
-cache/
-.vscode/
-package/
-output*/
-tmp/
-dataset/
-wandb/
-logs/
+/.vscode/
+/tmp/
+/data/
+/wandb/
+/logs/
 /models*/
 tmp/

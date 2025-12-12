@@ -32,6 +32,8 @@ import accelerate
 
 import dllm
 
+logger = dllm.utils.get_default_logger(__name__)
+
 
 @dataclass
 class ModelArguments(dllm.utils.ModelArguments):
@@ -67,7 +69,7 @@ class DataArguments(dllm.utils.DataArguments):
 @dataclass
 class TrainingArguments(dllm.utils.TrainingArguments):
     output_dir: str = (
-        "models/LLaDA-8B-PT/dclm-baseline-1.0[train:10_000_000,test:10_000]"
+        "models/LLaDA-8B-Base/dclm-baseline-1.0[train:10_000_000,test:10_000]"
     )
     learning_rate: float = 3e-4
     max_steps: int = 2_000
@@ -84,7 +86,8 @@ def train():
     )
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
     # necessary for streaming dataset
-    if data_args.streaming: training_args.accelerator_config.dispatch_batches = False
+    if data_args.streaming:
+        training_args.accelerator_config.dispatch_batches = False
     dllm.utils.print_args_main(model_args, data_args, training_args)
     dllm.utils.initial_training_setup(model_args, data_args, training_args)
 
@@ -104,56 +107,44 @@ def train():
     # ----- Dataset ----------------------------------------------------------------
     with accelerate.PartialState().local_main_process_first():
         dataset = dllm.data.load_pt_dataset(
-            data_args.dataset_args, 
+            data_args.dataset_args,
             streaming=data_args.streaming,
         )
         dataset = dataset.map(
             functools.partial(
-                dllm.utils.tokenize_and_group, 
-                tokenizer=tokenizer, 
-                text_field=data_args.text_field, 
-                seq_length=data_args.max_length, 
+                dllm.utils.tokenize_and_group,
+                tokenizer=tokenizer,
+                text_field=data_args.text_field,
+                seq_length=data_args.max_length,
                 insert_eos=data_args.insert_eos,
-                drop_tail=data_args.drop_tail),
+                drop_tail=data_args.drop_tail,
+            ),
             batched=True,
-            num_proc=None if data_args.streaming else data_args.num_proc,
             remove_columns=dataset["train"].column_names,
+            **({} if data_args.streaming else {"num_proc": data_args.num_proc}),
+            **({} if data_args.streaming else {"desc": "Mapping dataset to PT format"}),
         )
-        if data_args.streaming: dataset = dataset.shuffle(seed=training_args.seed)
+        if data_args.streaming:
+            dataset = dataset.shuffle(seed=training_args.seed)
 
     # ----- Training --------------------------------------------------------------
-    @dataclass
-    class LLaDAPTCollator(transformers.DataCollatorForSeq2Seq):
-        # Reference: https://github.com/ML-GSAI/LLaDA/blob/main/GUIDELINES.md#pre-training
-        # By default, 1% of the pre-training data are truncated to a random length
-        random_length_ratio: float = 0.01
-
-        def __call__(self, features, return_tensors=None):
-            outputs = super().__call__(features, return_tensors)
-            if torch.rand(1) < self.random_length_ratio:
-                random_length = torch.randint(
-                    1, outputs["input_ids"].shape[1] + 1, (1,)
-                )
-                for key in ["input_ids", "labels", "attention_mask"]:
-                    if key in outputs: outputs[key] = outputs[key][:, :random_length]
-            # Check if attention_mask is all ones and set it to None
-            if torch.all(outputs["attention_mask"] == 1):
-                outputs.pop("attention_mask")
-            return outputs
-
     accelerate.PartialState().wait_for_everyone()
-    dllm.utils.print_main("start training...")
+    logger.info("Start training...")
     trainer = dllm.core.trainers.MDLMTrainer(
         model=model,
         tokenizer=tokenizer,
         train_dataset=dataset["train"],
         eval_dataset=dataset.get("test", None),
         args=training_args,
-        data_collator=LLaDAPTCollator(
-            tokenizer,
-            return_tensors="pt",
-            padding=True,
-            random_length_ratio=data_args.random_length_ratio,
+        data_collator=(
+            dllm.utils.RandomTruncateWrapper(
+                transformers.DataCollatorForSeq2Seq(
+                    tokenizer,
+                    return_tensors="pt",
+                    padding=True,
+                ),
+                random_length_ratio=data_args.random_length_ratio,
+            )
         ),
     )
     trainer.train()
