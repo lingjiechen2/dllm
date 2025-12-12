@@ -2,7 +2,7 @@
 Block diffusion-style sampler for LLaDA2-MoE.
 
 This mirrors the blockwise masked-denoising generate logic from
-`modeling_llada2_moe.py`, but as a standalone sampler that follows the
+`dllm.pipelines.llada2.modeling_llada2_moe`, but as a standalone sampler that follows the
 BaseSampler interface (similar to bd3lm/mdlm).
 """
 
@@ -75,7 +75,7 @@ def sample_tokens(
 
 
 @dataclass
-class BDLMSamplerConfig(SamplerConfig):
+class LLaDA2MoeSamplerConfig(SamplerConfig):
     max_new_tokens: int = 128
     block_size: int = 32
     steps_per_block: int = 32
@@ -88,12 +88,12 @@ class BDLMSamplerConfig(SamplerConfig):
 
 
 @dataclass
-class BDLMSampler(BaseSampler):
+class LLaDA2MoeSampler(BaseSampler):
     @torch.no_grad()
     def sample(
         self,
         inputs: list[torch.Tensor | list],
-        config: BDLMSamplerConfig | None = None,
+        config: LLaDA2MoeSamplerConfig | None = None,
         **kwargs,
     ) -> SamplerOutput | torch.Tensor:
         """
@@ -101,7 +101,7 @@ class BDLMSampler(BaseSampler):
         Currently supports equal-length prompts.
         """
         if config is None:
-            config = BDLMSamplerConfig()
+            config = LLaDA2MoeSamplerConfig()
 
         block_size = kwargs.get("block_size", config.block_size)
         steps_per_block = kwargs.get("steps_per_block", config.steps_per_block)
@@ -125,7 +125,7 @@ class BDLMSampler(BaseSampler):
             ]
         prompt_lens = [p.shape[0] for p in inputs]
         if len(set(prompt_lens)) != 1:
-            raise ValueError("BDLMSampler expects all prompts to have the same length.")
+            raise ValueError("LLaDA2MoeSampler expects all prompts to have the same length.")
 
         prompt_len = prompt_lens[0]
         steps_per_block = min(
@@ -211,7 +211,7 @@ class BDLMSampler(BaseSampler):
     def infill(
         self,
         inputs: list[torch.Tensor, list],
-        config: SamplerConfig | None = None,
+        config: LLaDA2MoeSamplerConfig | None = None,
         **kwargs,
     ) -> SamplerOutput:
         raise NotImplementedError

@@ -85,7 +85,7 @@ def get_tokenizer(model_args) -> transformers.PreTrainedTokenizer:
     # Lazy imports to avoid circular dependencies
     from dllm.pipelines.llada.models.modeling_llada import LLaDAModelLM
     from dllm.pipelines.llada.models.modeling_lladamoe import LLaDAMoEModelLM
-    from dllm.pipelines.llada.models.modeling_llada2_moe import LLaDA2MoeModelLM
+    from dllm.pipelines.llada2.modeling_llada2_moe import LLaDA2MoeModelLM
     from dllm.pipelines.dream.models.modeling_dream import DreamModel
     from dllm.pipelines.a2d import (
         A2DLlamaLMHeadModel,

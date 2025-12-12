@@ -1,5 +1,5 @@
 """
-python -u examples/llada/sample_llada2moe.py --model_name_or_path "YOUR_MODEL_PATH"
+python -u examples/llada2/sample.py --model_name_or_path "YOUR_MODEL_PATH"
 """
 
 from dataclasses import dataclass
@@ -11,7 +11,7 @@ import dllm
 
 @dataclass
 class ScriptArguments:
-    model_name_or_path: str = "inclusionAI/LLaDA2.0-mini/"
+    model_name_or_path: str = "inclusionAI/LLaDA2.0-mini"
     seed: int = 42
     visualize: bool = False
 
@@ -22,7 +22,7 @@ class ScriptArguments:
 
 
 @dataclass
-class SamplerConfig(dllm.pipelines.llada.BDLMSamplerConfig):
+class SamplerConfig(dllm.pipelines.llada2.LLaDA2MoeSamplerConfig):
     steps_per_block: int = 32
     max_new_tokens: int = 128
     block_size: int = 32
@@ -39,7 +39,7 @@ transformers.set_seed(script_args.seed)
 # Load model & tokenizer
 model = dllm.utils.get_model(model_args=script_args).eval()
 tokenizer = dllm.utils.get_tokenizer(model_args=script_args)
-sampler = dllm.pipelines.llada.BDLMSampler(model=model, tokenizer=tokenizer)
+sampler = dllm.pipelines.llada2.LLaDA2MoeSampler(model=model, tokenizer=tokenizer)
 terminal_visualizer = dllm.utils.TerminalVisualizer(tokenizer=tokenizer)
 
 # Single prompt (BDLM expects equal-length prompts; a single prompt avoids mismatch)
