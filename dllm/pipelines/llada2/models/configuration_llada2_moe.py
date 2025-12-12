@@ -86,4 +86,3 @@ class LLaDA2MoeConfig(PretrainedConfig):
         super().__init__(
             pad_token_id=pad_token_id, tie_word_embeddings=tie_word_embeddings, **kwargs
         )
-

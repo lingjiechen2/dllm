@@ -42,12 +42,12 @@ if [[ "$model_type" == "coder" ]]; then
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/a2d/eval.py \
         --tasks humaneval_instruct --num_fewshot 0 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0,enable_thinking=False" \
+        --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0" \
         --confirm_run_unsafe_code
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/a2d/eval.py \
         --tasks mbpp_instruct --num_fewshot 3 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0,enable_thinking=False" \
+        --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0" \
         --confirm_run_unsafe_code
 
     exit 0
@@ -59,34 +59,34 @@ fi
 
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/a2d/eval.py \
     --tasks mmlu_generative_dream --num_fewshot 0 ${common_args} \
-    --model_args "pretrained=${model_name_or_path},max_new_tokens=3,steps=3,block_size=32,cfg=0.0,enable_thinking=False"
+    --model_args "pretrained=${model_name_or_path},max_new_tokens=3,steps=3,block_size=32,cfg=0.0"
 
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/a2d/eval.py \
     --tasks mmlu_pro --num_fewshot 0 ${common_args} \
-    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0,enable_thinking=False"
+    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0"
 
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/a2d/eval.py \
     --tasks hellaswag_gen --num_fewshot 0 ${common_args} \
-    --model_args "pretrained=${model_name_or_path},max_new_tokens=3,steps=3,block_size=32,cfg=0.0,enable_thinking=False"
+    --model_args "pretrained=${model_name_or_path},max_new_tokens=3,steps=3,block_size=32,cfg=0.0"
 
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/a2d/eval.py \
     --tasks gsm8k_cot --num_fewshot 5 ${common_args} \
-    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0,enable_thinking=False"
+    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0"
 
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/a2d/eval.py \
     --tasks bbh --num_fewshot 3 ${common_args} \
-    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0,enable_thinking=False"
+    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0"
 
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/a2d/eval.py \
     --tasks minerva_math --num_fewshot 4 ${common_args} \
-    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0,enable_thinking=False"
+    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0"
 
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/a2d/eval.py \
     --tasks humaneval_instruct --num_fewshot 0 ${common_args} \
-    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0,enable_thinking=False" \
+    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0" \
     --confirm_run_unsafe_code
 
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/a2d/eval.py \
     --tasks mbpp_instruct --num_fewshot 3 ${common_args} \
-    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0,enable_thinking=False" \
+    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0" \
     --confirm_run_unsafe_code

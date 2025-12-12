@@ -403,9 +403,7 @@ def eager_attention_forward(
     key_states = repeat_kv(key, module.num_key_value_groups)
     value_states = repeat_kv(value, module.num_key_value_groups)
 
-    attn_weights = (
-        torch.matmul(query, key_states.transpose(2, 3)) * scaling
-    )
+    attn_weights = torch.matmul(query, key_states.transpose(2, 3)) * scaling
     if attention_mask is not None:
         attn_weights = attn_weights + attention_mask[:, :, :, : key_states.shape[-2]]
 
@@ -1431,4 +1429,3 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
         return generated_answer[
             :, input_ids.shape[1] : input_ids.shape[1] + first_mask_position + 1
         ]
-
