@@ -6,7 +6,7 @@
 This directory provides two key sets of resources:
 
 -  **[Warmup](#warmup)**: Tutorials for continual pretraining and SFTing any BERT-style model on small datasets to generate text with diffusion.
--  **[`BERT-Chat`](#bert-chat)**: The exact training, inference, and evaluation scripts used to develop the 🤗checkpoints: [`ModernBERT-base-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0.1) and [`ModernBERT-large-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0.1), two BERTs finetuned as Chatbots via SFT. For a deep dive into experimental results, lessons learned, and more reproduction details, please see our full [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) BERT-Chat Report](https://api.wandb.ai/links/asap-zzhou/101h5xvg).
+-  **[`BERT-Chat`](#bert-chat)**: The exact training, inference, and evaluation scripts for developing the 🤗checkpoints: [`ModernBERT-base-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0.1) and [`ModernBERT-large-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0.1), two BERTs finetuned as Chatbots via SFT. For a deep dive into experimental results, lessons learned, and more reproduction details, please see our full [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) BERT-Chat Report](https://api.wandb.ai/links/asap-zzhou/101h5xvg).
 
 <p align="center" style="margin-top: 15px;">
     <img src="/examples/bert/assets/chat.gif" alt="chat" width="70%">

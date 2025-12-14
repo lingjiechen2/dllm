@@ -6,9 +6,9 @@
 
 This directory provides two key sets of resources:
 
-- **Warmup ([MDLM](#warmup-mdlm) and [BD3LM](#warmup-bd3lm))**: Tutorials for continual pretraining and SFTing any autoregressive model on small datasets to generate text with MDLM (masked diffusion) or BD3LM (block diffusion).
-- **[`Tiny-A2D`](#tiny-a2d)**: The exact training, inference, and evaluation scripts used to develop the 🤗checkpoints: [`Qwen3-0.6B-diffusion-bd3lm-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-bd3lm-v0.1) (MDLM, global masked diffusion) and [`Qwen3-0.6B-diffusion-mdlm-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1) (BD3LM, blockwise masked diffusion with KV cache).
-For a deep dive into experimental results, lessons learned, and more reproduction details, please see our full [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) Tiny-A2D Report](https://wandb.ai/asap-zzhou/dllm/reports/dLLM-Tiny-A2D--VmlldzoxNTI2NTEzOA).
+- **Warmup**: Tutorials for continual pretraining and SFTing any autoregressive model on small datasets to generate text with [MDLM](#warmup-mdlm) (masked diffusion) or [BD3LM](#warmup-bd3lm) (block diffusion).
+- **[`Tiny-A2D`](#tiny-a2d)**: The exact training, inference, and evaluation scripts for developing: [`Qwen3-0.6B-diffusion-mdlm-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1) and [`Qwen3-0.6B-diffusion-bd3lm-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-bd3lm-v0.1).
+For detailed experimental results and reproduction instructions, please see our [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) Tiny-A2D Report](https://wandb.ai/asap-zzhou/dllm/reports/dLLM-Tiny-A2D--VmlldzoxNTI2NTEzOA).
 
 ## Files overview
 ```
@@ -29,22 +29,27 @@ examples/a2d
 └── README.md
 ```
 
-## Setup 
+## Setup
 
-1. **Customize modeling files**: You must first modify the original autoregressive modeling file to support non-causal attention. See [`modeling_qwen3.py`](/dllm/pipelines/a2d/models/qwen3/modeling_qwen3.py#L77-L108) for an example, and update [`__init__.py`](/dllm/pipelines/a2d/__init__.py) accordingly to register the new model config and architecture.
+> (Optional) If your source AR model is **not already supported** in [`dllm/pipelines/a2d/models`](/dllm/pipelines/a2d/models):
+> 
+> 1. Modify the original autoregressive modeling file to support non-causal
+> attention. See [`modeling_qwen3.py`](/dllm/pipelines/a2d/models/qwen3/modeling_qwen3.py#L77-L108)
+> for an example.
+> 
+> 2. And ensure the attention behavior is correct: 
+>    ```shell
+>    pytest scripts/tests/attention.py -k "a2d"
+>    ```
+<!-- **Convert an AR model with customized attention**-->
 
-2. **Run unit tests**: Before proceeding with your customized models, ensure they pass:
-    ```shell
-    pytest scripts/tests/test_attention.py::test_a2d_attention_mask_invariance
-    pytest scripts/tests/test_attention.py::test_a2d_fullmask_future_affects_past
-    # Optional: only needed for BD3LM
-    pytest scripts/tests/test_attention.py::test_a2d_staircase_attention_kvcache_equivalence
-    ```
-
-3. **Convert an AR model with customized attention**: For example, to convert `Qwen/Qwen3-0.6B` using its original weights but with the customized attention defined in [`modeling_qwen3.py`](/dllm/pipelines/a2d/models/qwen3/modeling_qwen3.py):
-    ```shell
-    python dllm/pipelines/a2d/convert.py --model_name_or_path "Qwen/Qwen3-0.6B" --output_dir "models/a2d/Qwen3-0.6B"
-    ```
+All training first requires modifying the source autoregressive models with non-causal attention.
+For example, to save [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) using its original weights but with the
+modify non-causal attention defined in
+[`modeling_qwen3.py`](/dllm/pipelines/a2d/models/qwen3/modeling_qwen3.py):
+```shell
+python dllm/pipelines/a2d/convert.py --model_name_or_path "Qwen/Qwen3-0.6B" --output_dir "models/a2d/Qwen3-0.6B"
+```
 
 ## Warmup: [MDLM](https://arxiv.org/abs/2406.07524)
 
@@ -52,7 +57,7 @@ In this section, we show toy examples of continual pretraining and SFTing [`Qwen
 
 ### Continual Pretraining
 
-To adapat [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`tiny-shakespeare`](https://huggingface.co/datasets/Trelis/tiny-shakespeare) dataset with [MDLM](https://arxiv.org/abs/2406.07524), run:
+To train [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`tiny-shakespeare`](https://huggingface.co/datasets/Trelis/tiny-shakespeare) dataset with [MDLM](https://arxiv.org/abs/2406.07524), run:
 
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_processes 1 \
@@ -82,7 +87,7 @@ python -u examples/a2d/mdlm/chat.py \
 
 ### SFT
 
-To adapat [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset with [MDLM](https://arxiv.org/abs/2406.07524), run:
+To train [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset with [MDLM](https://arxiv.org/abs/2406.07524), run:
 
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
@@ -111,7 +116,7 @@ In this section, we show toy examples of continual pretraining and SFTing [`Qwen
 
 ### Continual Pretraining
 
-To adapat [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`tiny-shakespeare`](https://huggingface.co/datasets/Trelis/tiny-shakespeare) dataset with [BD3LM](https://arxiv.org/abs/2503.09573), run:
+To train [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`tiny-shakespeare`](https://huggingface.co/datasets/Trelis/tiny-shakespeare) dataset with [BD3LM](https://arxiv.org/abs/2503.09573), run:
 
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_processes 1 \
@@ -142,7 +147,7 @@ python -u examples/a2d/bd3lm/chat.py \
 
 ### SFT
 
-To adapat [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset with [BD3LM](https://arxiv.org/abs/2503.09573), run:
+To train [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset with [BD3LM](https://arxiv.org/abs/2503.09573), run:
 
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \

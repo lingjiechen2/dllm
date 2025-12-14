@@ -427,7 +427,7 @@ def _assert_batch_equal_to_single(
         ("Dream-org/Dream-v0-Base-7B", None, False),
     ],
 )
-def test_attention_mask_invariance(model_name_or_path, attn_impl, use_position_ids):
+def attention_mask_invariance(model_name_or_path, attn_impl, use_position_ids):
     """
     For each model:
 
@@ -531,7 +531,7 @@ def test_attention_mask_invariance(model_name_or_path, attn_impl, use_position_i
         ),
     ],
 )
-def test_a2d_attention_mask_invariance(
+def a2d_attention_mask_invariance(
     model_name_or_path,
     config_cls,
     model_cls,
@@ -612,7 +612,7 @@ def test_a2d_attention_mask_invariance(
         ),
     ],
 )
-def test_a2d_fullmask_future_affects_past(model_name_or_path, config_cls, model_cls):
+def a2d_fullmask_future_affects_past(model_name_or_path, config_cls, model_cls):
     torch.manual_seed(0)
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -654,7 +654,7 @@ def test_a2d_fullmask_future_affects_past(model_name_or_path, config_cls, model_
         ),
     ],
 )
-def test_a2d_staircase_attention_kvcache_equivalence(
+def a2d_staircase_attention_kvcache_equivalence(
     model_name_or_path, config_cls, model_cls
 ):
     """
