@@ -14,15 +14,15 @@ To train [`ModernBERT-large`](https://huggingface.co/answerdotai/ModernBERT-larg
 ```shell
 PYTHONPATH=. accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_processes 1 \
     examples/editflow/bert/pt.py \
-    --model_name_or_path "answerdotai/ModernBERT-large" \
+    --model_name_or_path "models/editflow/ModernBERT-large" \
     --dataset_args "Trelis/tiny-shakespeare" \
     --text_field "Text" \
     --insert_eos False \
     --max_length 128 \
     --num_train_epochs 20 \
+    --learning_rate 3e-4 \
     --per_device_train_batch_size 64 \
     --per_device_eval_batch_size 64 \
-    --save_steps 0.1 \
     --x0_sampler "masks[length:64]" \
     --output_dir "models/editflow/ModernBERT-large/tiny-shakespeare"
 ```
@@ -42,13 +42,13 @@ To train [`ModernBERT-large`](https://huggingface.co/answerdotai/ModernBERT-larg
 ```shell
 PYTHONPATH=. accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
     examples/editflow/bert/sft.py \
-    --model_name_or_path "answerdotai/ModernBERT-large" \
+    --model_name_or_path "models/editflow/ModernBERT-large" \
     --dataset_args "tatsu-lab/alpaca" \
     --max_length 512 \
     --num_train_epochs 20 \
+    --learning_rate 3e-4 \
     --per_device_train_batch_size 64 \
     --per_device_eval_batch_size 64 \
-    --save_steps 0.1 \
     --x0_sampler "masks[length:64]" \
     --output_dir "models/editflow/ModernBERT-large/alpaca"
 ```

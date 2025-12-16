@@ -45,12 +45,10 @@ accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_proces
     --text_field "Text" \
     --insert_eos False \
     --max_length 128 \
-    --learning_rate 1e-4 \
     --num_train_epochs 20 \
+    --learning_rate 1e-4 \
     --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 16 \
-    --eval_steps 0.1 \
-    --save_steps 0.1 \
     --output_dir "models/ModernBERT-large/tiny-shakespeare"
 ```
 
@@ -72,12 +70,10 @@ accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_proc
     --model_name_or_path "answerdotai/ModernBERT-large" \
     --dataset_args "tatsu-lab/alpaca" \
     --max_length 512 \
-    --learning_rate 1e-4 \
     --num_train_epochs 20 \
+    --learning_rate 1e-4 \
     --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 16 \
-    --eval_steps 0.1 \
-    --save_steps 0.1 \
     --output_dir "models/ModernBERT-large/alpaca"
 ```
 
@@ -104,12 +100,10 @@ accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_proc
     --model_name_or_path "answerdotai/ModernBERT-base" \
     --dataset_args "allenai/tulu-3-sft-mixture+HuggingFaceTB/smoltalk" \
     --max_length 1024 \
-    --learning_rate 1e-4 \
     --num_train_epochs 10 \
+    --learning_rate 1e-4 \
     --per_device_train_batch_size 48 \
     --per_device_eval_batch_size 48 \
-    --eval_steps 0.1 \
-    --save_steps 0.1 \
     --output_dir "models/ModernBERT-base/tulu-3-sft-mixture+smoltalk"
 ```
 
@@ -120,12 +114,10 @@ accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_proc
     --model_name_or_path "answerdotai/ModernBERT-large" \
     --dataset_args "allenai/tulu-3-sft-mixture+HuggingFaceTB/smoltalk" \
     --max_length 1024 \
-    --learning_rate 1e-4 \
     --num_train_epochs 10 \
+    --learning_rate 1e-4 \
     --per_device_train_batch_size 48 \
     --per_device_eval_batch_size 48 \
-    --eval_steps 0.1 \
-    --save_steps 0.1 \
     --output_dir "models/ModernBERT-large/tulu-3-sft-mixture+smoltalk"
 ```
 

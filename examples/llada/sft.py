@@ -58,6 +58,10 @@ class DataArguments(dllm.utils.DataArguments):
 class TrainingArguments(dllm.utils.TrainingArguments):
     output_dir: str = "models/LLaDA-8B-Base/tulu-3-sft-mixture[train:10000,test:1000]"
     group_by_length: bool = True
+    num_train_epochs: float = 5
+    learning_rate: float = 2e-5
+    per_device_train_batch_size: int = 4
+    per_device_eval_batch_size: int = 4
 
 
 def train():

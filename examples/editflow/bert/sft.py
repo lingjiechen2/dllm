@@ -1,33 +1,54 @@
+"""
+Local users
+------------
+- 1 GPU (LoRA, useful for testing):
+    PYTHONPATH=. accelerate launch \
+        --config_file scripts/accelerate_configs/ddp.yaml --num_processes 1 \
+        examples/editflow/bert/sft.py \
+        --lora True
+
+- 8 GPUs (FSDP):
+    PYTHONPATH=. accelerate launch \
+        --config_file scripts/accelerate_configs/fsdp.yaml \
+        examples/editflow/bert/sft.py
+
+Slurm users
+# Note: run `mkdir logs` before running sbatch; and adjust
+#       `partition` and `quotatype` in `scripts/train.slurm.sh` for your cluster.
+------------
+- 1 Node, 8 GPUs (FSDP):
+    PYTHONPATH=. sbatch --gres=gpu:8 scripts/train.slurm.sh \
+        --accelerate_config "fsdp" \
+        --script_path "examples/editflow/bert/sft.py"
+
+- 2 Nodes, 16 GPUs (FSDP):
+    PYTHONPATH=. sbatch --nodes=2 --gres=gpu:8 scripts/train.slurm.sh \
+        --accelerate_config "fsdp" \
+        --script_path "examples/editflow/bert/sft.py"
+"""
+
 from dataclasses import dataclass
 
 import transformers
 
-import dllm
 from examples.editflow import sft as editflow_sft
 
 
 @dataclass
 class ModelArguments(editflow_sft.ModelArguments):
-    model_name_or_path: str = "answerdotai/ModernBERT-large"
-    lm_head_key: str = "decoder"
+    model_name_or_path: str = "models/editflow/ModernBERT-large"
 
 
 @dataclass
 class DataArguments(editflow_sft.DataArguments):
     dataset_args: str = "tatsu-lab/alpaca"
-    max_length: int = 512
 
 
 @dataclass
 class TrainingArguments(editflow_sft.TrainingArguments):
     output_dir: str = "models/editflow/ModernBERT-large/alpaca"
-    num_train_epochs: float = 20
-    learning_rate: float = 3e-4
-    per_device_train_batch_size: int = 64
-    per_device_eval_batch_size: int = 64
-    eval_steps: float = 0.1
-    save_steps: float = 0.1
-    x0_sampler: str = "masks[length:64]"
+    per_device_train_batch_size: int = 16
+    per_device_eval_batch_size: int = 16
 
 
 if __name__ == "__main__":
@@ -40,5 +61,4 @@ if __name__ == "__main__":
         model_args=model_args,
         data_args=data_args,
         training_args=training_args,
-        ef_config_cls=dllm.pipelines.editflow.EditFlowModernBertConfig,
     )

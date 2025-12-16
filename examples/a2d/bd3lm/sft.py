@@ -58,12 +58,10 @@ class DataArguments(dllm.utils.DataArguments):
 class TrainingArguments(dllm.utils.TrainingArguments):
     output_dir: str = "models/a2d/Qwen3-0.6B/mdlm/alpaca"
     group_by_length: bool = True
-    learning_rate: float = 1e-4
     num_train_epochs: int = 20
+    learning_rate: float = 1e-4
     per_device_train_batch_size: int = 16
     per_device_eval_batch_size: int = 16
-    eval_steps: float = 0.1
-    save_steps: float = 0.1
     # a2d-specific
     block_size: int = 32
     right_shift_logits: bool = False

@@ -59,8 +59,10 @@ accelerate launch \
     --model_name_or_path "Dream-org/Dream-v0-Base-7B" \
     --dataset_args "tatsu-lab/alpaca" \
     --max_length 1024 \
-    --num_train_epochs 4 \
+    --num_train_epochs 5 \
     --learning_rate 2e-5 \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 4 \
     --output_dir "models/Dream-v0-Base-7B/alpaca"
 ```
 If you are using slurm and want to train across, for example, 2 nodes (16 GPUs total), run:
@@ -71,8 +73,10 @@ sbatch --nodes=2 --gres=gpu:8 scripts/train.slurm.sh \
     --model_name_or_path "Dream-org/Dream-v0-Base-7B" \
     --dataset_args "tatsu-lab/alpaca" \
     --max_length 1024 \
-    --num_train_epochs 4 \
+    --num_train_epochs 5 \
     --learning_rate 2e-5 \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 4 \
     --output_dir "models/Dream-v0-Base-7B/alpaca"
 ```
 
@@ -96,14 +100,11 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
     --model_name_or_path "Dream-org/Dream-v0-Base-7B" \
     --dataset_args "data/sft/dream/tulu-3-sft-mixture" \
     --load_preprocessed_data True \
-    --max_length 2048 \
+    --max_length 1024 \
     --num_train_epochs 5 \
-    --learning_rate 1e-5 \
-    --per_device_train_batch_size 2 \
-    --gradient_accumulation_steps 2 \
-    --per_device_eval_batch_size 2 \
-    --eval_steps 0.1 \
-    --save_steps 0.05 \
+    --learning_rate 2e-5 \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 4 \
     --output_dir "models/Dream-v0-Base-7B/tulu-3-sft-mixture"
 ```
 <!-- [TODO] Training curves are on Wandb; checkpoints with evaluation results are available on Hugging Face. See the [Evaluation](#evaluation) section below for evaluation instructions. -->
@@ -120,6 +121,8 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
     --max_length 1024 \
     --max_steps 2000 \
     --learning_rate 3e-4 \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 4 \
     --output_dir "models/Dream-v0-Base-7B/dclm-baseline-1.0"
 ```
 

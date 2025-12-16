@@ -2,13 +2,13 @@
 Local users
 ------------
 - 1 GPU (LoRA, useful for testing):
-    accelerate launch \
+    PYTHONPATH=. accelerate launch \
         --config_file scripts/accelerate_configs/ddp.yaml --num_processes 1 \
         examples/editflow/llada/sft.py \
         --lora True
 
 - 8 GPUs (FSDP):
-    accelerate launch \
+    PYTHONPATH=. accelerate launch \
         --config_file scripts/accelerate_configs/fsdp.yaml \
         examples/editflow/llada/sft.py
 
@@ -17,12 +17,12 @@ Slurm users
 #       `partition` and `quotatype` in `scripts/train.slurm.sh` for your cluster.
 ------------
 - 1 Node, 8 GPUs (FSDP):
-    sbatch --gres=gpu:1 scripts/train.slurm.sh \
+    PYTHONPATH=. sbatch --gres=gpu:8 scripts/train.slurm.sh \
         --accelerate_config "fsdp" \
         --script_path "examples/editflow/llada/sft.py"
 
 - 2 Nodes, 16 GPUs (FSDP):
-    sbatch --nodes=2 --gres=gpu:8 scripts/train.slurm.sh \
+    PYTHONPATH=. sbatch --nodes=2 --gres=gpu:8 scripts/train.slurm.sh \
         --accelerate_config "fsdp" \
         --script_path "examples/editflow/llada/sft.py"
 """
@@ -36,21 +36,17 @@ from examples.editflow import sft as editflow_sft
 
 @dataclass
 class ModelArguments(editflow_sft.ModelArguments):
-    model_name_or_path: str = (
-        "models/EditFlow-LLaDA-8B-Base/dclm-baseline-1.0[train:10_000_000,test:10_000]/checkpoint-final"
-    )
+    model_name_or_path: str = "models/editflow/LLaDA-8B-Instruct"
 
 
 @dataclass
 class DataArguments(editflow_sft.DataArguments):
-    dataset_args: str = "allenai/tulu-3-sft-mixture[train:10000,test:1000]"
+    dataset_args: str = "tatsu-lab/alpaca"
 
 
 @dataclass
 class TrainingArguments(editflow_sft.TrainingArguments):
-    output_dir: str = (
-        "models/EditFlow-LLaDA-8B-Instruct-SFT/tulu-3-sft-mixture[train:10000,test:1000]"
-    )
+    output_dir: str = "models/editflow/LLaDA-8B-Instruct/alpaca"
 
 
 if __name__ == "__main__":

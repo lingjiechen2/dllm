@@ -2,13 +2,13 @@
 Local users
 ------------
 - 1 GPU (LoRA, useful for testing):
-    accelerate launch \
+    PYTHONPATH=. accelerate launch \
         --config_file scripts/accelerate_configs/ddp.yaml --num_processes 1 \
         examples/editflow/dream/pt.py \
         --lora True
 
 - 8 GPUs (FSDP):
-    accelerate launch \
+    PYTHONPATH=. accelerate launch \
         --config_file scripts/accelerate_configs/fsdp.yaml \
         examples/editflow/dream/pt.py
 
@@ -17,12 +17,12 @@ Slurm users
 #       `partition` and `quotatype` in `scripts/train.slurm.sh` for your cluster.
 ------------
 - 1 Node, 8 GPUs (FSDP):
-    sbatch --gres=gpu:1 scripts/train.slurm.sh \
+    PYTHONPATH=. sbatch --gres=gpu:1 scripts/train.slurm.sh \
         --accelerate_config "fsdp" \
         --script_path "examples/editflow/dream/pt.py"
 
 - 24 Nodes, 192 GPUs (FSDP):
-    sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
+    PYTHONPATH=. sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
         --accelerate_config "fsdp" \
         --script_path "examples/editflow/dream/pt.py"
 """
@@ -31,14 +31,12 @@ from dataclasses import dataclass
 
 import transformers
 
-import dllm
 from examples.editflow import pt as editflow_pt
 
 
 @dataclass
 class ModelArguments(editflow_pt.ModelArguments):
-    model_name_or_path: str = "Dream-org/Dream-v0-Base-7B"
-    lm_head_key: str = "lm_head"
+    model_name_or_path: str = "models/editflow/Dream-v0-Base-7B"
 
 
 @dataclass
@@ -49,7 +47,7 @@ class DataArguments(editflow_pt.DataArguments):
 @dataclass
 class TrainingArguments(editflow_pt.TrainingArguments):
     output_dir: str = (
-        "models/EditFlow-Dream-7B-Base/dclm-baseline-1.0[train:10_000_000,test:10_000]"
+        "models/editflow/Dream-v0-Base-7B/dclm-baseline-1.0[train:10_000_000,test:10_000]"
     )
 
 
@@ -63,5 +61,4 @@ if __name__ == "__main__":
         model_args=model_args,
         data_args=data_args,
         training_args=training_args,
-        ef_config_cls=dllm.pipelines.editflow.EditFlowDreamConfig,
     )

@@ -62,8 +62,6 @@ class TrainingArguments(dllm.utils.TrainingArguments):
     num_train_epochs: int = 20
     per_device_train_batch_size: int = 16
     per_device_eval_batch_size: int = 16
-    eval_steps: float = 0.1
-    save_steps: float = 0.1
     # a2d-specific
     right_shift_logits: bool = False
 

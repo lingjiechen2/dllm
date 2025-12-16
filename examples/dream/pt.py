@@ -69,12 +69,10 @@ class TrainingArguments(dllm.utils.TrainingArguments):
     output_dir: str = (
         "models/Dream-v0-Base-7B/dclm-baseline-1.0[train:10_000_000,test:10_000]"
     )
+    max_steps: int = 100_000
     learning_rate: float = 3e-4
-    max_steps: int = 2_000
     per_device_train_batch_size: int = 4
     gradient_accumulation_steps: int = 4
-    eval_steps: float = 0.05
-    save_steps: float = 0.05
     # Dream PT specific args
     # Note: Since Dream’s pretraining recipe is not public,
     # this is only a reference implementation following LLaDA’s data processing approach.

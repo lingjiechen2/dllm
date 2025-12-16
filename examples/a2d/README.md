@@ -67,12 +67,10 @@ accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_proces
     --text_field "Text" \
     --insert_eos False \
     --max_length 128 \
-    --learning_rate 1e-4 \
     --num_train_epochs 20 \
+    --learning_rate 1e-4 \
     --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 16 \
-    --eval_steps 0.1 \
-    --save_steps 0.1 \
     --output_dir "models/a2d/Qwen3-0.6B/mdlm/tiny-shakespeare"
 ```
 
@@ -95,12 +93,10 @@ accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_proc
     --model_name_or_path "models/a2d/Qwen3-0.6B" \
     --dataset_args "tatsu-lab/alpaca" \
     --max_length 512 \
-    --learning_rate 1e-4 \
     --num_train_epochs 20 \
+    --learning_rate 1e-4 \
     --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 16 \
-    --eval_steps 0.1 \
-    --save_steps 0.1 \
     --output_dir "models/a2d/Qwen3-0.6B/mdlm/alpaca"
 ```
 
@@ -126,12 +122,10 @@ accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_proces
     --text_field "Text" \
     --insert_eos False \
     --max_length 128 \
-    --learning_rate 1e-4 \
     --num_train_epochs 20 \
+    --learning_rate 1e-4 \
     --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 16 \
-    --eval_steps 0.1 \
-    --save_steps 0.1 \
     --block_size 32 \
     --output_dir "models/a2d/Qwen3-0.6B/bd3lm/tiny-shakespeare"
 ```
@@ -155,12 +149,10 @@ accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_proc
     --model_name_or_path "models/a2d/Qwen3-0.6B" \
     --dataset_args "tatsu-lab/alpaca" \
     --max_length 512 \
-    --learning_rate 1e-4 \
     --num_train_epochs 20 \
+    --learning_rate 1e-4 \
     --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 16 \
-    --eval_steps 0.1 \
-    --save_steps 0.1 \
     --block_size 32 \
     --output_dir "models/a2d/Qwen3-0.6B/bd3lm/alpaca"
 ```
@@ -191,10 +183,10 @@ WANDB_MODE=online sbatch --nodes=8 --gres=gpu:8 scripts/train.slurm.sh \
     --dataset_args "allenai/tulu-3-sft-mixture+HuggingFaceTB/smoltalk+OpenCoder-LLM/opc-sft-stage1[lang:python]+OpenCoder-LLM/opc-sft-stage2[lang:python]" \
     --max_length 1024 \
     --num_train_epochs 10 \
+    --learning_rate 1e-4 \
     --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 16 \
     --gradient_accumulation_steps 2 \
-    --save_steps 0.1 \
     --output_dir "models/a2d/Qwen3-0.6B/tulu-3-sft-mixture+smoltalk+opc-sft-stage1&2/epochs-10-bs-2048-len-1024"
 ```
 
@@ -206,12 +198,12 @@ WANDB_MODE=online sbatch --nodes=8 --gres=gpu:8 scripts/train.slurm.sh \
     --model_name_or_path "models/a2d/Qwen3-0.6B" \
     --dataset_args "allenai/tulu-3-sft-mixture+HuggingFaceTB/smoltalk+OpenCoder-LLM/opc-sft-stage1[lang:python]+OpenCoder-LLM/opc-sft-stage2[lang:python]" \
     --max_length 512 \
-    --block_size 32 \
     --num_train_epochs 10 \
+    --learning_rate 1e-4 \
     --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 16 \
     --gradient_accumulation_steps 2 \
-    --save_steps 0.1 \
+    --block_size 32 \
     --output_dir "models/a2d/Qwen3-0.6B/tulu-3-sft-mixture+smoltalk+opc-sft-stage1&2/epochs-10-bs-2048-len-512-bls-32"
 ```
 
