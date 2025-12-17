@@ -57,7 +57,7 @@ In this section, we show toy examples of continual pretraining and SFTing [`Qwen
 
 ### Continual Pretraining
 
-To train [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`tiny-shakespeare`](https://huggingface.co/datasets/Trelis/tiny-shakespeare) dataset with [MDLM](https://arxiv.org/abs/2406.07524), run:
+To train [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`tiny-shakespeare`](https://huggingface.co/datasets/Trelis/tiny-shakespeare) dataset with [MDLM](https://arxiv.org/abs/2406.07524), run (on 1 GPU):
 
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_processes 1 \
@@ -67,7 +67,7 @@ accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_proces
     --text_field "Text" \
     --insert_eos False \
     --max_length 128 \
-    --num_train_epochs 20 \
+    --num_train_epochs 10 \
     --learning_rate 1e-4 \
     --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 16 \
@@ -83,9 +83,31 @@ python -u examples/a2d/mdlm/chat.py \
     --chat_template False --remasking "random" --steps 128 --max_new_tokens 128
 ```
 
+<details>
+<summary>Example of pretraining on a larger dataset (OpenWebText) in streaming mode</summary>
+
+To train [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`openwebtext`](https://huggingface.co/datasets/dylanebert/openwebtext) dataset in streaming mode with [MDLM](https://arxiv.org/abs/2406.07524), run (on 8 GPUs):
+```diff
+accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_processes 8 \
+    examples/a2d/mdlm/pt.py \
+    --model_name_or_path "models/a2d/Qwen3-0.6B" \
+    --dataset_args "dylanebert/openwebtext" \
+    --text_field "text" \
+    --streaming True \
+    --insert_eos True \
+    --max_length 512 \
+    --max_steps 20000 \
+    --learning_rate 1e-4 \
+    --per_device_train_batch_size 16 \
+    --per_device_eval_batch_size 16 \
+    --eval_strategy "no" \
+    --output_dir "models/a2d/Qwen3-0.6B/mdlm/openwebtext"
+```
+</details>
+
 ### SFT
 
-To train [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset with [MDLM](https://arxiv.org/abs/2406.07524), run:
+To train [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset with [MDLM](https://arxiv.org/abs/2406.07524), run (on 8 GPUs):
 
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
@@ -93,7 +115,7 @@ accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_proc
     --model_name_or_path "models/a2d/Qwen3-0.6B" \
     --dataset_args "tatsu-lab/alpaca" \
     --max_length 512 \
-    --num_train_epochs 20 \
+    --num_train_epochs 10 \
     --learning_rate 1e-4 \
     --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 16 \
@@ -112,7 +134,7 @@ In this section, we show toy examples of continual pretraining and SFTing [`Qwen
 
 ### Continual Pretraining
 
-To train [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`tiny-shakespeare`](https://huggingface.co/datasets/Trelis/tiny-shakespeare) dataset with [BD3LM](https://arxiv.org/abs/2503.09573), run:
+To train [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`tiny-shakespeare`](https://huggingface.co/datasets/Trelis/tiny-shakespeare) dataset with [BD3LM](https://arxiv.org/abs/2503.09573), run (on 1 GPU):
 
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_processes 1 \
@@ -122,7 +144,7 @@ accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_proces
     --text_field "Text" \
     --insert_eos False \
     --max_length 128 \
-    --num_train_epochs 20 \
+    --num_train_epochs 10 \
     --learning_rate 1e-4 \
     --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 16 \
@@ -139,9 +161,32 @@ python -u examples/a2d/bd3lm/chat.py \
     --chat_template False --block_size 32 --remasking "random" --steps 128 --max_new_tokens 128
 ```
 
+<details>
+<summary>Example of pretraining on a larger dataset (OpenWebText) in streaming mode</summary>
+
+To train [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`openwebtext`](https://huggingface.co/datasets/dylanebert/openwebtext) dataset in streaming mode with [BD3LM](https://arxiv.org/abs/2503.09573), run (on 8 GPUs):
+```diff
+accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_processes 8 \
+    examples/a2d/bd3lm/pt.py \
+    --model_name_or_path "models/a2d/Qwen3-0.6B" \
+    --dataset_args "dylanebert/openwebtext" \
+    --text_field "text" \
+    --streaming True \
+    --insert_eos True \
+    --max_length 512 \
+    --max_steps 20000 \
+    --learning_rate 1e-4 \
+    --per_device_train_batch_size 16 \
+    --per_device_eval_batch_size 16 \
+    --eval_strategy "no" \
+    --block_size 32 \
+    --output_dir "models/a2d/Qwen3-0.6B/bd3lm/openwebtext"
+```
+</details>
+
 ### SFT
 
-To train [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset with [BD3LM](https://arxiv.org/abs/2503.09573), run:
+To train [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset with [BD3LM](https://arxiv.org/abs/2503.09573), run (on 8 GPUs):
 
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
@@ -149,7 +194,7 @@ accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_proc
     --model_name_or_path "models/a2d/Qwen3-0.6B" \
     --dataset_args "tatsu-lab/alpaca" \
     --max_length 512 \
-    --num_train_epochs 20 \
+    --num_train_epochs 10 \
     --learning_rate 1e-4 \
     --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 16 \
@@ -174,7 +219,7 @@ For training curves and other details, please see [![blog](https://img.shields.i
 
 The [`Tiny-A2D`](https://huggingface.co/collections/dllm-collection/tiny-a2d) models are trained purely with SFT.
 
-To reproduce [`Qwen3-0.6B-diffusion-mdlm-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1) (with MDLM & SFT), run the command below (about 10 hours on 64 GPUs):
+To reproduce [`Qwen3-0.6B-diffusion-mdlm-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1) (with MDLM & SFT), run the command below (about 10 hours on 64 A100s):
 ```shell
 WANDB_MODE=online sbatch --nodes=8 --gres=gpu:8 scripts/train.slurm.sh \
     --accelerate_config "zero2" \
@@ -190,7 +235,7 @@ WANDB_MODE=online sbatch --nodes=8 --gres=gpu:8 scripts/train.slurm.sh \
     --output_dir "models/a2d/Qwen3-0.6B/tulu-3-sft-mixture+smoltalk+opc-sft-stage1&2/epochs-10-bs-2048-len-1024"
 ```
 
-To reproduce [`Qwen3-0.6B-diffusion-bd3lm-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-bd3lm-v0.1) (with BD3LM & SFT), run the command below (about 10 hours on 64 GPUs):
+To reproduce [`Qwen3-0.6B-diffusion-bd3lm-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-bd3lm-v0.1) (with BD3LM & SFT), run the command below (about 10 hours on 64 A100s):
 ```shell
 WANDB_MODE=online sbatch --nodes=8 --gres=gpu:8 scripts/train.slurm.sh \
     --accelerate_config "zero2" \

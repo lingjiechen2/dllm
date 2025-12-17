@@ -36,7 +36,7 @@ You can use any BERT model instead for example, by `--model_name_or_path "Facebo
 
 ### Continual Pretraining
 
-To train [`ModernBERT-large`](https://huggingface.co/answerdotai/ModernBERT-large) on the [`tiny-shakespeare`](https://huggingface.co/datasets/Trelis/tiny-shakespeare) dataset, run:
+To train [`ModernBERT-large`](https://huggingface.co/answerdotai/ModernBERT-large) on the [`tiny-shakespeare`](https://huggingface.co/datasets/Trelis/tiny-shakespeare) dataset, run (on 1 GPU):
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_processes 1 \
     examples/bert/pt.py \
@@ -45,7 +45,7 @@ accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_proces
     --text_field "Text" \
     --insert_eos False \
     --max_length 128 \
-    --num_train_epochs 20 \
+    --num_train_epochs 10 \
     --learning_rate 1e-4 \
     --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 16 \
@@ -61,16 +61,40 @@ python -u examples/bert/chat.py \
     --chat_template False --remasking "random" --steps 128 --max_new_tokens 128
 ```
 
+<details>
+<summary>Example of pretraining on a larger dataset (OpenWebText) in streaming mode</summary>
+
+To train [`ModernBERT-large`](https://huggingface.co/answerdotai/ModernBERT-large) on the [`openwebtext`](https://huggingface.co/datasets/dylanebert/openwebtext) dataset in streaming mode, run (on 8 GPUs):
+```diff
+accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_processes 8 \
+    examples/bert/pt.py \
+    --model_name_or_path "answerdotai/ModernBERT-large" \
+    --dataset_args "dylanebert/openwebtext" \
+    --text_field "text" \
+    --streaming True \
+    --insert_eos True \
+    --max_length 512 \
+    --max_steps 20000 \
+    --learning_rate 1e-4 \
+    --per_device_train_batch_size 16 \
+    --per_device_eval_batch_size 16 \
+    --eval_strategy "no" \
+    --output_dir "models/ModernBERT-large/openwebtext"
+```
+
+</details>
+
+
 ### SFT
 
-To train [`ModernBERT-large`](https://huggingface.co/answerdotai/ModernBERT-large) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset, run:
+To train [`ModernBERT-large`](https://huggingface.co/answerdotai/ModernBERT-large) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset, run (on 8 GPUs):
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
     examples/bert/sft.py \
     --model_name_or_path "answerdotai/ModernBERT-large" \
     --dataset_args "tatsu-lab/alpaca" \
     --max_length 512 \
-    --num_train_epochs 20 \
+    --num_train_epochs 10 \
     --learning_rate 1e-4 \
     --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 16 \
@@ -93,7 +117,7 @@ For training curves and other details, please see [![blog](https://img.shields.i
 
 The [`BERT-Chat`](https://huggingface.co/collections/dllm-collection/bert-chat) models are trained purely with SFT on the [`tulu-3-sft-mixture`](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture) and [`smoltalk`](https://huggingface.co/datasets/HuggingFaceTB/smoltalk) dataset.
 
-To reproduce [`ModernBERT-base-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0.1), run the command below (about 4 hours on 8 GPUs):
+To reproduce [`ModernBERT-base-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0.1), run the command below (about 4 hours on 8 A100s):
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
     examples/bert/sft.py \
@@ -107,7 +131,7 @@ accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_proc
     --output_dir "models/ModernBERT-base/tulu-3-sft-mixture+smoltalk"
 ```
 
-To reproduce [`ModernBERT-large-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0.1), run the command below (about 7 hours on 8 GPUs):
+To reproduce [`ModernBERT-large-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0.1), run the command below (about 7 hours on 8 A100s):
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
     examples/bert/sft.py \

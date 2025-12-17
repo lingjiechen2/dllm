@@ -215,7 +215,7 @@ See [Features](#features) for specific training recipes.
 - Load pretraining dataset in streaming mode:
 `--streaming True`
 - Preprocess SFT dataset before training (e.g., LLaDA):
-  ```shell
+  <!-- ```shell
   # Preprocess SFT data
   python dllm/tools/preprocess_sft_dataset.py \
       --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
@@ -231,6 +231,26 @@ See [Features](#features) for specific training recipes.
       --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
       --dataset_args "data/sft/llada/tulu-3-sft-mixture" \
       --load_preprocessed_data True \
+      ...
+  ``` -->
+
+  ```diff
+  # Preprocess SFT data
+  + python dllm/tools/preprocess_sft_dataset.py \
+  +     --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
+  +     --sft_map_fn_path "dllm.utils.default_mdlm_sft_map_fn" \
+  +     --dataset_args "allenai/tulu-3-sft-mixture" \
+  +     --output_dir "data/sft/llada/tulu-3-sft-mixture" \
+  +     --num_proc 64
+  
+  # SFT with preprocessed data
+  accelerate launch \
+      --config_file scripts/accelerate_configs/fsdp.yaml \
+      examples/llada/sft.py \
+      --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
+  -   --dataset_args "allenai/tulu-3-sft-mixture" \
+  +   --dataset_args "data/sft/llada/tulu-3-sft-mixture" \
+  +   --load_preprocessed_data True \
       ...
   ```
 

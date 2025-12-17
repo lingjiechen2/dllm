@@ -19,7 +19,7 @@ PYTHONPATH=. accelerate launch --config_file scripts/accelerate_configs/ddp.yaml
     --text_field "Text" \
     --insert_eos False \
     --max_length 128 \
-    --num_train_epochs 20 \
+    --num_train_epochs 10 \
     --learning_rate 3e-4 \
     --per_device_train_batch_size 64 \
     --per_device_eval_batch_size 64 \
@@ -45,7 +45,7 @@ PYTHONPATH=. accelerate launch --config_file scripts/accelerate_configs/zero2.ya
     --model_name_or_path "models/editflow/ModernBERT-large" \
     --dataset_args "tatsu-lab/alpaca" \
     --max_length 512 \
-    --num_train_epochs 20 \
+    --num_train_epochs 10 \
     --learning_rate 3e-4 \
     --per_device_train_batch_size 64 \
     --per_device_eval_batch_size 64 \
