@@ -4,6 +4,12 @@ python dllm/pipelines/editflow/convert.py --model_name_or_path "GSAI-ML/LLaDA-8B
 python dllm/pipelines/editflow/convert.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct" --output_dir "models/editflow/LLaDA-8B-Instruct"
 python dllm/pipelines/editflow/convert.py --model_name_or_path "Dream-org/Dream-v0-Base-7B" --output_dir "models/editflow/Dream-v0-Base-7B"
 python dllm/pipelines/editflow/convert.py --model_name_or_path "Dream-org/Dream-v0-Instruct-7B" --output_dir "models/editflow/Dream-v0-Instruct-7B"
+
+python dllm/pipelines/a2d/convert.py --model_name_or_path "Qwen/Qwen2.5-0.5B" --output_dir "models/a2d/Qwen2.5-0.5B"
+python dllm/pipelines/editflow/convert.py --model_name_or_path "models/a2d/Qwen2.5-0.5B" --output_dir "models/editflow/Qwen2.5-0.5B"
+
+python dllm/pipelines/a2d/convert.py --model_name_or_path "Qwen/Qwen3-0.6B" --output_dir "models/a2d/Qwen3-0.6B"
+python dllm/pipelines/editflow/convert.py --model_name_or_path "models/a2d/Qwen3-0.6B" --output_dir "models/editflow/Qwen3-0.6B"
 """
 
 from dataclasses import dataclass
@@ -12,6 +18,7 @@ import transformers
 import tyro
 
 import dllm
+
 
 EDITFLOW_MAP = {
     "modernbert": {
@@ -24,6 +31,14 @@ EDITFLOW_MAP = {
     },
     "Dream": {
         "config": dllm.pipelines.editflow.EditFlowDreamConfig,
+        "lm_head_key": "lm_head",
+    },
+    "a2d-qwen2": {
+        "config": dllm.pipelines.editflow.EditFlowQwen2Config,
+        "lm_head_key": "lm_head",
+    },
+    "a2d-qwen3": {
+        "config": dllm.pipelines.editflow.EditFlowQwen3Config,
         "lm_head_key": "lm_head",
     },
 }

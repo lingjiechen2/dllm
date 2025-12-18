@@ -11,7 +11,7 @@ This directory provides an educational reference for training EditFlow models. I
 
 ## Table of Contents
 - [Setup](#setup)
-- [Files overview](#files-overview)
+- [Files](#files)
 - [Training](#training)
     - [Adapting LLaDA-8B-Instruct to support insertion and deletion](#adapting-llada-8b-instruct-to-support-insertion-and-deletion)
     - [Pretraining & Finetuning from scratch](#pretraining--finetuning-from-scratch)
@@ -22,7 +22,7 @@ This directory provides an educational reference for training EditFlow models. I
 > [!IMPORTANT]  
 > **Slurm users:** Update `scripts/train.slurm.sh` and `mkdir logs`: see [(optional) Slurm setup](/README.md/#optional-slurm-setup) for details.
 
-##  Files overview
+##  Files
 ```
 dllm/pipelines/editflow
 ├── __init__.py                 # Package initialization

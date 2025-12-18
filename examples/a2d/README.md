@@ -10,7 +10,7 @@ This directory provides two key sets of resources:
 - **[`Tiny-A2D`](#tiny-a2d)**: The exact training, inference, and evaluation scripts for developing: [`Qwen3-0.6B-diffusion-mdlm-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1) and [`Qwen3-0.6B-diffusion-bd3lm-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-bd3lm-v0.1).
 For detailed experimental results and reproduction instructions, please see our [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) Tiny-A2D Report](https://wandb.ai/asap-zzhou/dllm/reports/dLLM-Tiny-A2D--VmlldzoxNTI2NTEzOA).
 
-## Files overview
+## Files
 ```
 # example entry points for training / inference / evaluation
 examples/a2d
@@ -43,9 +43,8 @@ examples/a2d
 >    ```
 <!-- **Convert an AR model with customized attention**-->
 
-All training first requires modifying the source autoregressive models with non-causal attention.
-For example, to save [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) using its original weights but with the
-modify non-causal attention defined in
+Before training, modify and save the source autoregressive models with non-causal attention.
+For example, to save [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) with its original weights but with modified non-causal attention defined in
 [`modeling_qwen3.py`](/dllm/pipelines/a2d/models/qwen3/modeling_qwen3.py):
 ```shell
 python dllm/pipelines/a2d/convert.py --model_name_or_path "Qwen/Qwen3-0.6B" --output_dir "models/a2d/Qwen3-0.6B"
@@ -80,15 +79,15 @@ To sample from the model interactively:
 # or press Enter to let the model generate text from scratch.
 python -u examples/a2d/mdlm/chat.py \
     --model_name_or_path "models/a2d/Qwen3-0.6B/mdlm/tiny-shakespeare/checkpoint-final" \
-    --chat_template False --remasking "random" --steps 128 --max_new_tokens 128
+    --chat_template False --remasking "random" --temperature 0.7
 ```
 
 <details>
 <summary>Example of pretraining on a larger dataset (OpenWebText) in streaming mode</summary>
 
 To train [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`openwebtext`](https://huggingface.co/datasets/dylanebert/openwebtext) dataset in streaming mode with [MDLM](https://arxiv.org/abs/2406.07524), run (on 8 GPUs):
-```diff
-accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_processes 8 \
+```shell
+accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
     examples/a2d/mdlm/pt.py \
     --model_name_or_path "models/a2d/Qwen3-0.6B" \
     --dataset_args "dylanebert/openwebtext" \
@@ -103,6 +102,16 @@ accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_proces
     --eval_strategy "no" \
     --output_dir "models/a2d/Qwen3-0.6B/mdlm/openwebtext"
 ```
+
+To sample from the model interactively:
+```shell
+# Enter a prompt (e.g., "Lebron James is"),
+# or press Enter to let the model generate text from scratch.
+python -u examples/a2d/mdlm/chat.py \
+    --model_name_or_path "models/a2d/Qwen3-0.6B/mdlm/openwebtext/checkpoint-final" \
+    --chat_template False --remasking "random" --temperature 0.7
+```
+
 </details>
 
 ### SFT
@@ -158,15 +167,15 @@ To sample from the model interactively:
 # or press Enter to let the model generate text from scratch.
 python -u examples/a2d/bd3lm/chat.py \
     --model_name_or_path "models/a2d/Qwen3-0.6B/bd3lm/tiny-shakespeare/checkpoint-final" \
-    --chat_template False --block_size 32 --remasking "random" --steps 128 --max_new_tokens 128
+    --chat_template False --block_size 32 --remasking "random" --temperature 0.7
 ```
 
 <details>
 <summary>Example of pretraining on a larger dataset (OpenWebText) in streaming mode</summary>
 
 To train [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B) on the [`openwebtext`](https://huggingface.co/datasets/dylanebert/openwebtext) dataset in streaming mode with [BD3LM](https://arxiv.org/abs/2503.09573), run (on 8 GPUs):
-```diff
-accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_processes 8 \
+```shell
+accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
     examples/a2d/bd3lm/pt.py \
     --model_name_or_path "models/a2d/Qwen3-0.6B" \
     --dataset_args "dylanebert/openwebtext" \
@@ -181,6 +190,15 @@ accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_proces
     --eval_strategy "no" \
     --block_size 32 \
     --output_dir "models/a2d/Qwen3-0.6B/bd3lm/openwebtext"
+```
+
+To sample from the model interactively:
+```shell
+# Enter a prompt (e.g., "Lebron James is"),
+# or press Enter to let the model generate text from scratch.
+python -u examples/a2d/bd3lm/chat.py \
+    --model_name_or_path "models/a2d/Qwen3-0.6B/bd3lm/openwebtext/checkpoint-final" \
+    --chat_template False --block_size 32 --remasking "random" --temperature 0.7
 ```
 </details>
 
@@ -252,7 +270,13 @@ WANDB_MODE=online sbatch --nodes=8 --gres=gpu:8 scripts/train.slurm.sh \
     --output_dir "models/a2d/Qwen3-0.6B/tulu-3-sft-mixture+smoltalk+opc-sft-stage1&2/epochs-10-bs-2048-len-512-bls-32"
 ```
 
+### Inference
 
+To chat with the model:
+```shell
+python -u examples/a2d/mdlm/chat.py --model_name_or_path "dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1"
+python -u examples/a2d/bd3lm/chat.py --model_name_or_path "dllm-collection/Qwen3-0.6B-diffusion-bd3lm-v0.1"
+```
 
 ### Evaluation
 
@@ -285,7 +309,7 @@ bash examples/a2d/bd3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B
 ```
 
 
-#### Evaluation Results
+#### Evaluation results
 
 <table style="border-collapse: collapse; width: 100%; text-align: center; table-layout: fixed;">
   <colgroup>

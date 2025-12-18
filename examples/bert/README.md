@@ -17,7 +17,7 @@ This directory provides two key sets of resources:
   </em>
 </p>
 
-## Files overview
+## Files
 ```
 # example entry points for training / inference / evaluation
 examples/bert
@@ -58,15 +58,15 @@ To sample from the model interactively:
 # or press Enter to let the model generate text from scratch.
 python -u examples/bert/chat.py \
     --model_name_or_path "models/ModernBERT-large/tiny-shakespeare/checkpoint-final" \
-    --chat_template False --remasking "random" --steps 128 --max_new_tokens 128
+    --chat_template False --remasking "random" --temperature 0.7
 ```
 
 <details>
 <summary>Example of pretraining on a larger dataset (OpenWebText) in streaming mode</summary>
 
 To train [`ModernBERT-large`](https://huggingface.co/answerdotai/ModernBERT-large) on the [`openwebtext`](https://huggingface.co/datasets/dylanebert/openwebtext) dataset in streaming mode, run (on 8 GPUs):
-```diff
-accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_processes 8 \
+```shell
+accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
     examples/bert/pt.py \
     --model_name_or_path "answerdotai/ModernBERT-large" \
     --dataset_args "dylanebert/openwebtext" \
@@ -80,6 +80,15 @@ accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_proces
     --per_device_eval_batch_size 16 \
     --eval_strategy "no" \
     --output_dir "models/ModernBERT-large/openwebtext"
+```
+
+To sample from the model interactively:
+```shell
+# Enter a prompt (e.g., "Lebron James is"),
+# or press Enter to let the model generate text from scratch.
+python -u examples/bert/chat.py \
+    --model_name_or_path "models/ModernBERT-large/openwebtext/checkpoint-final" \
+    --chat_template False --remasking "random" --temperature 0.7
 ```
 
 </details>
@@ -152,7 +161,7 @@ To chat with the model:
 python -u examples/bert/chat.py --model_name_or_path "dllm-collection/ModernBERT-large-chat-v0.1"
 ```
 
-## Evaluation
+### Evaluation
 > Read [(optional) Evaluation setup](/README.md/#optional-evaluation-setup) before running evaluation.
 
 For example, to evaluate [`ModernBERT-large-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0.1) on [`gsm8k`](https://huggingface.co/datasets/openai/gsm8k) using 4 GPUs, run:
@@ -173,7 +182,7 @@ bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-base
 bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-large-chat-v0.1"
 ```
 
-### Evaluation Results
+#### Evaluation results
 <!-- 
 |                     | LAMBADA | GSM8K | CEval | BBH | MATH | MMLU | Winogrande | HellaSwag | CMMLU |
 |:------------------------------------|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|

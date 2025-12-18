@@ -6,7 +6,7 @@ Resources and examples for training (finetuning & pretraining) and evaluating di
 
 ## Table of Contents
 - [Setup](#setup)
-- [Files overview](#files-overview)
+- [Files](#files)
 - [Training](#training)
 - [Inference](#inference)
 - [Evaluation](#evaluation)
@@ -17,7 +17,7 @@ Resources and examples for training (finetuning & pretraining) and evaluating di
 > -->
 
 
-##  Files overview
+##  Files
 ```
 # pipeline modules relevant with Dream
 dllm/pipelines/dream
@@ -120,7 +120,7 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
     --dataset_args "mlfoundations/dclm-baseline-1.0" \
     --max_length 1024 \
     --max_steps 2000 \
-    --learning_rate 3e-4 \
+    --learning_rate 1e-4 \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
     --output_dir "models/Dream-v0-Base-7B/dclm-baseline-1.0"
@@ -157,7 +157,7 @@ bash examples/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Instruct-7B
 bash examples/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --instruct False
 ```
 
-### Evaluation Results
+### Evaluation results
 
 >  Results (evaluated) are evaluated using our framework, while results (reported) come from the original [paper](https://arxiv.org/abs/2508.15487). All evaluation settings follow the configurations in the [Dream](https://github.com/DreamLM/Dream) repository, with minor adjustments.
 

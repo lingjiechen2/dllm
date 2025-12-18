@@ -29,7 +29,7 @@ class DataArguments(dllm.utils.DataArguments):
 class TrainingArguments(dllm.utils.TrainingArguments):
     output_dir: str = None  # overwrite this
     num_train_epochs: float = 10
-    learning_rate: float = 3e-4
+    learning_rate: float = 1e-4
     per_device_train_batch_size: int = 2
     per_device_eval_batch_size: int = 2
     # EditFlow specific args

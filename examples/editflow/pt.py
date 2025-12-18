@@ -17,9 +17,10 @@ class ModelArguments(dllm.utils.ModelArguments):
 
 @dataclass
 class DataArguments(dllm.utils.DataArguments):
-    dataset_args: str = "mlfoundations/dclm-baseline-1.0[train:10_000_000,test:10_000]"
-    text_field: str = "text"
-    streaming: bool = True
+    dataset_args: str = "Trelis/tiny-shakespeare"
+    text_field: str = "Text"
+    max_length: int = 128
+    streaming: bool = False
     drop_tail: bool = True
     insert_eos: bool = field(
         default=True,
@@ -32,8 +33,8 @@ class DataArguments(dllm.utils.DataArguments):
 @dataclass
 class TrainingArguments(dllm.utils.TrainingArguments):
     output_dir: str = None  # overwrite this
-    max_steps: int = 100_000
-    learning_rate: float = 3e-4
+    num_train_epochs: int = 10
+    learning_rate: float = 1e-4
     per_device_train_batch_size: int = 2
     per_device_eval_batch_size: int = 2
     # EditFlow specific args
@@ -102,7 +103,7 @@ def train(
                 tokenizer=tokenizer,
                 text_field=data_args.text_field,
                 seq_length=data_args.max_length,
-                insert_eos=data_args.insert_eos,
+                insert_eos=False,
                 drop_tail=data_args.drop_tail,
             ),
             batched=True,
