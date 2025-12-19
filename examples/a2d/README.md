@@ -39,7 +39,10 @@ examples/a2d
 > 
 > 2. And ensure the attention behavior is correct: 
 >    ```shell
->    pytest scripts/tests/attention.py -k "a2d"
+>    # Run A2D attention tests
+>    pytest scripts/tests/test_attention.py -k "test_a2d"
+>    # (Optional; required for the bd3lm trainer)
+>    pytest scripts/tests/test_attention.py -k "test_bd3lm"
 >    ```
 <!-- **Convert an AR model with customized attention**-->
 
