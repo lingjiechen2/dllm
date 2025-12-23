@@ -5,14 +5,14 @@ Local users
     accelerate launch \
         --config_file scripts/accelerate_configs/ddp.yaml --num_processes 1 \
         examples/a2d/mdlm/sft.py
-    
+
 - 8 GPUs (ZeRO-2):
     accelerate launch \
         --config_file scripts/accelerate_configs/zero2.yaml \
         examples/a2d/mdlm/sft.py
 
 Slurm users
-# Note: run `mkdir logs` before running sbatch; and adjust 
+# Note: run `mkdir logs` before running sbatch; and adjust
 #       `partition` and `quotatype` in `scripts/train.slurm.sh` for your cluster.
 ------------
 - 1 Node, 8 GPUs (ZeRO-2):
@@ -30,8 +30,8 @@ import os
 from dataclasses import dataclass, field
 from functools import partial
 
-import transformers
 import accelerate
+import transformers
 
 import dllm
 
@@ -62,8 +62,6 @@ class TrainingArguments(dllm.utils.TrainingArguments):
     num_train_epochs: int = 20
     per_device_train_batch_size: int = 16
     per_device_eval_batch_size: int = 16
-    eval_steps: float = 0.1
-    save_steps: float = 0.1
     # a2d-specific
     right_shift_logits: bool = False
 

@@ -873,7 +873,7 @@ LLADAMOE_INPUTS_DOCSTRING = r"""
             is useful if you want more control over how to convert `input_ids` indices into associated vectors than the
             model's internal embedding lookup matrix.
         use_cache (`bool`, *optional*):
-            For diffusion languagem model, the use_cache and past_key_values can not be enabled for default setting.
+            For diffusion language model, the use_cache and past_key_values can not be enabled for default setting.
         output_attentions (`bool`, *optional*):
             Whether or not to return the attentions tensors of all attention layers. See `attentions` under returned
             tensors for more detail.
@@ -939,7 +939,7 @@ class LLaDAMoEModel(LLaDAMoEPreTrainedModel):
         return_dict: Optional[bool] = None,
         cache_position: Optional[torch.LongTensor] = None,
     ) -> Union[Tuple, MoeModelOutputWithPast]:
-        assert (not use_cache and past_key_values is None and cache_position is None), "The cache mechanism is not suppotred for LLaDA MoE by default."
+        assert (not use_cache and past_key_values is None and cache_position is None), "The cache mechanism is not supported for LLaDA MoE by default."
 
         output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
         output_router_logits = (

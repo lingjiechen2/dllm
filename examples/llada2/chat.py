@@ -32,7 +32,7 @@ class ScriptArguments:
 
 
 @dataclass
-class SamplerConfig(dllm.pipelines.llada2.LLaDA2MoeSamplerConfig):
+class SamplerConfig(dllm.pipelines.llada2.LLaDA2SamplerConfig):
     steps_per_block: int = 32
     max_new_tokens: int = 128
     block_size: int = 32
@@ -49,7 +49,7 @@ def main():
 
     model = dllm.utils.get_model(model_args=script_args).eval()
     tokenizer = dllm.utils.get_tokenizer(model_args=script_args)
-    sampler = dllm.pipelines.llada2.LLaDA2MoeSampler(model=model, tokenizer=tokenizer)
+    sampler = dllm.pipelines.llada2.LLaDA2Sampler(model=model, tokenizer=tokenizer)
 
     if script_args.chat_template:
         dllm.utils.multi_turn_chat(

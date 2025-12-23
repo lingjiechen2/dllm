@@ -1,8 +1,7 @@
-import os
 import functools
+import os
 from dataclasses import dataclass, field
 
-import transformers
 import accelerate
 
 import dllm
@@ -14,27 +13,13 @@ logger = dllm.utils.get_default_logger(__name__)
 @dataclass
 class ModelArguments(dllm.utils.ModelArguments):
     model_name_or_path: str = None  # overwrite this
-    lm_head_key: str = field(
-        default=None,
-        metadata={
-            "help": (
-                "The key to the `lm_head` in the source model for initializing operation heads in the EditFlow model. "
-                "Overwrite this when `init_editflow_from_src` = True"
-            )
-        },
-    )
-    init_editflow_from_src: bool = field(
-        default=True,
-        metadata={
-            "help": "Whether to initialize EditFlow model from the source model."
-        },
-    )
 
 
 @dataclass
 class DataArguments(dllm.utils.DataArguments):
-    dataset_args: str = "mlfoundations/dclm-baseline-1.0[train:10_000_000,test:10_000]"
-    text_field: str = "text"
+    dataset_args: str = "Trelis/tiny-shakespeare"
+    text_field: str = "Text"
+    max_length: int = 128
     streaming: bool = False
     drop_tail: bool = True
     insert_eos: bool = field(
@@ -48,13 +33,10 @@ class DataArguments(dllm.utils.DataArguments):
 @dataclass
 class TrainingArguments(dllm.utils.TrainingArguments):
     output_dir: str = None  # overwrite this
-    num_train_epochs: float = 20
-    learning_rate: float = 3e-4
-    # max_steps: int = 2_000
-    per_device_train_batch_size: int = 3
-    per_device_eval_batch_size: int = 3
-    eval_steps: float = 0.1
-    save_steps: float = 0.1
+    num_train_epochs: int = 10
+    learning_rate: float = 1e-4
+    per_device_train_batch_size: int = 2
+    per_device_eval_batch_size: int = 2
     # EditFlow specific args
     scheduler_cls: str = field(
         default="LinearKappaScheduler",
@@ -88,7 +70,6 @@ def train(
     model_args: ModelArguments,
     data_args: DataArguments,
     training_args: TrainingArguments,
-    ef_config_cls: type[transformers.PretrainedConfig],
 ):
     # necessary when batch does not contain "labels" field
     training_args.label_names = []
@@ -99,26 +80,8 @@ def train(
     dllm.utils.print_args_main(model_args, data_args, training_args)
     dllm.utils.initial_training_setup(model_args, data_args, training_args)
 
-    # ----- Load base Model and initialize EditFlow Model ---------------------------
-    # Create EditFlow model (bf16 init on CUDA)
-    ef_cfg = ef_config_cls.from_pretrained(
-        model_args.model_name_or_path,
-        dtype=model_args.dtype,
-        attn_implementation=model_args.attn_implementation,
-    )
-    with dllm.utils.init_device_context_manager():
-        model = transformers.AutoModel.from_config(ef_cfg)
-        if model_args.init_editflow_from_src:
-            # Load src model config & weights (bf16 on CUDA) for intializing EditFlow model
-            src_model = transformers.AutoModelForMaskedLM.from_pretrained(
-                model_args.model_name_or_path, dtype=model_args.dtype
-            )
-            # Initialize EditFlow model from the src model: copies backbone & clones lm_head
-            editflow.utils.init_editflow_from_src(
-                model, src_model, lm_head_key=model_args.lm_head_key
-            )
-            del src_model
-    model = dllm.utils.load_peft(model, model_args)
+    # ----- Load EditFlow Model ----------------------------------------------------
+    model = dllm.utils.get_model(model_args=model_args)
 
     def _no_flops(*args, **kwargs):
         return 0.0
@@ -140,7 +103,7 @@ def train(
                 tokenizer=tokenizer,
                 text_field=data_args.text_field,
                 seq_length=data_args.max_length,
-                insert_eos=data_args.insert_eos,
+                insert_eos=False,
                 drop_tail=data_args.drop_tail,
             ),
             batched=True,

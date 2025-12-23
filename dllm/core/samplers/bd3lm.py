@@ -9,12 +9,8 @@ from dataclasses import dataclass
 import torch
 import torch.nn.functional as F
 
-from dllm.core.samplers.base import (
-    SamplerOutput,
-    SamplerConfig,
-    BaseSampler,
-)
-from dllm.core.samplers.utils import get_num_transfer_tokens, add_gumbel_noise
+from dllm.core.samplers.base import BaseSampler, SamplerConfig, SamplerOutput
+from dllm.core.samplers.utils import add_gumbel_noise, get_num_transfer_tokens
 
 
 def build_staircase_attention_mask(
@@ -165,6 +161,20 @@ class BD3LMSampler(BaseSampler):
         config: BD3LMSamplerConfig | None = None,
         **kwargs,
     ) -> SamplerOutput | torch.Tensor:
+        """
+        Generate text using block diffusion language modeling.
+
+        Generates text block-by-block with a staircase attention pattern, where each
+        block undergoes multiple diffusion steps before moving to the next block.
+
+        Args:
+            inputs: List of input prompts (token tensors or lists of token IDs).
+            config: Sampler configuration, or None to use defaults.
+            **kwargs: Override specific config parameters.
+
+        Returns:
+            SamplerOutput with generated sequences, or raw tensor if return_dict=False.
+        """
 
         if config is None:
             config = BD3LMSamplerConfig()

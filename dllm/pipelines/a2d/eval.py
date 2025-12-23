@@ -9,22 +9,36 @@ accelerate launch \
     --model_args "pretrained=dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1,max_new_tokens=256,steps=256,block_size=32,cfg=0.0"
 """
 
-from types import SimpleNamespace
 from dataclasses import dataclass
+from types import SimpleNamespace
 
 import accelerate
 import torch
 import torch.nn.functional as F
 from datasets import Dataset
-from tqdm import tqdm
 from lm_eval.__main__ import cli_evaluate
 from lm_eval.api.instance import Instance
 from lm_eval.api.model import LM
 from lm_eval.api.registry import register_model
 from lm_eval.models.utils import get_dtype
+from tqdm import tqdm
 
 import dllm
 from dllm.core.samplers import BD3LMSampler, BD3LMSamplerConfig
+from dllm.pipelines.llada.eval import LLaDAEvalConfig, LLaDAEvalHarness
+
+
+@dataclass
+class MDLMEvalConfig(LLaDAEvalConfig):
+    """Alias config for A2D MDLM eval (inherits LLaDA settings)."""
+
+
+@register_model("mdlm")
+class MDLMEvalHarness(LLaDAEvalHarness):
+    def __init__(self, config: MDLMEvalConfig | None = None, **kwargs):
+        if config is None:
+            config = MDLMEvalConfig()
+        super().__init__(config=config, **kwargs)
 
 
 @dataclass
@@ -33,7 +47,6 @@ class BD3LMEvalConfig(BD3LMSamplerConfig):
     max_length: int = 2048
     steps: int = 128
     block_size: int = 32
-    enable_thinking: bool | None = None
 
     pretrained: str = ""
     dtype: str | torch.dtype = "auto"
@@ -41,6 +54,7 @@ class BD3LMEvalConfig(BD3LMSamplerConfig):
     mc_num: int = 128
     is_check_greedy: bool = False
     device: str = "cuda"
+
 
 @register_model("bd3lm")
 class BD3LMEvalHarness(LM):
@@ -69,7 +83,6 @@ class BD3LMEvalHarness(LM):
         max_length = kwargs.get("max_length", config.max_length)
         remasking = kwargs.get("remasking", config.remasking)
         right_shift_logits = kwargs.get("right_shift_logits", config.right_shift_logits)
-        enable_thinking = kwargs.get("enable_thinking", config.enable_thinking)
 
         accelerator = accelerate.Accelerator()
 
@@ -117,7 +130,6 @@ class BD3LMEvalHarness(LM):
         self.remasking = remasking
         self.is_check_greedy = is_check_greedy
         self.right_shift_logits = right_shift_logits
-        self.enable_thinking = enable_thinking
 
         # loglikelihood params
         self.mc_num = int(mc_num)
@@ -130,19 +142,14 @@ class BD3LMEvalHarness(LM):
         """
         Method to apply a chat template to a list of chat history between user and model.
         """
-        template_kwargs = {
-            "tokenize": False,
-            "add_generation_prompt": add_generation_prompt,
-            "continue_final_message": not add_generation_prompt,
-        }
-        if self.enable_thinking is not None:
-            template_kwargs["enable_thinking"] = self.enable_thinking
         chat_templated = self.tokenizer.apply_chat_template(
-            chat_history, **template_kwargs
+            chat_history,
+            tokenize=False,
+            add_generation_prompt=add_generation_prompt,
+            continue_final_message=not add_generation_prompt,
         )
         return chat_templated
 
-    
     @property
     def tokenizer_name(self) -> str:
         return self.tokenizer.name_or_path.replace("/", "__")
@@ -154,7 +161,6 @@ class BD3LMEvalHarness(LM):
     @property
     def world_size(self):
         return self._world_size
-
 
     def generate_until(self, requests: list[Instance]):
         def _tokenize(e):
@@ -210,7 +216,6 @@ class BD3LMEvalHarness(LM):
 
     def loglikelihood_rolling(self, requests):
         raise NotImplementedError("loglikelihood_rolling not supported for this model")
-
 
 
 if __name__ == "__main__":

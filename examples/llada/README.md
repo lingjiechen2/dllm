@@ -6,14 +6,14 @@ Resources and examples for training (finetuning & pretraining) and evaluating di
 
 ## Table of Contents
 - [Setup](#setup)
-- [Files overview](#files-overview)
+- [Files](#files-overview)
 - [Training](#training)
 - [Inference](#inference)
 - [Evaluation](#evaluation)
 
 <!-- ## Setup
 > [!IMPORTANT]  
-> **Slurm users:** Update `scripts/train.slurm.sh` and `mkdir logps`: see [(optional) Slurm setup](/README.md/#optional-slurm-setup) for details.
+> **Slurm users:** Update `scripts/train.slurm.sh` and `mkdir logs`: see [(optional) Slurm setup](/README.md/#optional-slurm-setup) for details.
 >
 > **MoE checkpoints:** For models like [`LLaDA-MoE-7B-A1B-Base`](https://huggingface.co/inclusionAI/LLaDA-MoE-7B-A1B-Base), set `"model_type"` to `"lladamoe"` in the checkpoint’s `config.json`:
 > ```diff
@@ -23,7 +23,7 @@ Resources and examples for training (finetuning & pretraining) and evaluating di
 > -->
 
 
-##  Files overview
+##  Files
 ```
 # pipeline modules relevant with LLaDA
 dllm/pipelines/llada
@@ -79,8 +79,10 @@ accelerate launch \
     --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
     --dataset_args "tatsu-lab/alpaca" \
     --max_length 1024 \ 
-    --num_train_epochs 4 \
+    --num_train_epochs 5 \
     --learning_rate 2e-5 \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 4 \
     --output_dir "models/LLaDA-8B-Base/alpaca"
 ```
 If you are using slurm and want to train across, for example, 2 nodes (16 GPUs total), run:
@@ -91,8 +93,10 @@ sbatch --nodes=2 --gres=gpu:8 scripts/train.slurm.sh \
     --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
     --dataset_args "tatsu-lab/alpaca" \
     --max_length 1024 \ 
-    --num_train_epochs 4 \
+    --num_train_epochs 5 \
     --learning_rate 2e-5 \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 4 \
     --output_dir "models/LLaDA-8B-Base/alpaca"
 ```
 
@@ -117,13 +121,11 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
     --model_name_or_path "GSAI-ML/LLaDA-8B-Base" \
     --dataset_args "data/sft/llada/tulu-3-sft-mixture" \
     --load_preprocessed_data True \
-    --max_length 2048 \
+    --max_length 1024 \
     --num_train_epochs 5 \
-    --learning_rate 1e-5 \
+    --learning_rate 2e-5 \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
-    --eval_steps 0.1 \
-    --save_steps 0.05 \
     --output_dir "models/LLaDA-8B-Base/tulu-3-sft-mixture"
 ```
 <!-- [TODO] Training curves are on Wandb; checkpoints with evaluation results are available on Hugging Face. See the [Evaluation](#evaluation) section below for evaluation instructions. -->
@@ -140,7 +142,9 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
     --dataset_args "mlfoundations/dclm-baseline-1.0" \
     --max_length 1024 \ 
     --max_steps 2000 \
-    --learning_rate 3e-4 \
+    --learning_rate 1e-4 \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 4 \
     --output_dir "models/LLaDA-8B-Base/dclm-baseline-1.0"
 ```
 
@@ -159,7 +163,7 @@ python examples/llada/chat.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct"
 
 For example, to evaluate [LLaDA-8B-Instruct](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) on [gsm8k](https://huggingface.co/datasets/openai/gsm8k) using 4 GPUs, run:
 ```shell
-# Use model_args to adjust the sampling arguments for evalution.
+# Use model_args to adjust the sampling arguments for evaluation.
 accelerate launch --num_processes 4 \
     dllm/pipelines/llada/eval.py \
     --tasks "gsm8k_cot" \

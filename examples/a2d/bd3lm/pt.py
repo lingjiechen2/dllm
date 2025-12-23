@@ -12,7 +12,7 @@ Local users
         examples/a2d/bd3lm/pt.py
 
 Slurm users
-# Note: run `mkdir logs` before running sbatch; and adjust 
+# Note: run `mkdir logs` before running sbatch; and adjust
 #       `partition` and `quotatype` in `scripts/train.slurm.sh` for your cluster.
 ------------
 - 1 Node, 8 GPUs (ZeRO-2):
@@ -26,12 +26,12 @@ Slurm users
         --script_path "examples/bd3lm/mdlm/pt.py"
 """
 
-import os
 import functools
+import os
 from dataclasses import dataclass, field
 
-import transformers
 import accelerate
+import transformers
 
 import dllm
 
@@ -66,8 +66,6 @@ class TrainingArguments(dllm.utils.TrainingArguments):
     learning_rate: float = 1e-4
     per_device_train_batch_size: int = 16
     per_device_eval_batch_size: int = 16
-    eval_steps: float = 0.1
-    save_steps: float = 0.1
     # a2d-specific
     block_size: int = 32
     right_shift_logits: bool = False

@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 
 import transformers
 
-from dllm.utils.utils import resolve_with_base_env, get_default_logger
+from dllm.utils.utils import get_default_logger, resolve_with_base_env
 
 logger = get_default_logger(__name__)
 
@@ -53,19 +53,19 @@ class TrainingArguments(transformers.TrainingArguments):
     report_to: str = "wandb"
     overwrite_output_dir: bool = True
     seed: int = 42
+    num_train_epochs: float = 10
+    learning_rate: float = 2e-5
+    lr_scheduler_type: str = "cosine"
     per_device_train_batch_size: int = 4
     per_device_eval_batch_size: int = 4
     gradient_accumulation_steps: int = 1
-    learning_rate: float = 2e-5
-    lr_scheduler_type: str = "cosine"
     warmup_ratio: float = 0.1
     bf16: bool = True
-    num_train_epochs: float = 4
     logging_steps: float = 10
     eval_on_start: bool = False
     eval_strategy: str = "steps"
-    eval_steps: float = 0.25
-    save_steps: float = 0.25
+    eval_steps: float = 0.1
+    save_steps: float = 0.1
     save_only_model: bool = True
 
     def __post_init__(self):

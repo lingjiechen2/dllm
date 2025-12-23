@@ -6,14 +6,14 @@ Local users
         --config_file scripts/accelerate_configs/ddp.yaml --num_processes 1 \
         examples/llada/pt.py \
         --load_in_4bit True --lora True
-    
+
 - 8 GPUs (FSDP):
     accelerate launch \
         --config_file scripts/accelerate_configs/fsdp.yaml \
         examples/llada/pt.py
 
 Slurm users
-# Note: run `mkdir logs` before running sbatch; and adjust 
+# Note: run `mkdir logs` before running sbatch; and adjust
 #       `partition` and `quotatype` in `scripts/train.slurm.sh` for your cluster.
 ------------
 - 24 Nodes, 192 GPUs (FSDP):
@@ -22,13 +22,13 @@ Slurm users
         --script_path "examples/llada/pt.py"
 """
 
-import os
 import functools
+import os
 from dataclasses import dataclass, field
 
+import accelerate
 import torch
 import transformers
-import accelerate
 
 import dllm
 
@@ -71,12 +71,10 @@ class TrainingArguments(dllm.utils.TrainingArguments):
     output_dir: str = (
         "models/LLaDA-8B-Base/dclm-baseline-1.0[train:10_000_000,test:10_000]"
     )
-    learning_rate: float = 3e-4
-    max_steps: int = 2_000
+    max_steps: int = 100_000
+    learning_rate: float = 1e-4
     per_device_train_batch_size: int = 4
     gradient_accumulation_steps: int = 4
-    eval_steps: float = 0.05
-    save_steps: float = 0.05
 
 
 def train():

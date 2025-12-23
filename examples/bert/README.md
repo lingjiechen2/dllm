@@ -6,7 +6,7 @@
 This directory provides two key sets of resources:
 
 -  **[Warmup](#warmup)**: Tutorials for continual pretraining and SFTing any BERT-style model on small datasets to generate text with diffusion.
--  **[`BERT-Chat`](#bert-chat)**: The exact training, inference, and evaluation scripts used to develop the 🤗checkpoints: [`ModernBERT-base-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0.1) and [`ModernBERT-large-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0.1), two BERTs finetuned as Chatbots via SFT. For a deep dive into experimental results, lessons learned, and more reproduction details, please see our full [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) BERT-Chat Report](https://api.wandb.ai/links/asap-zzhou/101h5xvg).
+-  **[`BERT-Chat`](#bert-chat)**: The exact training, inference, and evaluation scripts for developing the 🤗checkpoints: [`ModernBERT-base-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0.1) and [`ModernBERT-large-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0.1), two BERTs finetuned as Chatbots via SFT. For a deep dive into experimental results, lessons learned, and more reproduction details, please see our full [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) BERT-Chat Report](https://api.wandb.ai/links/asap-zzhou/101h5xvg).
 
 <p align="center" style="margin-top: 15px;">
     <img src="/examples/bert/assets/chat.gif" alt="chat" width="70%">
@@ -17,7 +17,7 @@ This directory provides two key sets of resources:
   </em>
 </p>
 
-## Files overview
+## Files
 ```
 # example entry points for training / inference / evaluation
 examples/bert
@@ -36,7 +36,7 @@ You can use any BERT model instead for example, by `--model_name_or_path "Facebo
 
 ### Continual Pretraining
 
-To train [`ModernBERT-large`](https://huggingface.co/answerdotai/ModernBERT-large) on the [`tiny-shakespeare`](https://huggingface.co/datasets/Trelis/tiny-shakespeare) dataset, run:
+To train [`ModernBERT-large`](https://huggingface.co/answerdotai/ModernBERT-large) on the [`tiny-shakespeare`](https://huggingface.co/datasets/Trelis/tiny-shakespeare) dataset, run (on 1 GPU):
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_processes 1 \
     examples/bert/pt.py \
@@ -45,12 +45,10 @@ accelerate launch --config_file scripts/accelerate_configs/ddp.yaml --num_proces
     --text_field "Text" \
     --insert_eos False \
     --max_length 128 \
+    --num_train_epochs 10 \
     --learning_rate 1e-4 \
-    --num_train_epochs 20 \
     --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 16 \
-    --eval_steps 0.1 \
-    --save_steps 0.1 \
     --output_dir "models/ModernBERT-large/tiny-shakespeare"
 ```
 
@@ -60,24 +58,55 @@ To sample from the model interactively:
 # or press Enter to let the model generate text from scratch.
 python -u examples/bert/chat.py \
     --model_name_or_path "models/ModernBERT-large/tiny-shakespeare/checkpoint-final" \
-    --chat_template False --remasking "random" --steps 128 --max_new_tokens 128
+    --chat_template False --remasking "random" --temperature 0.7
 ```
+
+<details>
+<summary>Example of pretraining on a larger dataset (OpenWebText) in streaming mode</summary>
+
+To train [`ModernBERT-large`](https://huggingface.co/answerdotai/ModernBERT-large) on the [`openwebtext`](https://huggingface.co/datasets/dylanebert/openwebtext) dataset in streaming mode, run (on 8 GPUs):
+```shell
+accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
+    examples/bert/pt.py \
+    --model_name_or_path "answerdotai/ModernBERT-large" \
+    --dataset_args "dylanebert/openwebtext" \
+    --text_field "text" \
+    --streaming True \
+    --insert_eos True \
+    --max_length 512 \
+    --max_steps 20000 \
+    --learning_rate 1e-4 \
+    --per_device_train_batch_size 16 \
+    --per_device_eval_batch_size 16 \
+    --eval_strategy "no" \
+    --output_dir "models/ModernBERT-large/openwebtext"
+```
+
+To sample from the model interactively:
+```shell
+# Enter a prompt (e.g., "Lebron James is"),
+# or press Enter to let the model generate text from scratch.
+python -u examples/bert/chat.py \
+    --model_name_or_path "models/ModernBERT-large/openwebtext/checkpoint-final" \
+    --chat_template False --remasking "random" --temperature 0.7
+```
+
+</details>
+
 
 ### SFT
 
-To train [`ModernBERT-large`](https://huggingface.co/answerdotai/ModernBERT-large) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset, run:
+To train [`ModernBERT-large`](https://huggingface.co/answerdotai/ModernBERT-large) on the [`alpaca`](https://huggingface.co/datasets/tatsu-lab/alpaca) dataset, run (on 8 GPUs):
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
     examples/bert/sft.py \
     --model_name_or_path "answerdotai/ModernBERT-large" \
     --dataset_args "tatsu-lab/alpaca" \
     --max_length 512 \
+    --num_train_epochs 10 \
     --learning_rate 1e-4 \
-    --num_train_epochs 20 \
     --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 16 \
-    --eval_steps 0.1 \
-    --save_steps 0.1 \
     --output_dir "models/ModernBERT-large/alpaca"
 ```
 
@@ -97,7 +126,7 @@ For training curves and other details, please see [![blog](https://img.shields.i
 
 The [`BERT-Chat`](https://huggingface.co/collections/dllm-collection/bert-chat) models are trained purely with SFT on the [`tulu-3-sft-mixture`](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture) and [`smoltalk`](https://huggingface.co/datasets/HuggingFaceTB/smoltalk) dataset.
 
-To reproduce [`ModernBERT-base-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0.1), run the command below (about 4 hours on 8 GPUs):
+To reproduce [`ModernBERT-base-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0.1), run the command below (about 4 hours on 8 A100s):
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
     examples/bert/sft.py \
@@ -106,14 +135,13 @@ accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_proc
     --max_length 1024 \
     --learning_rate 1e-4 \
     --num_train_epochs 10 \
+    --learning_rate 1e-4 \
     --per_device_train_batch_size 48 \
     --per_device_eval_batch_size 48 \
-    --eval_steps 0.1 \
-    --save_steps 0.1 \
     --output_dir "models/ModernBERT-base/tulu-3-sft-mixture+smoltalk"
 ```
 
-To reproduce [`ModernBERT-large-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0.1), run the command below (about 7 hours on 8 GPUs):
+To reproduce [`ModernBERT-large-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0.1), run the command below (about 7 hours on 8 A100s):
 ```shell
 accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_processes 8 \
     examples/bert/sft.py \
@@ -122,10 +150,9 @@ accelerate launch --config_file scripts/accelerate_configs/zero2.yaml --num_proc
     --max_length 1024 \
     --learning_rate 1e-4 \
     --num_train_epochs 10 \
+    --learning_rate 1e-4 \
     --per_device_train_batch_size 48 \
     --per_device_eval_batch_size 48 \
-    --eval_steps 0.1 \
-    --save_steps 0.1 \
     --output_dir "models/ModernBERT-large/tulu-3-sft-mixture+smoltalk"
 ```
 
@@ -136,12 +163,12 @@ To chat with the model:
 python -u examples/bert/chat.py --model_name_or_path "dllm-collection/ModernBERT-large-chat-v0.1"
 ```
 
-## Evaluation
+### Evaluation
 > Read [(optional) Evaluation setup](/README.md/#optional-evaluation-setup) before running evaluation.
 
 For example, to evaluate [`ModernBERT-large-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0.1) on [`gsm8k`](https://huggingface.co/datasets/openai/gsm8k) using 4 GPUs, run:
 ```shell
-# Use model_args to adjust the sampler arguments for evalution.
+# Use model_args to adjust the sampler arguments for evaluation.
 accelerate launch --num_processes 4 \
     dllm/pipelines/bert/eval.py \
     --tasks "gsm8k_bert" \
@@ -157,7 +184,7 @@ bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-base
 bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-large-chat-v0.1"
 ```
 
-### Evaluation Results
+#### Evaluation results
 <!-- 
 |                     | LAMBADA | GSM8K | CEval | BBH | MATH | MMLU | Winogrande | HellaSwag | CMMLU |
 |:------------------------------------|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|

@@ -9,19 +9,19 @@ accelerate launch \
     --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,max_new_tokens=512,steps=512,block_size=512,cfg=0.0,logits_eos_inf=False,confidence_eos_eot_inf=True"
 """
 
-from types import SimpleNamespace
 from dataclasses import dataclass
+from types import SimpleNamespace
 
 import accelerate
 import torch
 import torch.nn.functional as F
 from datasets import Dataset
-from tqdm import tqdm
 from lm_eval.__main__ import cli_evaluate
 from lm_eval.api.instance import Instance
 from lm_eval.api.model import LM
 from lm_eval.api.registry import register_model
 from lm_eval.models.utils import get_dtype
+from tqdm import tqdm
 
 import dllm
 from dllm.core.samplers import MDLMSampler, MDLMSamplerConfig
@@ -34,7 +34,6 @@ class LLaDAEvalConfig(MDLMSamplerConfig):
     max_length: int = 4096
     steps: int = 1024
     block_size: int = 1024
-    enable_thinking: bool | None = None
 
     pretrained: str = ""
     dtype: str | torch.dtype = "auto"
@@ -91,7 +90,6 @@ class LLaDAEvalHarness(LM):
             kwargs.get("begin_suppress_tokens", config.begin_suppress_tokens)
         )
         right_shift_logits = kwargs.get("right_shift_logits", config.right_shift_logits)
-        enable_thinking = kwargs.get("enable_thinking", config.enable_thinking)
 
         accelerator = accelerate.Accelerator()
 
@@ -141,7 +139,6 @@ class LLaDAEvalHarness(LM):
         self.suppress_tokens = suppress_tokens
         self.begin_suppress_tokens = begin_suppress_tokens
         self.right_shift_logits = right_shift_logits
-        self.enable_thinking = enable_thinking
 
         # loglikelihood params
         self.mc_num = int(mc_num)

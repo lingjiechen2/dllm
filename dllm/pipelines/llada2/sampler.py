@@ -2,7 +2,7 @@
 Block diffusion-style sampler for LLaDA2-MoE.
 
 This mirrors the blockwise masked-denoising generate logic from
-`dllm.pipelines.llada2.modeling_llada2_moe`, but as a standalone sampler that follows the
+`dllm.pipelines.llada2.models.modeling_llada2_moe`, but as a standalone sampler that follows the
 BaseSampler interface (similar to bd3lm/mdlm).
 """
 
@@ -29,13 +29,17 @@ def even_transfer_schedule(block_size: int, steps_per_block: int) -> torch.Tenso
     return schedule
 
 
-def top_k_top_p(logits: torch.Tensor, top_k: Optional[int], top_p: Optional[float]) -> torch.Tensor:
+def top_k_top_p(
+    logits: torch.Tensor, top_k: Optional[int], top_p: Optional[float]
+) -> torch.Tensor:
     """Filter logits with top-k / top-p; returns filtered logits."""
     if top_k is not None and top_k > 0:
         top_k = min(top_k, logits.size(-1))
         values, _ = torch.topk(logits, top_k)
         min_values = values[..., -1, None]
-        logits = torch.where(logits < min_values, torch.full_like(logits, float("-inf")), logits)
+        logits = torch.where(
+            logits < min_values, torch.full_like(logits, float("-inf")), logits
+        )
 
     if top_p is not None and 0.0 < top_p < 1.0:
         sorted_logits, sorted_indices = torch.sort(logits, descending=True)
@@ -69,13 +73,15 @@ def sample_tokens(
     logits = logits / temperature
     filtered = top_k_top_p(logits, top_k, top_p)
     probs = F.softmax(filtered, dim=-1)
-    tokens = torch.multinomial(probs.view(-1, probs.size(-1)), num_samples=1).view(*probs.shape[:-1])
+    tokens = torch.multinomial(probs.view(-1, probs.size(-1)), num_samples=1).view(
+        *probs.shape[:-1]
+    )
     token_prob = torch.gather(probs, -1, tokens.unsqueeze(-1)).squeeze(-1)
     return tokens, token_prob
 
 
 @dataclass
-class LLaDA2MoeSamplerConfig(SamplerConfig):
+class LLaDA2SamplerConfig(SamplerConfig):
     max_new_tokens: int = 128
     block_size: int = 32
     steps_per_block: int = 32
@@ -88,12 +94,12 @@ class LLaDA2MoeSamplerConfig(SamplerConfig):
 
 
 @dataclass
-class LLaDA2MoeSampler(BaseSampler):
+class LLaDA2Sampler(BaseSampler):
     @torch.no_grad()
     def sample(
         self,
         inputs: list[torch.Tensor | list],
-        config: LLaDA2MoeSamplerConfig | None = None,
+        config: LLaDA2SamplerConfig | None = None,
         **kwargs,
     ) -> SamplerOutput | torch.Tensor:
         """
@@ -101,7 +107,7 @@ class LLaDA2MoeSampler(BaseSampler):
         Currently supports equal-length prompts.
         """
         if config is None:
-            config = LLaDA2MoeSamplerConfig()
+            config = LLaDA2SamplerConfig()
 
         block_size = kwargs.get("block_size", config.block_size)
         steps_per_block = kwargs.get("steps_per_block", config.steps_per_block)
@@ -125,7 +131,9 @@ class LLaDA2MoeSampler(BaseSampler):
             ]
         prompt_lens = [p.shape[0] for p in inputs]
         if len(set(prompt_lens)) != 1:
-            raise ValueError("LLaDA2MoeSampler expects all prompts to have the same length.")
+            raise ValueError(
+                "LLaDA2Sampler expects all prompts to have the same length."
+            )
 
         prompt_len = prompt_lens[0]
         steps_per_block = min(
@@ -137,24 +145,37 @@ class LLaDA2MoeSampler(BaseSampler):
         total_len = num_blocks * block_size
 
         # Block-wise attention mask (block causal, bidirectional within block)
-        block_mask = torch.tril(torch.ones(num_blocks, num_blocks, device=self.model.device))
+        block_mask = torch.tril(
+            torch.ones(num_blocks, num_blocks, device=self.model.device)
+        )
         block_attn = (
-            block_mask.repeat_interleave(block_size, dim=0)
-            .repeat_interleave(block_size, dim=1)
-            .unsqueeze(0)
-            .unsqueeze(0)
-        ).log().to(torch.bfloat16)
+            (
+                block_mask.repeat_interleave(block_size, dim=0)
+                .repeat_interleave(block_size, dim=1)
+                .unsqueeze(0)
+                .unsqueeze(0)
+            )
+            .log()
+            .to(torch.bfloat16)
+        )
 
         position_ids = torch.arange(total_len, device=self.model.device).unsqueeze(0)
 
         # Canvas initialized with masks, prompts filled at the front
-        x = torch.full((len(inputs), total_len), mask_id, dtype=torch.long, device=self.model.device)
+        x = torch.full(
+            (len(inputs), total_len),
+            mask_id,
+            dtype=torch.long,
+            device=self.model.device,
+        )
         for i, p in enumerate(inputs):
             x[i, : prompt_lens[i]] = p
 
         prompt_blocks = prompt_len // block_size
         denoising_steps_per_block = steps_per_block
-        transfer_schedule = even_transfer_schedule(block_size, denoising_steps_per_block)
+        transfer_schedule = even_transfer_schedule(
+            block_size, denoising_steps_per_block
+        )
 
         histories = [x.clone()] if return_dict else None
 
@@ -184,7 +205,11 @@ class LLaDA2MoeSampler(BaseSampler):
                 transfer_index = torch.zeros_like(block_slice, dtype=torch.bool)
 
                 for b in range(block_slice.size(0)):
-                    conf = torch.where(active_mask[b], probs[b], torch.full_like(probs[b], -float("inf")))
+                    conf = torch.where(
+                        active_mask[b],
+                        probs[b],
+                        torch.full_like(probs[b], -float("inf")),
+                    )
                     high_conf = (conf > threshold) & active_mask[b]
                     if high_conf.sum().item() >= num_to_transfer:
                         transfer_index[b] = high_conf
@@ -211,7 +236,7 @@ class LLaDA2MoeSampler(BaseSampler):
     def infill(
         self,
         inputs: list[torch.Tensor, list],
-        config: LLaDA2MoeSamplerConfig | None = None,
+        config: LLaDA2SamplerConfig | None = None,
         **kwargs,
     ) -> SamplerOutput:
         raise NotImplementedError

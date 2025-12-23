@@ -39,6 +39,7 @@ line-length = 88
 exclude = '''
 (
     (^|/)dllm/pipelines/llada/models(/|$)|
+    (^|/)dllm/pipelines/llada2/models(/|$)|
     (^|/)dllm/pipelines/dream/models(/|$)|
     (^|/)dllm/pipelines/a2d/models(/|$)|
     (^|/)lm-evaluation-harness(/|$)
