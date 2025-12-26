@@ -266,7 +266,7 @@ class BERTEvalHarness(LM):
 
     def _encode_pair(
         self, context: str, continuation: str
-    ) -> tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[list[int], list[int]]:
         """
         Move trailing spaces in the context to the beginning of the continuation
         and encode both pieces into token ids.
