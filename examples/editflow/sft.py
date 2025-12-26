@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from functools import partial
 
 import accelerate
+import transformers
 
 import dllm
 from dllm.pipelines import editflow
@@ -13,6 +14,22 @@ logger = dllm.utils.get_default_logger(__name__)
 @dataclass
 class ModelArguments(dllm.utils.ModelArguments):
     model_name_or_path: str = None  # overwrite this
+    lm_head_key: str = field(
+        default=None,
+        metadata={
+            "help": (
+                "The key to the `lm_head` in the source model for initializing operation heads in the EditFlow model. "
+                "Overwrite this when `init_editflow_from_src` = True"
+            )
+        },
+    )
+    init_editflow_from_src: bool = field(
+        default=True,
+        metadata={
+            "help": "Whether to initialize EditFlow model from the source model."
+        },
+    )
+    init_editflow_from_editflow: bool = False
 
 
 @dataclass
@@ -28,10 +45,9 @@ class DataArguments(dllm.utils.DataArguments):
 @dataclass
 class TrainingArguments(dllm.utils.TrainingArguments):
     output_dir: str = None  # overwrite this
-    num_train_epochs: float = 10
-    learning_rate: float = 1e-4
     per_device_train_batch_size: int = 2
     per_device_eval_batch_size: int = 2
+    learning_rate: float = 5e-5
     # EditFlow specific args
     scheduler_cls: str = field(
         default="LinearKappaScheduler",
@@ -51,7 +67,7 @@ class TrainingArguments(dllm.utils.TrainingArguments):
         metadata={"help": "The maximum weight (κ'(t) / (1 - κ(t))) for the loss."},
     )
     x0_sampler: str = field(
-        default="masks[length:64]",
+        default="masks[length:128]",
         metadata={
             "help": (
                 "Choose the x0 sampler. "
@@ -92,6 +108,7 @@ def train(
     model_args: ModelArguments,
     data_args: DataArguments,
     training_args: TrainingArguments,
+    ef_config_cls: type[transformers.PretrainedConfig],
 ):
     # necessary when batch does not contain "labels" field
     training_args.label_names = []
@@ -101,7 +118,27 @@ def train(
     dllm.utils.initial_training_setup(model_args, data_args, training_args)
 
     # ----- Load EditFlow Model ----------------------------------------------------
-    model = dllm.utils.get_model(model_args=model_args)
+    if model_args.init_editflow_from_editflow:
+        model = dllm.utils.get_model(model_args=model_args)
+    else:
+        ef_cfg = ef_config_cls.from_pretrained(
+            model_args.model_name_or_path,
+            dtype=model_args.dtype,
+            attn_implementation=model_args.attn_implementation,
+        )
+        with dllm.utils.init_device_context_manager():
+            model = transformers.AutoModel.from_config(ef_cfg)
+            if model_args.init_editflow_from_src:
+                # Load src model config & weights (bf16 on CUDA) for initializing EditFlow model
+                src_model = transformers.AutoModelForMaskedLM.from_pretrained(
+                    model_args.model_name_or_path, dtype=model_args.dtype
+                )
+                # Initialize EditFlow model from the src model: copies backbone & clones lm_head
+                editflow.utils.init_editflow_from_src(
+                    model, src_model, lm_head_key=model_args.lm_head_key
+                )
+                del src_model
+        model = dllm.utils.load_peft(model, model_args)
 
     def _no_flops(*args, **kwargs):
         return 0.0
@@ -117,7 +154,7 @@ def train(
             data_args.dataset_args,
             load_preprocessed_data=data_args.load_preprocessed_data,
         )
-        if not data_args.load_preprocessed_data:
+        if data_args.load_preprocessed_data:
             map_fn = partial(
                 sft_map_fn,
                 tokenizer=tokenizer,
@@ -134,6 +171,7 @@ def train(
     # ----- Training --------------------------------------------------------------
     accelerate.PartialState().wait_for_everyone()
     logger.info("Start training...")
+    breakpoint()
     trainer = editflow.EditFlowTrainer(
         model=model,
         tokenizer=tokenizer,

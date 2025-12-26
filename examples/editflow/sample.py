@@ -1,4 +1,4 @@
-"""
+tell"""
 python -u examples/editflow/sample.py --model_name_or_path "YOUR_MODEL_PATH"
 """
 
@@ -45,7 +45,7 @@ print("TEST: editflow.sample()".center(80))
 print("=" * 80)
 
 messages = [
-    [{"role": "user", "content": "Lily runs 12 km/h for 4 hours. How far in 8 hours?"}],
+    [{"role": "user", "content": """Complete the graph from the partial JSON below. Only the node list is provided; infer all missing edges. Return ONLY the JSON with keys "nodes" and "edges".\n\nPartial graph (nodes-only):\n{"nodes": [{"id": "Other starchy vegetables"}, {"id": "Vegetables and Vegetable Products"}, {"id": "Chicken patties, nuggets and tenders"}, {"id": "Poultry Products"}, {"id": "Other red and orange vegetables"}, {"id": "Flavored milk, nonfat"}, {"id": "Dairy and Egg Products"}, {"id": "Broccoli"}, {"id": "FOODON_03411443"}]}"""}],
     # [{"role": "user", "content": "Please write an educational python function."}],
 ]
 

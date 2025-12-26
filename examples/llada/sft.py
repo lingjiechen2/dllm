@@ -65,6 +65,19 @@ class TrainingArguments(dllm.utils.TrainingArguments):
 
 
 def train():
+    import traceback
+    import transformers
+
+    orig = transformers.PreTrainedModel.resize_token_embeddings
+
+    def wrapped(self, *args, **kwargs):
+        print(">>> resize_token_embeddings called:", args, kwargs)
+        traceback.print_stack(limit=25)
+        return orig(self, *args, **kwargs)
+
+    transformers.PreTrainedModel.resize_token_embeddings = wrapped
+
+
     # ----- Argument parsing -------------------------------------------------------
     parser = transformers.HfArgumentParser(
         (ModelArguments, DataArguments, TrainingArguments)
@@ -75,8 +88,14 @@ def train():
 
     # ----- Model ------------------------------------------------------------------
     model = dllm.utils.get_model(model_args=model_args)
+    from torch.distributed.fsdp import FullyShardedDataParallel as FSDP
+
+    print("after get_model:", type(model), "is FSDP?", isinstance(model, FSDP), flush=True)
+    print("after resize:", type(model), "is FSDP?", isinstance(model, FSDP), flush=True)
     # ----- Tokenizer --------------------------------------------------------------
     tokenizer = dllm.utils.get_tokenizer(model_args=model_args)
+    breakpoint()
+    print("len(tokenizer) right after get_tokenizer:", len(tokenizer), flush=True)
 
     # ----- Dataset ----------------------------------------------------------------
     with accelerate.PartialState().local_main_process_first():
@@ -97,6 +116,7 @@ def train():
             )
         # truncate / filter long sequences if needed
         dataset = dllm.utils.post_process_dataset(dataset, data_args)
+    print("len(tokenizer) after map:", len(tokenizer), flush=True)
 
     # ----- Training --------------------------------------------------------------
     accelerate.PartialState().wait_for_everyone()
@@ -118,6 +138,8 @@ def train():
             )
         ),
     )
+    print("after trainer init:", type(trainer.model), "is FSDP?", isinstance(trainer.model, FSDP), flush=True)
+
     trainer.train()
     trainer.save_model(os.path.join(training_args.output_dir, "checkpoint-final"))
     trainer.processing_class.save_pretrained(

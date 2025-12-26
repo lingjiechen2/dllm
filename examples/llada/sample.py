@@ -46,7 +46,7 @@ print("TEST: llada.sample()".center(80))
 print("=" * 80)
 
 messages = [
-    [{"role": "user", "content": "Lily runs 12 km/h for 4 hours. How far in 8 hours?"}],
+    # [{"role": "user", "content": "Lily runs 12 km/h for 4 hours. How far in 8 hours?"}],
     [{"role": "user", "content": "Please write an educational python function."}],
 ]
 
@@ -57,6 +57,9 @@ inputs = tokenizer.apply_chat_template(
 )
 
 outputs = sampler.sample(inputs, sampler_config, return_dict=True)
+import torch
+torch.save(outputs.histories, 'test_histories.pt')
+breakpoint()
 sequences = dllm.utils.decode_trim(tokenizer, outputs.sequences.tolist(), inputs)
 
 for iter, s in enumerate(sequences):

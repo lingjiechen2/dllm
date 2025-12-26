@@ -10,7 +10,7 @@ export NCCL_DEBUG=warn                      # Show NCCL warnings for better diag
 export TORCH_DISTRIBUTED_DEBUG=DETAIL       # Provide detailed logging for PyTorch distributed debugging
 
 # ===== Input Arguments =====
-model_name_or_path="GSAI-ML/LLaDA-8B-Instruct"
+model_name_or_path="/home/lingjie7/models/huggingface/GSAI-ML/LLaDA-8B-Instruct"
 instruct=True
 num_gpu=1
 while [[ $# -gt 0 ]]; do

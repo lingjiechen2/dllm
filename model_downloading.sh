@@ -17,7 +17,7 @@ download_dataset() {
     local dataset_name="$1"
     local target_dir="${DATASET_DIR_BASE}/${dataset_name}"
     echo "📚 Downloading dataset: ${dataset_name}"
-    echo "📦 Target path: ${πtarget_dir}"
+    echo "📦 Target path: ${target_dir}"
     mkdir -p "${target_dir}"
     hf download "${dataset_name}" --repo-type dataset --local-dir "${target_dir}"
 }

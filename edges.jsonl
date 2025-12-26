@@ -1,0 +1,139 @@
+{"source": "Milk, whole", "relation": "subClassOf", "target": "Dairy and Egg Products"}
+{"source": "Milk, reduced fat", "relation": "subClassOf", "target": "Dairy and Egg Products"}
+{"source": "Milk, lowfat", "relation": "subClassOf", "target": "Dairy and Egg Products"}
+{"source": "Milk, nonfat", "relation": "subClassOf", "target": "Dairy and Egg Products"}
+{"source": "Flavored milk, whole", "relation": "subClassOf", "target": "Dairy and Egg Products"}
+{"source": "Flavored milk, reduced fat", "relation": "subClassOf", "target": "Dairy and Egg Products"}
+{"source": "Flavored milk, lowfat", "relation": "subClassOf", "target": "Dairy and Egg Products"}
+{"source": "Flavored milk, nonfat", "relation": "subClassOf", "target": "Dairy and Egg Products"}
+{"source": "Milk shakes and other dairy drinks", "relation": "subClassOf", "target": "Dairy and Egg Products"}
+{"source": "Milk substitutes", "relation": "subClassOf", "target": "Beverages"}
+{"source": "Cheese", "relation": "subClassOf", "target": "Dairy and Egg Products"}
+{"source": "Cottage/ricotta cheese", "relation": "subClassOf", "target": "Dairy and Egg Products"}
+{"source": "Yogurt, regular", "relation": "subClassOf", "target": "Dairy and Egg Products"}
+{"source": "Yogurt, Greek", "relation": "subClassOf", "target": "Dairy and Egg Products"}
+{"source": "Beef, excludes ground", "relation": "subClassOf", "target": "Beef Products"}
+{"source": "Ground beef", "relation": "subClassOf", "target": "Beef Products"}
+{"source": "Pork", "relation": "subClassOf", "target": "Pork Products"}
+{"source": "Lamb, goat, game", "relation": "sameAs", "target": "FOODON_03411669"}
+{"source": "Chicken, whole pieces", "relation": "subClassOf", "target": "Poultry Products"}
+{"source": "Chicken patties, nuggets and tenders", "relation": "subClassOf", "target": "Poultry Products"}
+{"source": "Turkey, duck, other poultry", "relation": "subClassOf", "target": "Poultry Products"}
+{"source": "Fish", "relation": "subClassOf", "target": "Finfish and Shellfish Products"}
+{"source": "Shellfish", "relation": "subClassOf", "target": "Finfish and Shellfish Products"}
+{"source": "Shellfish", "relation": "sameAs", "target": "FOODON_03411433"}
+{"source": "Eggs and omelets", "relation": "subClassOf", "target": "Dairy and Egg Products"}
+{"source": "Bacon", "relation": "subClassOf", "target": "Pork Products"}
+{"source": "Frankfurters", "relation": "subClassOf", "target": "Sausages and Luncheon Meats"}
+{"source": "Sausages", "relation": "subClassOf", "target": "Sausages and Luncheon Meats"}
+{"source": "Beans, peas, legumes", "relation": "subClassOf", "target": "Legumes and Legume Products"}
+{"source": "Beans, peas, legumes", "relation": "subClassOf", "target": "FOODON_03412265"}
+{"source": "Nuts and seeds", "relation": "subClassOf", "target": "Nut and Seed Products"}
+{"source": "Processed soy products", "relation": "subClassOf", "target": "Legumes and Legume Products"}
+{"source": "Poultry mixed dishes", "relation": "subClassOf", "target": "Poultry Products"}
+{"source": "Bean, pea, legume dishes", "relation": "subClassOf", "target": "Legumes and Legume Products"}
+{"source": "Vegetable dishes", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "Fried rice and lo/chow mein", "relation": "subClassOf", "target": "Cereal Grains and Pasta"}
+{"source": "Egg rolls, dumplings, sushi", "relation": "subClassOf", "target": "Restaurant Foods"}
+{"source": "Pizza", "relation": "subClassOf", "target": "Baked Products"}
+{"source": "Pizza", "relation": "sameAs", "target": "FOODON_00003928"}
+{"source": "Chicken/turkey sandwiches (single code)", "relation": "subClassOf", "target": "Poultry Products"}
+{"source": "Soups", "relation": "subClassOf", "target": "Soups, Sauces, and Gravies"}
+{"source": "Rice", "relation": "subClassOf", "target": "Cereal Grains and Pasta"}
+{"source": "Pasta, noodles, cooked grains", "relation": "subClassOf", "target": "Cereal Grains and Pasta"}
+{"source": "Yeast breads", "relation": "subClassOf", "target": "Baked Products"}
+{"source": "Rolls and buns", "relation": "subClassOf", "target": "Baked Products"}
+{"source": "Bagels and English muffins", "relation": "subClassOf", "target": "Baked Products"}
+{"source": "Biscuits, muffins, quick breads", "relation": "subClassOf", "target": "Baked Products"}
+{"source": "Pancakes, waffles, French toast", "relation": "subClassOf", "target": "Baked Products"}
+{"source": "Grits and other cooked cereals", "relation": "subClassOf", "target": "Cereal Grains and Pasta"}
+{"source": "Pretzels/snack mix", "relation": "subClassOf", "target": "Baked Products"}
+{"source": "Crackers, excludes saltines", "relation": "subClassOf", "target": "Baked Products"}
+{"source": "Saltine crackers", "relation": "subClassOf", "target": "Baked Products"}
+{"source": "Cereal bars", "relation": "subClassOf", "target": "Cereal Grains and Pasta"}
+{"source": "Cakes and pies", "relation": "subClassOf", "target": "Baked Products"}
+{"source": "Cookies and brownies", "relation": "subClassOf", "target": "Baked Products"}
+{"source": "Doughnuts, sweet rolls, pastries", "relation": "subClassOf", "target": "Baked Products"}
+{"source": "Candy containing chocolate", "relation": "subClassOf", "target": "Sweets"}
+{"source": "Candy not containing chocolate", "relation": "subClassOf", "target": "Sweets"}
+{"source": "Apples", "relation": "subClassOf", "target": "Fruits and Fruit Juices"}
+{"source": "Bananas", "relation": "subClassOf", "target": "Fruits and Fruit Juices"}
+{"source": "Grapes", "relation": "subClassOf", "target": "Fruits and Fruit Juices"}
+{"source": "Peaches and nectarines", "relation": "subClassOf", "target": "Fruits and Fruit Juices"}
+{"source": "Strawberries", "relation": "subClassOf", "target": "Fruits and Fruit Juices"}
+{"source": "Strawberries", "relation": "subClassOf", "target": "FOODON_03411231"}
+{"source": "Blueberries and other berries", "relation": "subClassOf", "target": "Fruits and Fruit Juices"}
+{"source": "Citrus fruits", "relation": "subClassOf", "target": "Fruits and Fruit Juices"}
+{"source": "Melons", "relation": "sameAs", "target": "FOODON_03411283"}
+{"source": "Dried fruits", "relation": "subClassOf", "target": "Fruits and Fruit Juices"}
+{"source": "Other fruits and fruit salads", "relation": "subClassOf", "target": "Fruits and Fruit Juices"}
+{"source": "Pears", "relation": "subClassOf", "target": "Fruits and Fruit Juices"}
+{"source": "Pineapple", "relation": "subClassOf", "target": "Fruits and Fruit Juices"}
+{"source": "Pineapple", "relation": "sameAs", "target": "NCBITaxon_4615"}
+{"source": "Mango and papaya", "relation": "subClassOf", "target": "Fruits and Fruit Juices"}
+{"source": "Tomatoes", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "Carrots", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "Carrots", "relation": "sameAs", "target": "FOODON_03411227"}
+{"source": "Other red and orange vegetables", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "Broccoli", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "Broccoli", "relation": "sameAs", "target": "FOODON_03411443"}
+{"source": "Spinach", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "Spinach", "relation": "sameAs", "target": "NCBITaxon_3562"}
+{"source": "Lettuce and lettuce salads", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "Other dark green vegetables", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "String beans", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "Cabbage", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "Cabbage", "relation": "sameAs", "target": "FOODON_03411406"}
+{"source": "Onions", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "Onions", "relation": "sameAs", "target": "FOODON_03411300"}
+{"source": "Corn", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "Other starchy vegetables", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "Other vegetables and combinations", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "Fried vegetables", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "Vegetables on a sandwich", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "Citrus juice", "relation": "subClassOf", "target": "Fruits and Fruit Juices"}
+{"source": "Apple juice", "relation": "subClassOf", "target": "Fruits and Fruit Juices"}
+{"source": "Other fruit juice", "relation": "subClassOf", "target": "Fruits and Fruit Juices"}
+{"source": "Vegetable juice", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "Diet soft drinks", "relation": "subClassOf", "target": "Beverages"}
+{"source": "Diet sport and energy drinks", "relation": "subClassOf", "target": "Beverages"}
+{"source": "Other diet drinks", "relation": "subClassOf", "target": "Beverages"}
+{"source": "Soft drinks", "relation": "subClassOf", "target": "Beverages"}
+{"source": "Fruit drinks", "relation": "subClassOf", "target": "Beverages"}
+{"source": "Sport and energy drinks", "relation": "subClassOf", "target": "Beverages"}
+{"source": "Nutritional beverages", "relation": "subClassOf", "target": "Beverages"}
+{"source": "Smoothies and grain drinks", "relation": "subClassOf", "target": "Beverages"}
+{"source": "Coffee", "relation": "subClassOf", "target": "Beverages"}
+{"source": "Tea", "relation": "subClassOf", "target": "Beverages"}
+{"source": "Beer", "relation": "subClassOf", "target": "Beverages"}
+{"source": "Wine", "relation": "subClassOf", "target": "Beverages"}
+{"source": "Liquor and cocktails", "relation": "subClassOf", "target": "Beverages"}
+{"source": "Tap water", "relation": "sameAs", "target": "ENVO_00003096"}
+{"source": "Flavored or carbonated water", "relation": "subClassOf", "target": "Beverages"}
+{"source": "Enhanced or fortified water", "relation": "subClassOf", "target": "Beverages"}
+{"source": "Butter and animal fats", "relation": "subClassOf", "target": "Fats and Oils"}
+{"source": "Margarine", "relation": "subClassOf", "target": "Fats and Oils"}
+{"source": "Cream cheese, sour cream, whipped cream", "relation": "subClassOf", "target": "Dairy and Egg Products"}
+{"source": "Mayonnaise", "relation": "subClassOf", "target": "Soups, Sauces, and Gravies"}
+{"source": "Tomato-based condiments", "relation": "subClassOf", "target": "Soups, Sauces, and Gravies"}
+{"source": "Soy-based condiments", "relation": "subClassOf", "target": "Legumes and Legume Products"}
+{"source": "Mustard and other condiments", "relation": "subClassOf", "target": "Spices and Herbs"}
+{"source": "Olives, pickles, pickled vegetables", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "Pasta sauces, tomato-based", "relation": "subClassOf", "target": "Soups, Sauces, and Gravies"}
+{"source": "Dips, gravies, other sauces", "relation": "subClassOf", "target": "Soups, Sauces, and Gravies"}
+{"source": "Sugars and honey", "relation": "subClassOf", "target": "Sweets"}
+{"source": "Jams, syrups, toppings", "relation": "subClassOf", "target": "Soups, Sauces, and Gravies"}
+{"source": "Baby food: cereals", "relation": "subClassOf", "target": "Cereal Grains and Pasta"}
+{"source": "Baby food: cereals", "relation": "subClassOf", "target": "FOODON_03510020"}
+{"source": "Baby food: fruit", "relation": "subClassOf", "target": "Fruits and Fruit Juices"}
+{"source": "Baby food: fruit", "relation": "subClassOf", "target": "FOODON_03510020"}
+{"source": "Baby food: vegetable", "relation": "subClassOf", "target": "Vegetables and Vegetable Products"}
+{"source": "Baby food: vegetable", "relation": "subClassOf", "target": "FOODON_03510020"}
+{"source": "Baby food: meat and dinners", "relation": "subClassOf", "target": "FOODON_03510020"}
+{"source": "Baby food: yogurt", "relation": "subClassOf", "target": "Dairy and Egg Products"}
+{"source": "Baby food: yogurt", "relation": "subClassOf", "target": "FOODON_03510020"}
+{"source": "Baby food: snacks and sweets", "relation": "subClassOf", "target": "FOODON_03510020"}
+{"source": "Baby juice", "relation": "subClassOf", "target": "Fruits and Fruit Juices"}
+{"source": "Baby juice", "relation": "subClassOf", "target": "FOODON_03510020"}
+{"source": "Baby water", "relation": "subClassOf", "target": "FOODON_03510020"}
+{"source": "Protein and nutritional powders", "relation": "subClassOf", "target": "Dairy and Egg Products"}

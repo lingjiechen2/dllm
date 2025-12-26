@@ -1,0 +1,75 @@
+{
+  "builder_name": "json",
+  "citation": "",
+  "config_name": "default",
+  "dataset_name": "json",
+  "dataset_size": 16747,
+  "description": "",
+  "download_checksums": {
+    "/home/lingjie7/dllm/multi_granularity_gsm8k_0_10.jsonl": {
+      "num_bytes": 21019,
+      "checksum": null
+    }
+  },
+  "download_size": 21019,
+  "features": {
+    "id": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "question": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "answer_key": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "budgets": {
+      "feature": {
+        "L": {
+          "dtype": "int64",
+          "_type": "Value"
+        },
+        "target_length": {
+          "dtype": "int64",
+          "_type": "Value"
+        },
+        "format": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "text": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "input_tokens": {
+          "dtype": "int64",
+          "_type": "Value"
+        },
+        "output_tokens": {
+          "dtype": "int64",
+          "_type": "Value"
+        }
+      },
+      "_type": "List"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 37766,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 16747,
+      "num_examples": 10,
+      "dataset_name": "json"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}

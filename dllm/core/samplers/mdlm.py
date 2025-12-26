@@ -78,16 +78,6 @@ class MDLMSampler(BaseSampler):
 
         assert 1 <= block_size
         assert 1 <= steps
-        model_name = ""
-        if hasattr(self.tokenizer, "name_or_path"):
-            model_name = str(self.tokenizer.name_or_path).lower()
-
-        if ("instruct" in model_name) and (not confidence_eos_eot_inf):
-            print(
-                "[Warning] confidence_eos_eot_inf=False for an instruct model. "
-                "This can cause early eos_token emission and truncate long sequences, "
-                "reducing generation efficiency."
-            )
         mask_id = self.tokenizer.mask_token_id
         bos_id = self.tokenizer.bos_token_id
         eos_id = self.tokenizer.eos_token_id

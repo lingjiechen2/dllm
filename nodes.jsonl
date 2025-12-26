@@ -1,0 +1,156 @@
+{"id": "Apple juice", "label": "Apple juice", "types": ["Class"], "source": "graph"}
+{"id": "Apples", "label": "Apples", "types": ["Class"], "source": "graph"}
+{"id": "Baby food: cereals", "label": "Baby food: cereals", "types": ["Class"], "source": "graph"}
+{"id": "Baby food: fruit", "label": "Baby food: fruit", "types": ["Class"], "source": "graph"}
+{"id": "Baby food: meat and dinners", "label": "Baby food: meat and dinners", "types": ["Class"], "source": "graph"}
+{"id": "Baby food: snacks and sweets", "label": "Baby food: snacks and sweets", "types": ["Class"], "source": "graph"}
+{"id": "Baby food: vegetable", "label": "Baby food: vegetable", "types": ["Class"], "source": "graph"}
+{"id": "Baby food: yogurt", "label": "Baby food: yogurt", "types": ["Class"], "source": "graph"}
+{"id": "Baby juice", "label": "Baby juice", "types": ["Class"], "source": "graph"}
+{"id": "Baby water", "label": "Baby water", "types": ["Class"], "source": "graph"}
+{"id": "Bacon", "label": "Bacon", "types": ["Class"], "source": "graph"}
+{"id": "Bagels and English muffins", "label": "Bagels and English muffins", "types": ["Class"], "source": "graph"}
+{"id": "Baked Products", "label": "Baked Products", "types": ["Class"], "source": "graph"}
+{"id": "Bananas", "label": "Bananas", "types": ["Class"], "source": "graph"}
+{"id": "Bean, pea, legume dishes", "label": "Bean, pea, legume dishes", "types": ["Class"], "source": "graph"}
+{"id": "Beans, peas, legumes", "label": "Beans, peas, legumes", "types": ["Class"], "source": "graph"}
+{"id": "Beef Products", "label": "Beef Products", "types": ["Class"], "source": "graph"}
+{"id": "Beef, excludes ground", "label": "Beef, excludes ground", "types": ["Class"], "source": "graph"}
+{"id": "Beer", "label": "Beer", "types": ["Class"], "source": "graph"}
+{"id": "Beverages", "label": "Beverages", "types": ["Class"], "source": "graph"}
+{"id": "Biscuits, muffins, quick breads", "label": "Biscuits, muffins, quick breads", "types": ["Class"], "source": "graph"}
+{"id": "Blueberries and other berries", "label": "Blueberries and other berries", "types": ["Class"], "source": "graph"}
+{"id": "Broccoli", "label": "Broccoli", "types": ["Class"], "source": "graph"}
+{"id": "Butter and animal fats", "label": "Butter and animal fats", "types": ["Class"], "source": "graph"}
+{"id": "Cabbage", "label": "Cabbage", "types": ["Class"], "source": "graph"}
+{"id": "Cakes and pies", "label": "Cakes and pies", "types": ["Class"], "source": "graph"}
+{"id": "Candy containing chocolate", "label": "Candy containing chocolate", "types": ["Class"], "source": "graph"}
+{"id": "Candy not containing chocolate", "label": "Candy not containing chocolate", "types": ["Class"], "source": "graph"}
+{"id": "Carrots", "label": "Carrots", "types": ["Class"], "source": "graph"}
+{"id": "Cereal Grains and Pasta", "label": "Cereal Grains and Pasta", "types": ["Class"], "source": "graph"}
+{"id": "Cereal bars", "label": "Cereal bars", "types": ["Class"], "source": "graph"}
+{"id": "Cheese", "label": "Cheese", "types": ["Class"], "source": "graph"}
+{"id": "Chicken patties, nuggets and tenders", "label": "Chicken patties, nuggets and tenders", "types": ["Class"], "source": "graph"}
+{"id": "Chicken, whole pieces", "label": "Chicken, whole pieces", "types": ["Class"], "source": "graph"}
+{"id": "Chicken/turkey sandwiches (single code)", "label": "Chicken/turkey sandwiches (single code)", "types": ["Class"], "source": "graph"}
+{"id": "Citrus fruits", "label": "Citrus fruits", "types": ["Class"], "source": "graph"}
+{"id": "Citrus juice", "label": "Citrus juice", "types": ["Class"], "source": "graph"}
+{"id": "Coffee", "label": "Coffee", "types": ["Class"], "source": "graph"}
+{"id": "Cookies and brownies", "label": "Cookies and brownies", "types": ["Class"], "source": "graph"}
+{"id": "Corn", "label": "Corn", "types": ["Class"], "source": "graph"}
+{"id": "Cottage/ricotta cheese", "label": "Cottage/ricotta cheese", "types": ["Class"], "source": "graph"}
+{"id": "Crackers, excludes saltines", "label": "Crackers, excludes saltines", "types": ["Class"], "source": "graph"}
+{"id": "Cream cheese, sour cream, whipped cream", "label": "Cream cheese, sour cream, whipped cream", "types": ["Class"], "source": "graph"}
+{"id": "Dairy and Egg Products", "label": "Dairy and Egg Products", "types": ["Class"], "source": "graph"}
+{"id": "Diet soft drinks", "label": "Diet soft drinks", "types": ["Class"], "source": "graph"}
+{"id": "Diet sport and energy drinks", "label": "Diet sport and energy drinks", "types": ["Class"], "source": "graph"}
+{"id": "Dips, gravies, other sauces", "label": "Dips, gravies, other sauces", "types": ["Class"], "source": "graph"}
+{"id": "Doughnuts, sweet rolls, pastries", "label": "Doughnuts, sweet rolls, pastries", "types": ["Class"], "source": "graph"}
+{"id": "Dried fruits", "label": "Dried fruits", "types": ["Class"], "source": "graph"}
+{"id": "ENVO_00003096", "label": "ENVO_00003096", "types": ["Class"], "source": "graph"}
+{"id": "Egg rolls, dumplings, sushi", "label": "Egg rolls, dumplings, sushi", "types": ["Class"], "source": "graph"}
+{"id": "Eggs and omelets", "label": "Eggs and omelets", "types": ["Class"], "source": "graph"}
+{"id": "Enhanced or fortified water", "label": "Enhanced or fortified water", "types": ["Class"], "source": "graph"}
+{"id": "FOODON_00003928", "label": "FOODON_00003928", "types": ["Class"], "source": "graph"}
+{"id": "FOODON_03411227", "label": "FOODON_03411227", "types": ["Class"], "source": "graph"}
+{"id": "FOODON_03411231", "label": "FOODON_03411231", "types": ["Class"], "source": "graph"}
+{"id": "FOODON_03411283", "label": "FOODON_03411283", "types": ["Class"], "source": "graph"}
+{"id": "FOODON_03411300", "label": "FOODON_03411300", "types": ["Class"], "source": "graph"}
+{"id": "FOODON_03411406", "label": "FOODON_03411406", "types": ["Class"], "source": "graph"}
+{"id": "FOODON_03411433", "label": "FOODON_03411433", "types": ["Class"], "source": "graph"}
+{"id": "FOODON_03411443", "label": "FOODON_03411443", "types": ["Class"], "source": "graph"}
+{"id": "FOODON_03411669", "label": "FOODON_03411669", "types": ["Class"], "source": "graph"}
+{"id": "FOODON_03412265", "label": "FOODON_03412265", "types": ["Class"], "source": "graph"}
+{"id": "FOODON_03510020", "label": "FOODON_03510020", "types": ["Class"], "source": "graph"}
+{"id": "Fats and Oils", "label": "Fats and Oils", "types": ["Class"], "source": "graph"}
+{"id": "Finfish and Shellfish Products", "label": "Finfish and Shellfish Products", "types": ["Class"], "source": "graph"}
+{"id": "Fish", "label": "Fish", "types": ["Class"], "source": "graph"}
+{"id": "Flavored milk, lowfat", "label": "Flavored milk, lowfat", "types": ["Class"], "source": "graph"}
+{"id": "Flavored milk, nonfat", "label": "Flavored milk, nonfat", "types": ["Class"], "source": "graph"}
+{"id": "Flavored milk, reduced fat", "label": "Flavored milk, reduced fat", "types": ["Class"], "source": "graph"}
+{"id": "Flavored milk, whole", "label": "Flavored milk, whole", "types": ["Class"], "source": "graph"}
+{"id": "Flavored or carbonated water", "label": "Flavored or carbonated water", "types": ["Class"], "source": "graph"}
+{"id": "Frankfurters", "label": "Frankfurters", "types": ["Class"], "source": "graph"}
+{"id": "Fried rice and lo/chow mein", "label": "Fried rice and lo/chow mein", "types": ["Class"], "source": "graph"}
+{"id": "Fried vegetables", "label": "Fried vegetables", "types": ["Class"], "source": "graph"}
+{"id": "Fruit drinks", "label": "Fruit drinks", "types": ["Class"], "source": "graph"}
+{"id": "Fruits and Fruit Juices", "label": "Fruits and Fruit Juices", "types": ["Class"], "source": "graph"}
+{"id": "Grapes", "label": "Grapes", "types": ["Class"], "source": "graph"}
+{"id": "Grits and other cooked cereals", "label": "Grits and other cooked cereals", "types": ["Class"], "source": "graph"}
+{"id": "Ground beef", "label": "Ground beef", "types": ["Class"], "source": "graph"}
+{"id": "Jams, syrups, toppings", "label": "Jams, syrups, toppings", "types": ["Class"], "source": "graph"}
+{"id": "Lamb, goat, game", "label": "Lamb, goat, game", "types": ["Class"], "source": "graph"}
+{"id": "Legumes and Legume Products", "label": "Legumes and Legume Products", "types": ["Class"], "source": "graph"}
+{"id": "Lettuce and lettuce salads", "label": "Lettuce and lettuce salads", "types": ["Class"], "source": "graph"}
+{"id": "Liquor and cocktails", "label": "Liquor and cocktails", "types": ["Class"], "source": "graph"}
+{"id": "Mango and papaya", "label": "Mango and papaya", "types": ["Class"], "source": "graph"}
+{"id": "Margarine", "label": "Margarine", "types": ["Class"], "source": "graph"}
+{"id": "Mayonnaise", "label": "Mayonnaise", "types": ["Class"], "source": "graph"}
+{"id": "Melons", "label": "Melons", "types": ["Class"], "source": "graph"}
+{"id": "Milk shakes and other dairy drinks", "label": "Milk shakes and other dairy drinks", "types": ["Class"], "source": "graph"}
+{"id": "Milk substitutes", "label": "Milk substitutes", "types": ["Class"], "source": "graph"}
+{"id": "Milk, lowfat", "label": "Milk, lowfat", "types": ["Class"], "source": "graph"}
+{"id": "Milk, nonfat", "label": "Milk, nonfat", "types": ["Class"], "source": "graph"}
+{"id": "Milk, reduced fat", "label": "Milk, reduced fat", "types": ["Class"], "source": "graph"}
+{"id": "Milk, whole", "label": "Milk, whole", "types": ["Class"], "source": "graph"}
+{"id": "Mustard and other condiments", "label": "Mustard and other condiments", "types": ["Class"], "source": "graph"}
+{"id": "NCBITaxon_3562", "label": "NCBITaxon_3562", "types": ["Class"], "source": "graph"}
+{"id": "NCBITaxon_4615", "label": "NCBITaxon_4615", "types": ["Class"], "source": "graph"}
+{"id": "Nut and Seed Products", "label": "Nut and Seed Products", "types": ["Class"], "source": "graph"}
+{"id": "Nutritional beverages", "label": "Nutritional beverages", "types": ["Class"], "source": "graph"}
+{"id": "Nuts and seeds", "label": "Nuts and seeds", "types": ["Class"], "source": "graph"}
+{"id": "Olives, pickles, pickled vegetables", "label": "Olives, pickles, pickled vegetables", "types": ["Class"], "source": "graph"}
+{"id": "Onions", "label": "Onions", "types": ["Class"], "source": "graph"}
+{"id": "Other dark green vegetables", "label": "Other dark green vegetables", "types": ["Class"], "source": "graph"}
+{"id": "Other diet drinks", "label": "Other diet drinks", "types": ["Class"], "source": "graph"}
+{"id": "Other fruit juice", "label": "Other fruit juice", "types": ["Class"], "source": "graph"}
+{"id": "Other fruits and fruit salads", "label": "Other fruits and fruit salads", "types": ["Class"], "source": "graph"}
+{"id": "Other red and orange vegetables", "label": "Other red and orange vegetables", "types": ["Class"], "source": "graph"}
+{"id": "Other starchy vegetables", "label": "Other starchy vegetables", "types": ["Class"], "source": "graph"}
+{"id": "Other vegetables and combinations", "label": "Other vegetables and combinations", "types": ["Class"], "source": "graph"}
+{"id": "Pancakes, waffles, French toast", "label": "Pancakes, waffles, French toast", "types": ["Class"], "source": "graph"}
+{"id": "Pasta sauces, tomato-based", "label": "Pasta sauces, tomato-based", "types": ["Class"], "source": "graph"}
+{"id": "Pasta, noodles, cooked grains", "label": "Pasta, noodles, cooked grains", "types": ["Class"], "source": "graph"}
+{"id": "Peaches and nectarines", "label": "Peaches and nectarines", "types": ["Class"], "source": "graph"}
+{"id": "Pears", "label": "Pears", "types": ["Class"], "source": "graph"}
+{"id": "Pineapple", "label": "Pineapple", "types": ["Class"], "source": "graph"}
+{"id": "Pizza", "label": "Pizza", "types": ["Class"], "source": "graph"}
+{"id": "Pork", "label": "Pork", "types": ["Class"], "source": "graph"}
+{"id": "Pork Products", "label": "Pork Products", "types": ["Class"], "source": "graph"}
+{"id": "Poultry Products", "label": "Poultry Products", "types": ["Class"], "source": "graph"}
+{"id": "Poultry mixed dishes", "label": "Poultry mixed dishes", "types": ["Class"], "source": "graph"}
+{"id": "Pretzels/snack mix", "label": "Pretzels/snack mix", "types": ["Class"], "source": "graph"}
+{"id": "Processed soy products", "label": "Processed soy products", "types": ["Class"], "source": "graph"}
+{"id": "Protein and nutritional powders", "label": "Protein and nutritional powders", "types": ["Class"], "source": "graph"}
+{"id": "Restaurant Foods", "label": "Restaurant Foods", "types": ["Class"], "source": "graph"}
+{"id": "Rice", "label": "Rice", "types": ["Class"], "source": "graph"}
+{"id": "Rolls and buns", "label": "Rolls and buns", "types": ["Class"], "source": "graph"}
+{"id": "Saltine crackers", "label": "Saltine crackers", "types": ["Class"], "source": "graph"}
+{"id": "Sausages", "label": "Sausages", "types": ["Class"], "source": "graph"}
+{"id": "Sausages and Luncheon Meats", "label": "Sausages and Luncheon Meats", "types": ["Class"], "source": "graph"}
+{"id": "Shellfish", "label": "Shellfish", "types": ["Class"], "source": "graph"}
+{"id": "Smoothies and grain drinks", "label": "Smoothies and grain drinks", "types": ["Class"], "source": "graph"}
+{"id": "Soft drinks", "label": "Soft drinks", "types": ["Class"], "source": "graph"}
+{"id": "Soups", "label": "Soups", "types": ["Class"], "source": "graph"}
+{"id": "Soups, Sauces, and Gravies", "label": "Soups, Sauces, and Gravies", "types": ["Class"], "source": "graph"}
+{"id": "Soy-based condiments", "label": "Soy-based condiments", "types": ["Class"], "source": "graph"}
+{"id": "Spices and Herbs", "label": "Spices and Herbs", "types": ["Class"], "source": "graph"}
+{"id": "Spinach", "label": "Spinach", "types": ["Class"], "source": "graph"}
+{"id": "Sport and energy drinks", "label": "Sport and energy drinks", "types": ["Class"], "source": "graph"}
+{"id": "Strawberries", "label": "Strawberries", "types": ["Class"], "source": "graph"}
+{"id": "String beans", "label": "String beans", "types": ["Class"], "source": "graph"}
+{"id": "Sugars and honey", "label": "Sugars and honey", "types": ["Class"], "source": "graph"}
+{"id": "Sweets", "label": "Sweets", "types": ["Class"], "source": "graph"}
+{"id": "Tap water", "label": "Tap water", "types": ["Class"], "source": "graph"}
+{"id": "Tea", "label": "Tea", "types": ["Class"], "source": "graph"}
+{"id": "Tomato-based condiments", "label": "Tomato-based condiments", "types": ["Class"], "source": "graph"}
+{"id": "Tomatoes", "label": "Tomatoes", "types": ["Class"], "source": "graph"}
+{"id": "Turkey, duck, other poultry", "label": "Turkey, duck, other poultry", "types": ["Class"], "source": "graph"}
+{"id": "Vegetable dishes", "label": "Vegetable dishes", "types": ["Class"], "source": "graph"}
+{"id": "Vegetable juice", "label": "Vegetable juice", "types": ["Class"], "source": "graph"}
+{"id": "Vegetables and Vegetable Products", "label": "Vegetables and Vegetable Products", "types": ["Class"], "source": "graph"}
+{"id": "Vegetables on a sandwich", "label": "Vegetables on a sandwich", "types": ["Class"], "source": "graph"}
+{"id": "Wine", "label": "Wine", "types": ["Class"], "source": "graph"}
+{"id": "Yeast breads", "label": "Yeast breads", "types": ["Class"], "source": "graph"}
+{"id": "Yogurt, Greek", "label": "Yogurt, Greek", "types": ["Class"], "source": "graph"}
+{"id": "Yogurt, regular", "label": "Yogurt, regular", "types": ["Class"], "source": "graph"}
