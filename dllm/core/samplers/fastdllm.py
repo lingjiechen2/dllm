@@ -34,127 +34,109 @@ def get_transfer_index(
     logits: torch.Tensor,
     temperature: float,
     remasking: str,
-    mask_index: torch.Tensor,   # (B, L) bool
-    x: torch.Tensor,            # (B, L) long
-    num_transfer_tokens: Optional[torch.Tensor],  # (B,) long or None when threshold used
-    threshold: Optional[float] = None,
-):
+    mask_index: torch.Tensor,                     # (B, L) bool
+    x: torch.Tensor,                              # (B, L) long
+    num_transfer_tokens: Optional[torch.Tensor] = None,  # (B,) long (top-k mode)
+    threshold: Optional[float] = None,            # threshold mode
+    factor: Optional[float] = None,               # dynamic mode (highest priority)
+) -> Tuple[torch.Tensor, torch.Tensor]:
     """
     Returns:
-        x0: (B, L) long — proposed tokens
-        transfer_index: (B, L) bool — which positions to update
+        x0:            (B, L) long — proposed tokens
+        transfer_index:(B, L) bool — which positions to update
+
+    Priority:
+      if factor is not None: dynamic schedule
+      elif threshold is not None: threshold mode
+      else: top-k mode (num_transfer_tokens required)
     """
-    # 1) Sample proposal x0 (greedy / gumbel-max)
+    # 1) Propose tokens (greedy / gumbel-max)
     logits_with_noise = add_gumbel_noise(logits, temperature=temperature)
     x0 = torch.argmax(logits_with_noise, dim=-1)  # (B, L)
 
-    # 2) Confidence for chosen tokens (or random)
+    # 2) Confidence (or random)
     if remasking == "low_confidence":
         p = F.softmax(logits.to(torch.float64), dim=-1)
-        x0_p = torch.gather(p, dim=-1, index=x0.unsqueeze(-1)).squeeze(-1)  # (B, L)
+        conf = torch.gather(p, dim=-1, index=x0.unsqueeze(-1)).squeeze(-1)  # (B, L) float64
     elif remasking == "random":
-        x0_p = torch.rand(x0.shape, device=x0.device, dtype=torch.float64)
+        conf = torch.rand(x0.shape, device=x0.device, dtype=torch.float64)
     else:
         raise NotImplementedError(remasking)
 
-    # Only modify masked spots; keep others
+    # Only propose changes on masked positions
     x0 = torch.where(mask_index, x0, x)
 
-    neg_inf = torch.tensor(torch.finfo(x0_p.dtype).min, device=x0_p.device, dtype=x0_p.dtype)
-    confidence = torch.where(mask_index, x0_p, neg_inf)  # (B, L)
+    # Use a very negative value for non-mask positions so they never get selected
+    neg = torch.finfo(conf.dtype).min
+    confidence = torch.where(mask_index, conf, torch.tensor(neg, device=conf.device, dtype=conf.dtype))  # (B, L)
 
-    # 3) Threshold mode
+    # --------------------------
+    # A) Dynamic factor schedule
+    # --------------------------
+    if factor is not None:
+        B, L = confidence.shape
+        values, idx = torch.sort(confidence, dim=1, descending=True)  # (B, L)
+
+        # rank r = 1..L : thr[r] = 1 - factor/(r+1), but force rank-1 always selectable with -1
+        ranks = torch.arange(1, L + 1, device=confidence.device, dtype=values.dtype)  # (L,)
+        factor_t = torch.tensor(float(factor), device=confidence.device, dtype=values.dtype)
+        thr = 1.0 - (factor_t / (ranks + 1.0))  # (L,)
+        thr[0] = -1.0
+
+        accept = values >= thr.unsqueeze(0)      # (B, L) bool
+        k = accept.sum(dim=1).to(torch.long)     # (B,)
+
+        # never select more than masked count
+        n_masked = mask_index.sum(dim=1).to(torch.long)
+        k = torch.minimum(k, n_masked)
+
+        cols = torch.arange(L, device=confidence.device).unsqueeze(0).expand(B, L)
+        select_sorted = cols < k.unsqueeze(1)  # (B, L)
+
+        transfer_int = torch.zeros(B, L, device=confidence.device, dtype=torch.int8)
+        transfer_int = transfer_int.scatter(1, idx, select_sorted.to(torch.int8))
+        transfer_index = transfer_int.bool() & mask_index
+        return x0, transfer_index
+
+    # --------------------------
+    # B) Threshold mode
+    # --------------------------
     if threshold is not None:
         transfer_index = mask_index & (confidence >= threshold)
 
-        # force at least one transfer per row if there is any masked token
-        max_conf_indices = torch.argmax(confidence, dim=1, keepdim=True)  # (B, 1)
-        force_mask = torch.zeros_like(transfer_index).scatter_(1, max_conf_indices, True)
-        transfer_index = (transfer_index | force_mask) & mask_index
+        # force at least one transfer per row if there is any mask and none selected
+        has_mask = mask_index.any(dim=1)                 # (B,)
+        selected = transfer_index.any(dim=1)             # (B,)
+        need_force = has_mask & (~selected)
+        if need_force.any():
+            max_idx = torch.argmax(confidence, dim=1, keepdim=True)  # (B,1) — safe because non-masks are neg
+            force = torch.zeros_like(transfer_index).scatter_(1, max_idx, True)
+            transfer_index = (transfer_index | force) & mask_index
 
         return x0, transfer_index
 
-    # 4) Top-k mode (per-row varying k)
+    # --------------------------
+    # C) Top-k (quota) mode
+    # --------------------------
     if num_transfer_tokens is None:
-        raise ValueError("num_transfer_tokens must be provided when threshold is None")
+        raise ValueError("num_transfer_tokens must be provided when threshold is None and factor is None")
 
     if num_transfer_tokens.dim() == 2 and num_transfer_tokens.size(1) == 1:
         num_transfer_tokens = num_transfer_tokens.squeeze(1)
+
     num_transfer_tokens = num_transfer_tokens.to(dtype=torch.long, device=confidence.device)
     num_transfer_tokens = torch.clamp(num_transfer_tokens, min=0)
 
     values, idx = torch.sort(confidence, dim=1, descending=True)  # (B, L)
-
     B, L = confidence.shape
+
     cols = torch.arange(L, device=confidence.device).unsqueeze(0).expand(B, L)
-    k_expanded = num_transfer_tokens.unsqueeze(1).expand(B, L)
-    select_sorted = cols < k_expanded  # (B, L)
+    select_sorted = cols < num_transfer_tokens.unsqueeze(1)       # (B, L)
 
     transfer_int = torch.zeros(B, L, device=confidence.device, dtype=torch.int8)
     transfer_int = transfer_int.scatter(1, idx, select_sorted.to(torch.int8))
     transfer_index = transfer_int.bool() & mask_index
 
-    return x0, transfer_index
-
-
-def get_transfer_index_dynamic(
-    logits: torch.Tensor,
-    temperature: float,
-    remasking: str,
-    mask_index: torch.Tensor,   # (B, L) bool
-    x: torch.Tensor,            # (B, L) long
-    factor: float = 1.0,
-):
-    """
-    Dynamic threshold schedule variant from NVLabs code.
-    Slower (per-row loop), but matches original behavior.
-    """
-    logits_with_noise = add_gumbel_noise(logits, temperature=temperature)
-    x0 = torch.argmax(logits_with_noise, dim=-1)  # (B, L)
-
-    if remasking == "low_confidence":
-        p = F.softmax(logits.to(torch.float64), dim=-1)
-        x0_p = torch.gather(p, dim=-1, index=x0.unsqueeze(-1)).squeeze(-1)  # (B, L)
-    elif remasking == "random":
-        x0_p = torch.rand(x0.shape, device=x0.device, dtype=torch.float64)
-    else:
-        raise NotImplementedError(remasking)
-
-    x0 = torch.where(mask_index, x0, x)
-    confidence = torch.where(mask_index, x0_p, -torch.inf)
-
-    transfer_index = torch.zeros_like(x0, dtype=torch.bool)
-
-    # total masked per row
-    num_tokens_per_row = mask_index.sum(dim=1).to(torch.long)  # (B,)
-
-    for j in range(confidence.size(0)):
-        n = int(num_tokens_per_row[j].item())
-        if n == 0:
-            continue
-
-        # thresholds list length n
-        ns = list(range(1, n + 1))
-        es = [factor / (k + 1) for k in ns]
-        threshs = [1 - e for e in es]
-        threshs[0] = -1  # force at least one
-
-        masked_conf = confidence[j][mask_index[j]]
-        sorted_conf = torch.sort(masked_conf, descending=True)[0]
-
-        top_i = 0
-        for t in range(len(threshs)):
-            if sorted_conf[t] < threshs[t]:
-                break
-            top_i = t
-
-        # make sure >= 1
-        top_k = max(1, top_i + 1)
-
-        _, select_idx = torch.topk(confidence[j], k=top_k)
-        transfer_index[j, select_idx] = True
-
-    transfer_index = transfer_index & mask_index
     return x0, transfer_index
 
 
@@ -372,20 +354,17 @@ class FastDLLMSampler(BaseSampler):
                     if right_shift_logits:
                         logits = torch.cat([logits[:, :1], logits[:, :-1]], dim=1)
 
-                    # choose transfer indices
-                    if factor is not None:
-                        x0, transfer_idx = get_transfer_index_dynamic(
-                            logits, temperature, remasking, mask_allowed, x, factor=factor
-                        )
-                    else:
-                        quota = None if threshold is not None else num_transfer_tokens[:, i_step]
-                        x0, transfer_idx = get_transfer_index(
-                            logits, temperature, remasking, mask_allowed, x, quota, threshold=threshold
-                        )
-
-                    x = torch.where(transfer_idx, x0, x)
-                    if histories is not None:
-                        histories.append(x.clone())
+                    quota = None if threshold is not None else num_transfer_tokens[:, 0]
+                    x0, transfer_idx = get_transfer_index(
+                        logits=logits,
+                        temperature=temperature,
+                        remasking=remasking,
+                        mask_index=mask_allowed,
+                        x=x,
+                        num_transfer_tokens=quota,
+                        threshold=threshold,
+                        factor=factor,
+                    )
 
                 continue  # next block
 
@@ -407,15 +386,17 @@ class FastDLLMSampler(BaseSampler):
                 mask_allowed[:, s:e] = (x[:, s:e] == mask_id)
 
                 if mask_allowed.sum() > 0:
-                    if factor is not None:
-                        x0, transfer_idx = get_transfer_index_dynamic(
-                            logits_full, temperature, remasking, mask_allowed, x, factor=factor
-                        )
-                    else:
-                        quota0 = None if threshold is not None else num_transfer_tokens[:, 0]
-                        x0, transfer_idx = get_transfer_index(
-                            logits_full, temperature, remasking, mask_allowed, x, quota0, threshold=threshold
-                        )
+                    quota = None if threshold is not None else num_transfer_tokens[:, 0]
+                    x0, transfer_idx = get_transfer_index(
+                        logits=logits_full,
+                        temperature=temperature,
+                        remasking=remasking,
+                        mask_index=mask_allowed,
+                        x=x,
+                        num_transfer_tokens=quota,
+                        threshold=threshold,
+                        factor=factor,
+                    )
 
                     x = torch.where(transfer_idx, x0, x)
                     if histories is not None:
@@ -452,15 +433,17 @@ class FastDLLMSampler(BaseSampler):
                     if right_shift_logits:
                         logits_suf = torch.cat([logits_suf[:, :1], logits_suf[:, :-1]], dim=1)
 
-                    if factor is not None:
-                        x0_suf, transfer_suf = get_transfer_index_dynamic(
-                            logits_suf, temperature, remasking, mask_suffix, x_suffix, factor=factor
-                        )
-                    else:
-                        quota = None if threshold is not None else num_transfer_tokens[:, i_step]
-                        x0_suf, transfer_suf = get_transfer_index(
-                            logits_suf, temperature, remasking, mask_suffix, x_suffix, quota, threshold=threshold
-                        )
+                    quota = None if threshold is not None else num_transfer_tokens[:, 0]
+                    x0_suf, transfer_suf = get_transfer_index(
+                        logits=logits_suf,
+                        temperature=temperature,
+                        remasking=remasking,
+                        mask_index=mask_suffix,
+                        x=x_suffix,
+                        num_transfer_tokens=quota,
+                        threshold=threshold,
+                        factor=factor,
+                    )
 
                     x_suffix_new = torch.where(transfer_suf, x0_suf, x_suffix)
                     x = torch.cat([x[:, :s], x_suffix_new], dim=1)
@@ -494,15 +477,17 @@ class FastDLLMSampler(BaseSampler):
                 mask_allowed[:, s:e] = (x[:, s:e] == mask_id)
 
                 if mask_allowed.sum() > 0:
-                    if factor is not None:
-                        x0, transfer_idx = get_transfer_index_dynamic(
-                            logits_full, temperature, remasking, mask_allowed, x, factor=factor
-                        )
-                    else:
-                        quota0 = None if threshold is not None else num_transfer_tokens[:, 0]
-                        x0, transfer_idx = get_transfer_index(
-                            logits_full, temperature, remasking, mask_allowed, x, quota0, threshold=threshold
-                        )
+                    quota = None if threshold is not None else num_transfer_tokens[:, 0]
+                    x0, transfer_idx = get_transfer_index(
+                        logits=logits_full,
+                        temperature=temperature,
+                        remasking=remasking,
+                        mask_index=mask_allowed,
+                        x=x,
+                        num_transfer_tokens=quota,
+                        threshold=threshold,
+                        factor=factor,
+                    )
 
                     x = torch.where(transfer_idx, x0, x)
                     if histories is not None:
@@ -529,15 +514,17 @@ class FastDLLMSampler(BaseSampler):
                     if right_shift_logits:
                         logits_blk = torch.cat([logits_blk[:, :1], logits_blk[:, :-1]], dim=1)
 
-                    if factor is not None:
-                        x0_blk, transfer_blk = get_transfer_index_dynamic(
-                            logits_blk, temperature, remasking, mask_blk, blk, factor=factor
-                        )
-                    else:
-                        quota = None if threshold is not None else num_transfer_tokens[:, i_step]
-                        x0_blk, transfer_blk = get_transfer_index(
-                            logits_blk, temperature, remasking, mask_blk, blk, quota, threshold=threshold
-                        )
+                    quota = None if threshold is not None else num_transfer_tokens[:, 0]
+                    x0_blk, transfer_blk = get_transfer_index(
+                        logits=logits_blk,
+                        temperature=temperature,
+                        remasking=remasking,
+                        mask_index=mask_blk,
+                        x=blk,
+                        num_transfer_tokens=quota,
+                        threshold=threshold,
+                        factor=factor,
+                    )
 
                     blk_new = torch.where(transfer_blk, x0_blk, blk)
                     x = torch.cat([x[:, :s], blk_new, x[:, e:]], dim=1)
