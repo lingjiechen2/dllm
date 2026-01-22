@@ -408,24 +408,66 @@ class RotaryEmbedding(nn.Module):
     def apply_rotary_pos_emb(self, pos_sin: torch.Tensor, pos_cos: torch.Tensor, t: torch.Tensor) -> torch.Tensor:
         return ((t * pos_cos) + (self.rotate_half(t) * pos_sin)).to(t.dtype)
 
-    def forward(self, q: torch.Tensor, k: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    ###########################################################
+    # Modified modeling_llama.py start
+    ###########################################################
+    # def forward(self, q: torch.Tensor, k: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    #     if self.config.rope_full_precision:
+    #         q_, k_ = q.float(), k.float()
+    #     else:
+    #         q_, k_ = q, k
+
+    #     with torch.autocast(q.device.type, enabled=False):
+    #         query_len, key_len = q_.shape[-2], k_.shape[-2]  # could be different if layer_past not None
+    #         pos_sin, pos_cos = self.get_rotary_embedding(key_len, q_.device)
+    #         pos_sin = pos_sin.type_as(q_)
+    #         pos_cos = pos_cos.type_as(q_)
+    #         q_ = self.apply_rotary_pos_emb(
+    #             pos_sin[:, :, key_len - query_len : key_len, :],
+    #             pos_cos[:, :, key_len - query_len : key_len, :],
+    #             q_,
+    #         )
+    #         k_ = self.apply_rotary_pos_emb(pos_sin, pos_cos, k_)
+    #     return q_.type_as(q), k_.type_as(k)
+
+    ############################################################
+    # Modified modeling_llama.py start
+    def forward(self, q: torch.Tensor, k: torch.Tensor,
+                block_end_index: Optional[torch.Tensor] = None) -> Tuple[torch.Tensor, torch.Tensor]:
         if self.config.rope_full_precision:
             q_, k_ = q.float(), k.float()
         else:
             q_, k_ = q, k
 
         with torch.autocast(q.device.type, enabled=False):
-            query_len, key_len = q_.shape[-2], k_.shape[-2]  # could be different if layer_past not None
+            query_len, key_len = q_.shape[-2], k_.shape[-2]
             pos_sin, pos_cos = self.get_rotary_embedding(key_len, q_.device)
             pos_sin = pos_sin.type_as(q_)
             pos_cos = pos_cos.type_as(q_)
-            q_ = self.apply_rotary_pos_emb(
-                pos_sin[:, :, key_len - query_len : key_len, :],
-                pos_cos[:, :, key_len - query_len : key_len, :],
-                q_,
-            )
+
+            # Build tensor indices instead of using .item()
+            if block_end_index is None:
+                start = key_len - query_len
+                end = key_len
+            else:
+                # block_end_index is a tensor; keep ops tensor-based
+                start = (block_end_index - query_len)
+                end = block_end_index
+
+            # Make an index tensor [start, ..., end-1] on the right device/dtype
+            idx = torch.arange(start, end, device=q_.device, dtype=torch.long)
+
+            # Use index_select on the sequence dimension (dim=2)
+            pos_sin_slice = pos_sin.index_select(2, idx)
+            pos_cos_slice = pos_cos.index_select(2, idx)
+
+            q_ = self.apply_rotary_pos_emb(pos_sin_slice, pos_cos_slice, q_)
             k_ = self.apply_rotary_pos_emb(pos_sin, pos_cos, k_)
+
         return q_.type_as(q), k_.type_as(k)
+    ###########################################################
+    # Modified modeling_llama.py end
+    ###########################################################
 
 
 class Activation(nn.Module):
@@ -667,6 +709,7 @@ class LLaDABlock(nn.Module):
         attention_bias: Optional[torch.Tensor] = None,
         layer_past: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
         use_cache: bool = False,
+        replace_position: Optional[torch.Tensor] = None,
     ) -> Tuple[torch.Tensor, Optional[Tuple[torch.Tensor, torch.Tensor]]]:
         B, T, C = q.size()  # batch size, sequence length, d_model
         dtype = k.dtype
@@ -684,17 +727,75 @@ class LLaDABlock(nn.Module):
         # shape: (B, n_kv_h, T, hs)
         v = v.view(B, T, self.config.effective_n_kv_heads, C // self.config.n_heads).transpose(1, 2)
 
-        if layer_past is not None:
+        ########################################################
+        # Original modeling_llama.py start
+        ########################################################
+        # if layer_past is not None:
+        #     past_key, past_value = layer_past
+        #     k = torch.cat((past_key, k), dim=-2)
+        #     v = torch.cat((past_value, v), dim=-2)
+        ########################################################
+        # Original modeling_llama.py end
+        ########################################################
+
+
+        ########################################################
+        # Modified modeling_llama.py start
+        ########################################################
+        if layer_past is not None: 
             past_key, past_value = layer_past
-            k = torch.cat((past_key, k), dim=-2)
-            v = torch.cat((past_value, v), dim=-2)
+            if replace_position is None:
+                k = torch.cat((past_key, k), dim=-2)
+                v = torch.cat((past_value, v), dim=-2)
+            else:
+                # k shape is [B, n_kv_h, selected_length, hs]
+                # replace_position shape is [B, L], where L contains 0s and 1s, 0 means no replacement, 1 means replace, with selected_length number of 1s
+                # past_key shape is [B, n_kv_h, L, hs]
+                # Replace selected_length number of 1s in past_key with k
+                
+                # Handle batched replace_position correctly
+                B = replace_position.shape[0]
+                for batch_idx in range(B):
+                    # Get indices for this batch
+                    batch_replace_indices = replace_position[batch_idx].nonzero(as_tuple=True)[0]
+                    if len(batch_replace_indices) > 0:
+                        # Replace positions in past_key and past_value for this batch
+                        past_key[batch_idx, :, batch_replace_indices] = k[batch_idx, :, :len(batch_replace_indices)]
+                        past_value[batch_idx, :, batch_replace_indices] = v[batch_idx, :, :len(batch_replace_indices)]
+                
+                k = past_key
+                v = past_value
+        ########################################################
+        # Modified modeling_llama.py end
+        ########################################################
 
         present = (k, v) if use_cache else None
         query_len, key_len = q.shape[-2], k.shape[-2]  # could be different if layer_past not None
 
+        ##########################################################
+        # Original modeling_llama.py start
+        ##########################################################
+        # if self.config.rope:
+        #     # Apply rotary embeddings.
+        #     q, k = self.rotary_emb(q, k)
+        ##########################################################
+        # Original modeling_llama.py end
+        ##########################################################
+
+        ##########################################################
+        # Modified modeling_llama.py start
+        ##########################################################
         if self.config.rope:
             # Apply rotary embeddings.
-            q, k = self.rotary_emb(q, k)
+            if replace_position is None:
+                q, k = self.rotary_emb(q, k)
+            else:
+                # For batched replace_position, use the maximum position across all batches
+                max_replace_pos = replace_position.nonzero(as_tuple=True)[1].max() + 1 if replace_position.any() else key_len
+                q, k = self.rotary_emb(q, k, max_replace_pos)
+        ##########################################################
+        # Modified modeling_llama.py end
+        ##########################################################
 
         if attention_bias is not None:
             # Resize and cast attention bias.
@@ -889,6 +990,7 @@ class LLaDALlamaBlock(LLaDABlock):
         attention_bias: Optional[torch.Tensor] = None,
         layer_past: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
         use_cache: bool = False,
+        replace_position: Optional[torch.Tensor] = None,
     ) -> Tuple[torch.Tensor, Optional[Tuple[torch.Tensor, torch.Tensor]]]:
         # Get query, key, value projections.
         # shape:
@@ -905,10 +1007,10 @@ class LLaDALlamaBlock(LLaDABlock):
         # Get attention scores.
         if self._activation_checkpoint_fn is not None:
             att, cache = self._activation_checkpoint_fn(  # type: ignore
-                self.attention, q, k, v, attention_bias, layer_past=layer_past, use_cache=use_cache
+                self.attention, q, k, v, attention_bias, layer_past=layer_past, use_cache=use_cache, replace_position=replace_position
             )
         else:
-            att, cache = self.attention(q, k, v, attention_bias, layer_past=layer_past, use_cache=use_cache)
+            att, cache = self.attention(q, k, v, attention_bias, layer_past=layer_past, use_cache=use_cache, replace_position=replace_position)
 
         # Add attention scores.
         # shape: (B, T, C)
@@ -1241,6 +1343,7 @@ class LLaDAModel(LLaDAPreTrainedModel):
         use_cache: bool = False,
         last_logits_only: bool = False,
         output_hidden_states: Optional[bool] = None,
+        replace_position: Optional[torch.Tensor] = None,
     ) -> LLaDAOutput:
         """
         :param input_ids: A tensor of shape `(batch_size, seq_len)`.
@@ -1271,7 +1374,8 @@ class LLaDAModel(LLaDAPreTrainedModel):
         # Add Basic MDM Model config check
         assert not self.config.alibi, "Alibi length extrapolation is not supported for MDM."
         assert self.config.rope, "Rope must be used in Llama-Encoder for MDM."
-        assert (past_key_values is None and not use_cache), "The kvcache is not supported for MDM."
+        # Enable fast-dllm sampler
+        # assert (past_key_values is None and not use_cache), "The kvcache is not supported for MDM."
 
         output_hidden_states = output_hidden_states if output_hidden_states is not None else False
 
@@ -1377,11 +1481,11 @@ class LLaDAModel(LLaDAPreTrainedModel):
                 ):
                     # shape: (batch_size, seq_len, d_model)
                     x, cache = self._activation_checkpoint_fn(
-                        block, x, attention_bias=attention_bias, layer_past=layer_past, use_cache=use_cache
+                        block, x, attention_bias=attention_bias, layer_past=layer_past, use_cache=use_cache, replace_position=replace_position
                     )
                 else:
                     # shape: (batch_size, seq_len, d_model)
-                    x, cache = block(x, attention_bias=attention_bias, layer_past=layer_past, use_cache=use_cache)
+                    x, cache = block(x, attention_bias=attention_bias, layer_past=layer_past, use_cache=use_cache, replace_position=replace_position)
                 if attn_key_values is not None:
                     assert cache is not None
                     attn_key_values.append(cache)
@@ -1475,6 +1579,7 @@ class LLaDAModelLM(LLaDAPreTrainedModel):
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
         cache_position: Optional[Cache] = None,  # This is a hack mitigation of an issue in transformers `4.39.x`
+        replace_position: Optional[torch.Tensor] = None,
     ) -> Union[Tuple, CausalLMOutputWithPast]:
         if use_cache is None:
             use_cache = self.config.use_cache
@@ -1483,7 +1588,6 @@ class LLaDAModelLM(LLaDAPreTrainedModel):
             raise ValueError("output_attentions is not yet supported in LLaDA")
 
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
-
         # decoder outputs consists of (dec_features, layer_state, dec_hidden, dec_attn)
         outputs = self.model.forward(
             input_ids=input_ids,
@@ -1493,6 +1597,7 @@ class LLaDAModelLM(LLaDAPreTrainedModel):
             past_key_values=past_key_values,
             use_cache=use_cache,
             output_hidden_states=output_hidden_states,
+            replace_position=replace_position,
         )
 
         logits = outputs.logits
