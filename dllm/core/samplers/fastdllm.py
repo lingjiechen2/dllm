@@ -6,7 +6,6 @@ import math
 from dataclasses import dataclass
 from typing import Optional, Tuple, List, Union
 
-import numpy as np
 import torch
 import torch.nn.functional as F
 
