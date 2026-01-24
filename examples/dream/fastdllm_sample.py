@@ -1,14 +1,14 @@
 """
-python -u examples/dream/sample.py --model_name_or_path "YOUR_MODEL_PATH"
+python -u examples/dream/fastdllm_sample.py --model_name_or_path "YOUR_MODEL_PATH"
 """
 
+import time
 from dataclasses import dataclass
 
 import transformers
 
 import dllm
-from dllm.pipelines import dream
-import time
+
 
 @dataclass
 class ScriptArguments:
@@ -23,7 +23,7 @@ class ScriptArguments:
 
 
 @dataclass
-class SamplerConfig(dream.DreamFastDLLMSamplerConfig):
+class SamplerConfig(dllm.pipelines.dream.DreamFastDLLMSamplerConfig):
     steps: int = 512
     max_new_tokens: int = 512
     temperature: float = 0.0 # Recommended to be 0.0 for alg=="confidence_threshold"
@@ -42,7 +42,7 @@ transformers.set_seed(script_args.seed)
 # Load model & tokenizer
 model = dllm.utils.get_model(model_args=script_args).eval()
 tokenizer = dllm.utils.get_tokenizer(model_args=script_args)
-sampler = dream.DreamFastDLLMSampler(model=model, tokenizer=tokenizer)
+sampler = dllm.pipelines.dream.DreamFastDLLMSampler(model=model, tokenizer=tokenizer)
 terminal_visualizer = dllm.utils.TerminalVisualizer(tokenizer=tokenizer)
 
 # --- Example 1: Batch sampling ---
@@ -50,11 +50,8 @@ print("\n" + "=" * 80)
 print("TEST: dream.sample()".center(80))
 print("=" * 80)
 
-prompt = "Write a love story in New York City. Introduce two main characters."
-# prompt = "Lily runs 12 mile for 4 hours. How many miles can she run for 8 hours?"
-
 messages = [
-    [{"role": "user", "content": prompt}],
+    [{"role": "user", "content": "Lily runs 12 km/h for 4 hours. How far in 8 hours?"}],
 ]
 
 inputs = tokenizer.apply_chat_template(
@@ -63,7 +60,6 @@ inputs = tokenizer.apply_chat_template(
     tokenize=True,
 )
 
-print(sampler_config)
 start = time.time()
 outputs = sampler.sample(inputs, sampler_config, return_dict=True)
 end = time.time()

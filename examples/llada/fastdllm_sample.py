@@ -2,10 +2,9 @@
 python -u examples/llada/fastdllm_sample.py --model_name_or_path "YOUR_MODEL_PATH"
 """
 
-
+import time
 from dataclasses import dataclass
 
-from time import time
 import transformers
 
 import dllm
@@ -59,11 +58,9 @@ inputs = tokenizer.apply_chat_template(
     tokenize=True,
 )
 
-# sampler_config.begin_suppress_tokens = [126081,126348]
-
-start = time()
+start = time.time()
 outputs = sampler.sample(inputs, config=sampler_config, return_dict=True)
-end = time()
+end = time.time()
 sequences = dllm.utils.decode_trim(tokenizer, outputs.sequences.tolist(), inputs)
 
 for iter, s in enumerate(sequences):
@@ -76,5 +73,5 @@ print("\n" + "=" * 80 + "\n")
 print(f"Total NFE:{len(outputs.histories)}. Time taken for sampling: {end - start:.2f} seconds")
 print(f"Token speed: {(len(outputs.sequences[0])-len(inputs[0]))*1.0/(end - start):.2f} tokens/s")
 
-# if script_args.visualize:
-#     terminal_visualizer.visualize(outputs.histories, rich=True)
+if script_args.visualize:
+    terminal_visualizer.visualize(outputs.histories, rich=True)
