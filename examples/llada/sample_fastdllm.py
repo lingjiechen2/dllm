@@ -28,17 +28,18 @@ class SamplerConfig(dllm.core.samplers.FastDLLMSamplerConfig):
     block_size: int = 32
     temperature: float = 0.0
     remasking: str = "low_confidence"
-    use_cache: str = "prefix"
-    threshold: float = None
-    factor: float = 1.0
+    use_cache: str = "dual"
+    threshold: float = 0.7
+    factor: float = None
     begin_suppress_tokens: list[int] = None # Suppress special tokens at beginning
 
 parser = transformers.HfArgumentParser((ScriptArguments, SamplerConfig))
 script_args, sampler_config = parser.parse_args_into_dataclasses()
 transformers.set_seed(script_args.seed)
+fastdllm_config = dllm.pipelines.llada.models.FastDLLMLLaDAConfig.from_pretrained(script_args.model_name_or_path)
 
 # Load model & tokenizer
-model = dllm.utils.get_model(model_args=script_args).eval()
+model = dllm.utils.get_model(model_args=script_args, config=fastdllm_config).eval()
 tokenizer = dllm.utils.get_tokenizer(model_args=script_args)
 sampler = dllm.core.samplers.FastDLLMSampler(model=model, tokenizer=tokenizer)
 terminal_visualizer = dllm.utils.TerminalVisualizer(tokenizer=tokenizer)
@@ -49,7 +50,8 @@ print("TEST: llada.sample()".center(80))
 print("=" * 80)
 
 messages = [
-    [{"role": "user", "content": "Lily runs 12 km/h for 4 hours. How far in 8 hours?"}],
+    # [{"role": "user", "content": "Lily runs 12 km/h for 4 hours. How far in 8 hours?"}],
+    [{"role": "user", "content": "Write a love story in New York City."}],
 ]
 
 inputs = tokenizer.apply_chat_template(
@@ -70,6 +72,7 @@ for iter, s in enumerate(sequences):
     print(s.strip() if s.strip() else "<empty>")
 print("\n" + "=" * 80 + "\n")
 
+print(f"Config: use_cache={sampler_config.use_cache}, threshold={sampler_config.threshold}, factor={sampler_config.factor}")
 print(f"Total NFE:{len(outputs.histories)}. Time taken for sampling: {end - start:.2f} seconds")
 print(f"Token speed: {(len(outputs.sequences[0])-len(inputs[0]))*1.0/(end - start):.2f} tokens/s")
 

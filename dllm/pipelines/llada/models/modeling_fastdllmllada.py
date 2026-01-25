@@ -31,8 +31,8 @@ from transformers.modeling_outputs import CausalLMOutputWithPast
 from transformers.models.auto import AutoModel
 from transformers.cache_utils import Cache
 
-from .configuration_llada import (
-    LLaDAConfig,
+from .configuration_fastdllmllada import (
+    FastDLLMLLaDAConfig,
     StrEnum,
     InitFnType,
     ActivationType,
@@ -59,12 +59,12 @@ __all__ = [
     "GELU",
     "ReLU",
     "SwiGLU",
-    "LLaDABlock",
-    "LLaDASequentialBlock",
-    "LLaDAPreTrainedModel",
-    "LLaDAModel",
-    "LLaDAOutput",
-    "LLaDAGenerateOutput",
+    "FastDLLMLLaDABlock",
+    "FastDLLMLLaDASequentialBlock",
+    "FastDLLMLLaDAPreTrainedModel",
+    "FastDLLMLLaDAModel",
+    "FastDLLMLLaDAOutput",
+    "FastDLLMLLaDAGenerateOutput",
 ]
 
 
@@ -408,24 +408,66 @@ class RotaryEmbedding(nn.Module):
     def apply_rotary_pos_emb(self, pos_sin: torch.Tensor, pos_cos: torch.Tensor, t: torch.Tensor) -> torch.Tensor:
         return ((t * pos_cos) + (self.rotate_half(t) * pos_sin)).to(t.dtype)
 
-    def forward(self, q: torch.Tensor, k: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    ###########################################################
+    # Modified modeling_llama.py start
+    ###########################################################
+    # def forward(self, q: torch.Tensor, k: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    #     if self.config.rope_full_precision:
+    #         q_, k_ = q.float(), k.float()
+    #     else:
+    #         q_, k_ = q, k
+
+    #     with torch.autocast(q.device.type, enabled=False):
+    #         query_len, key_len = q_.shape[-2], k_.shape[-2]  # could be different if layer_past not None
+    #         pos_sin, pos_cos = self.get_rotary_embedding(key_len, q_.device)
+    #         pos_sin = pos_sin.type_as(q_)
+    #         pos_cos = pos_cos.type_as(q_)
+    #         q_ = self.apply_rotary_pos_emb(
+    #             pos_sin[:, :, key_len - query_len : key_len, :],
+    #             pos_cos[:, :, key_len - query_len : key_len, :],
+    #             q_,
+    #         )
+    #         k_ = self.apply_rotary_pos_emb(pos_sin, pos_cos, k_)
+    #     return q_.type_as(q), k_.type_as(k)
+
+    ############################################################
+    # Modified modeling_llama.py start
+    def forward(self, q: torch.Tensor, k: torch.Tensor,
+                block_end_index: Optional[torch.Tensor] = None) -> Tuple[torch.Tensor, torch.Tensor]:
         if self.config.rope_full_precision:
             q_, k_ = q.float(), k.float()
         else:
             q_, k_ = q, k
 
         with torch.autocast(q.device.type, enabled=False):
-            query_len, key_len = q_.shape[-2], k_.shape[-2]  # could be different if layer_past not None
+            query_len, key_len = q_.shape[-2], k_.shape[-2]
             pos_sin, pos_cos = self.get_rotary_embedding(key_len, q_.device)
             pos_sin = pos_sin.type_as(q_)
             pos_cos = pos_cos.type_as(q_)
-            q_ = self.apply_rotary_pos_emb(
-                pos_sin[:, :, key_len - query_len : key_len, :],
-                pos_cos[:, :, key_len - query_len : key_len, :],
-                q_,
-            )
+
+            # Build tensor indices instead of using .item()
+            if block_end_index is None:
+                start = key_len - query_len
+                end = key_len
+            else:
+                # block_end_index is a tensor; keep ops tensor-based
+                start = (block_end_index - query_len)
+                end = block_end_index
+
+            # Make an index tensor [start, ..., end-1] on the right device/dtype
+            idx = torch.arange(start, end, device=q_.device, dtype=torch.long)
+
+            # Use index_select on the sequence dimension (dim=2)
+            pos_sin_slice = pos_sin.index_select(2, idx)
+            pos_cos_slice = pos_cos.index_select(2, idx)
+
+            q_ = self.apply_rotary_pos_emb(pos_sin_slice, pos_cos_slice, q_)
             k_ = self.apply_rotary_pos_emb(pos_sin, pos_cos, k_)
+
         return q_.type_as(q), k_.type_as(k)
+    ###########################################################
+    # Modified modeling_llama.py end
+    ###########################################################
 
 
 class Activation(nn.Module):
@@ -518,7 +560,7 @@ def alibi_attention_bias(seq_len: int, config: ModelConfig, device: torch.device
     return alibi_bias * (1.0 / (2 ** m.view(1, config.n_heads, 1, 1)))  # type: ignore
 
 
-class LLaDABlock(nn.Module):
+class FastDLLMLLaDABlock(nn.Module):
     """
     A base class for transformer block implementations.
     """
@@ -667,6 +709,7 @@ class LLaDABlock(nn.Module):
         attention_bias: Optional[torch.Tensor] = None,
         layer_past: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
         use_cache: bool = False,
+        replace_position: Optional[torch.Tensor] = None,
     ) -> Tuple[torch.Tensor, Optional[Tuple[torch.Tensor, torch.Tensor]]]:
         B, T, C = q.size()  # batch size, sequence length, d_model
         dtype = k.dtype
@@ -684,17 +727,75 @@ class LLaDABlock(nn.Module):
         # shape: (B, n_kv_h, T, hs)
         v = v.view(B, T, self.config.effective_n_kv_heads, C // self.config.n_heads).transpose(1, 2)
 
-        if layer_past is not None:
+        ########################################################
+        # Original modeling_llama.py start
+        ########################################################
+        # if layer_past is not None:
+        #     past_key, past_value = layer_past
+        #     k = torch.cat((past_key, k), dim=-2)
+        #     v = torch.cat((past_value, v), dim=-2)
+        ########################################################
+        # Original modeling_llama.py end
+        ########################################################
+
+
+        ########################################################
+        # Modified modeling_llama.py start
+        ########################################################
+        if layer_past is not None: 
             past_key, past_value = layer_past
-            k = torch.cat((past_key, k), dim=-2)
-            v = torch.cat((past_value, v), dim=-2)
+            if replace_position is None:
+                k = torch.cat((past_key, k), dim=-2)
+                v = torch.cat((past_value, v), dim=-2)
+            else:
+                # k shape is [B, n_kv_h, selected_length, hs]
+                # replace_position shape is [B, L], where L contains 0s and 1s, 0 means no replacement, 1 means replace, with selected_length number of 1s
+                # past_key shape is [B, n_kv_h, L, hs]
+                # Replace selected_length number of 1s in past_key with k
+                
+                # Handle batched replace_position correctly
+                B = replace_position.shape[0]
+                for batch_idx in range(B):
+                    # Get indices for this batch
+                    batch_replace_indices = replace_position[batch_idx].nonzero(as_tuple=True)[0]
+                    if len(batch_replace_indices) > 0:
+                        # Replace positions in past_key and past_value for this batch
+                        past_key[batch_idx, :, batch_replace_indices] = k[batch_idx, :, :len(batch_replace_indices)]
+                        past_value[batch_idx, :, batch_replace_indices] = v[batch_idx, :, :len(batch_replace_indices)]
+                
+                k = past_key
+                v = past_value
+        ########################################################
+        # Modified modeling_llama.py end
+        ########################################################
 
         present = (k, v) if use_cache else None
         query_len, key_len = q.shape[-2], k.shape[-2]  # could be different if layer_past not None
 
+        ##########################################################
+        # Original modeling_llama.py start
+        ##########################################################
+        # if self.config.rope:
+        #     # Apply rotary embeddings.
+        #     q, k = self.rotary_emb(q, k)
+        ##########################################################
+        # Original modeling_llama.py end
+        ##########################################################
+
+        ##########################################################
+        # Modified modeling_llama.py start
+        ##########################################################
         if self.config.rope:
             # Apply rotary embeddings.
-            q, k = self.rotary_emb(q, k)
+            if replace_position is None:
+                q, k = self.rotary_emb(q, k)
+            else:
+                # For batched replace_position, use the maximum position across all batches
+                max_replace_pos = replace_position.nonzero(as_tuple=True)[1].max() + 1 if replace_position.any() else key_len
+                q, k = self.rotary_emb(q, k, max_replace_pos)
+        ##########################################################
+        # Modified modeling_llama.py end
+        ##########################################################
 
         if attention_bias is not None:
             # Resize and cast attention bias.
@@ -734,16 +835,16 @@ class LLaDABlock(nn.Module):
         raise NotImplementedError
 
     @classmethod
-    def build(cls, layer_id: int, config: ModelConfig, cache: BufferCache) -> LLaDABlock:
+    def build(cls, layer_id: int, config: ModelConfig, cache: BufferCache) -> FastDLLMLLaDABlock:
         if config.block_type == BlockType.sequential:
-            return LLaDASequentialBlock(layer_id, config, cache)
+            return FastDLLMLLaDASequentialBlock(layer_id, config, cache)
         elif config.block_type == BlockType.llama:
-            return LLaDALlamaBlock(layer_id, config, cache)
+            return FastDLLMLLaDALlamaBlock(layer_id, config, cache)
         else:
             raise NotImplementedError(f"Unknown block type: '{config.block_type}'")
 
 
-class LLaDASequentialBlock(LLaDABlock):
+class FastDLLMLLaDASequentialBlock(FastDLLMLLaDABlock):
     """
     This is a typical transformer block where the output is computed as ``MLP(LN(x + Attention(LN(x))))``
     (plus another skip connection).
@@ -833,10 +934,10 @@ class LLaDASequentialBlock(LLaDABlock):
         return x, cache
 
 
-class LLaDALlamaBlock(LLaDABlock):
+class FastDLLMLLaDALlamaBlock(FastDLLMLLaDABlock):
     """
     This is a transformer block where the output is computed as ``MLP(LN(x + Attention(LN(x))))``
-    (plus another skip connection). This block is similar to `LLaDASequentialBlock`
+    (plus another skip connection). This block is similar to `FastDLLMLLaDASequentialBlock`
     but some operations have slightly different implementations to imitate the
     behavior of Llama.
     """
@@ -889,6 +990,7 @@ class LLaDALlamaBlock(LLaDABlock):
         attention_bias: Optional[torch.Tensor] = None,
         layer_past: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
         use_cache: bool = False,
+        replace_position: Optional[torch.Tensor] = None,
     ) -> Tuple[torch.Tensor, Optional[Tuple[torch.Tensor, torch.Tensor]]]:
         # Get query, key, value projections.
         # shape:
@@ -905,10 +1007,10 @@ class LLaDALlamaBlock(LLaDABlock):
         # Get attention scores.
         if self._activation_checkpoint_fn is not None:
             att, cache = self._activation_checkpoint_fn(  # type: ignore
-                self.attention, q, k, v, attention_bias, layer_past=layer_past, use_cache=use_cache
+                self.attention, q, k, v, attention_bias, layer_past=layer_past, use_cache=use_cache, replace_position=replace_position
             )
         else:
-            att, cache = self.attention(q, k, v, attention_bias, layer_past=layer_past, use_cache=use_cache)
+            att, cache = self.attention(q, k, v, attention_bias, layer_past=layer_past, use_cache=use_cache, replace_position=replace_position)
 
         # Add attention scores.
         # shape: (B, T, C)
@@ -934,7 +1036,7 @@ class LLaDALlamaBlock(LLaDABlock):
         return x, cache
 
 
-class LLaDAOutput(NamedTuple):
+class FastDLLMLLaDAOutput(NamedTuple):
     logits: torch.FloatTensor
     """
     A tensor of shape `(batch_size, seq_len, vocab_size)` representing the log probabilities
@@ -952,7 +1054,7 @@ class LLaDAOutput(NamedTuple):
     """
 
 
-class LLaDAGenerateOutput(NamedTuple):
+class FastDLLMLLaDAGenerateOutput(NamedTuple):
     token_ids: torch.LongTensor
     """
     The generated token IDs, a tensor of shape `(batch_size, beam_size, max_steps)`.
@@ -965,7 +1067,7 @@ class LLaDAGenerateOutput(NamedTuple):
     """
 
 
-class LLaDABlockGroup(nn.ModuleList):
+class FastDLLMLLaDABlockGroup(nn.ModuleList):
     def __init__(self, config: ModelConfig, layer_offset: int, modules: Optional[Iterable[nn.Module]] = None):
         super().__init__(modules)
         self.config = config
@@ -1021,50 +1123,50 @@ class LLaDABlockGroup(nn.ModuleList):
             block.set_activation_checkpointing(strategy)
 
 
-class LLaDAPreTrainedModel(PreTrainedModel):
+class FastDLLMLLaDAPreTrainedModel(PreTrainedModel):
     """
     Minimal HF-compatible base to enable gradient checkpointing hooks and centralize
     parameter initialization.
     """
 
-    config_class = LLaDAConfig
+    config_class = FastDLLMLLaDAConfig
     base_model_prefix = "model"
-    _no_split_modules = ["LLaDALlamaBlock"]
+    _no_split_modules = ["FastDLLMLLaDALlamaBlock"]
     _supports_gradient_checkpointing = True  # backward compat
     supports_gradient_checkpointing = True   # transformers >=4.38
 
     def __init__(self, config, *model_args, **model_kwargs):
         hf_config = config
         if not hasattr(hf_config, "to_dict"):
-            hf_config = LLaDAConfig(**config.__dict__)
+            hf_config = FastDLLMLLaDAConfig(**config.__dict__)
         super().__init__(hf_config, *model_args, **model_kwargs)
 
     def _init_weights(self, module):
         # Avoid double-initializing by short-circuiting once a module (and its children)
         # have been reset.
-        if getattr(module, "_llada_params_initialized", False):
+        if getattr(module, "_fastdllmllada_params_initialized", False):
             return
         if hasattr(module, "reset_parameters"):
             module.reset_parameters()
             for child in module.modules():
-                setattr(child, "_llada_params_initialized", True)
+                setattr(child, "_fastdllmllada_params_initialized", True)
 
     def _set_gradient_checkpointing(
         self, enable: bool = True, gradient_checkpointing_func: Callable = None
     ):
         """
         New-format hook expected by `PreTrainedModel.gradient_checkpointing_enable`.
-        Only LLaDAModel (the heavy transformer) actually toggles checkpointing.
+        Only FastDLLMLLaDAModel (the heavy transformer) actually toggles checkpointing.
         """
         from torch.utils.checkpoint import checkpoint  # local import to avoid hard dep at import time
 
         if gradient_checkpointing_func is None:
             gradient_checkpointing_func = checkpoint
 
-        # When called on the HF wrapper (LLaDAModelLM), reach into the inner LLaDAModel.
-        target = self.model if isinstance(self, LLaDAModelLM) else self
+        # When called on the HF wrapper (FastDLLMLLaDAModelLM), reach into the inner FastDLLMLLaDAModel.
+        target = self.model if isinstance(self, FastDLLMLLaDAModelLM) else self
 
-        if isinstance(target, LLaDAModel):
+        if isinstance(target, FastDLLMLLaDAModel):
             target._gradient_checkpointing_func = gradient_checkpointing_func
             target.gradient_checkpointing = enable
             strategy = ActivationCheckpointingStrategy.whole_layer if enable else None
@@ -1073,7 +1175,7 @@ class LLaDAPreTrainedModel(PreTrainedModel):
 
         # Fallback: walk modules to find the core model.
         for module in self.modules():
-            if isinstance(module, LLaDAModel):
+            if isinstance(module, FastDLLMLLaDAModel):
                 module._gradient_checkpointing_func = gradient_checkpointing_func
                 module.gradient_checkpointing = enable
                 strategy = ActivationCheckpointingStrategy.whole_layer if enable else None
@@ -1081,8 +1183,8 @@ class LLaDAPreTrainedModel(PreTrainedModel):
                 break
 
 
-class LLaDAModel(LLaDAPreTrainedModel):
-    def __init__(self, config: LLaDAConfig | ModelConfig, init_params: bool = True):
+class FastDLLMLLaDAModel(FastDLLMLLaDAPreTrainedModel):
+    def __init__(self, config: FastDLLMLLaDAConfig | ModelConfig, init_params: bool = True):
         super().__init__(config)
         self.gradient_checkpointing: bool = False
         self.__cache = BufferCache()
@@ -1126,10 +1228,10 @@ class LLaDAModel(LLaDAPreTrainedModel):
             )
         )
 
-        blocks = [LLaDABlock.build(i, config, self.__cache) for i in range(config.n_layers)]
+        blocks = [FastDLLMLLaDABlock.build(i, config, self.__cache) for i in range(config.n_layers)]
         if self.config.block_group_size > 1:
             block_groups = [
-                LLaDABlockGroup(config, i, blocks[i : i + config.block_group_size])
+                FastDLLMLLaDABlockGroup(config, i, blocks[i : i + config.block_group_size])
                 for i in range(0, config.n_layers, config.block_group_size)
             ]
             self.transformer.update({"block_groups": nn.ModuleList(block_groups)})
@@ -1241,7 +1343,8 @@ class LLaDAModel(LLaDAPreTrainedModel):
         use_cache: bool = False,
         last_logits_only: bool = False,
         output_hidden_states: Optional[bool] = None,
-    ) -> LLaDAOutput:
+        replace_position: Optional[torch.Tensor] = None,
+    ) -> FastDLLMLLaDAOutput:
         """
         :param input_ids: A tensor of shape `(batch_size, seq_len)`.
         :param input_embeddings: A tensor of shape `(batch_size, seq_len, d_model)` with input
@@ -1271,7 +1374,8 @@ class LLaDAModel(LLaDAPreTrainedModel):
         # Add Basic MDM Model config check
         assert not self.config.alibi, "Alibi length extrapolation is not supported for MDM."
         assert self.config.rope, "Rope must be used in Llama-Encoder for MDM."
-        assert (past_key_values is None and not use_cache), "The kvcache is not supported for MDM."
+        # Enable fast-dllm sampler
+        # assert (past_key_values is None and not use_cache), "The kvcache is not supported for MDM."
 
         output_hidden_states = output_hidden_states if output_hidden_states is not None else False
 
@@ -1377,11 +1481,11 @@ class LLaDAModel(LLaDAPreTrainedModel):
                 ):
                     # shape: (batch_size, seq_len, d_model)
                     x, cache = self._activation_checkpoint_fn(
-                        block, x, attention_bias=attention_bias, layer_past=layer_past, use_cache=use_cache
+                        block, x, attention_bias=attention_bias, layer_past=layer_past, use_cache=use_cache, replace_position=replace_position
                     )
                 else:
                     # shape: (batch_size, seq_len, d_model)
-                    x, cache = block(x, attention_bias=attention_bias, layer_past=layer_past, use_cache=use_cache)
+                    x, cache = block(x, attention_bias=attention_bias, layer_past=layer_past, use_cache=use_cache, replace_position=replace_position)
                 if attn_key_values is not None:
                     assert cache is not None
                     attn_key_values.append(cache)
@@ -1425,10 +1529,10 @@ class LLaDAModel(LLaDAPreTrainedModel):
         if self.config.scale_logits:
             logits.mul_(1 / math.sqrt(self.config.d_model))
 
-        return LLaDAOutput(logits=logits, attn_key_values=attn_key_values, hidden_states=tuple(all_hidden_states) if output_hidden_states else None)  # type: ignore[arg-type]
+        return FastDLLMLLaDAOutput(logits=logits, attn_key_values=attn_key_values, hidden_states=tuple(all_hidden_states) if output_hidden_states else None)  # type: ignore[arg-type]
 
 
-def create_model_config_from_pretrained_config(config: LLaDAConfig):
+def create_model_config_from_pretrained_config(config: FastDLLMLLaDAConfig):
     """
     Utility function
     """
@@ -1441,24 +1545,24 @@ def create_model_config_from_pretrained_config(config: LLaDAConfig):
     return model_config
 
 
-class LLaDAModelLM(LLaDAPreTrainedModel):
+class FastDLLMLLaDAModelLM(FastDLLMLLaDAPreTrainedModel):
     """
     Extremely barebones HF model wrapper.
     """
 
-    config_class = LLaDAConfig
+    config_class = FastDLLMLLaDAConfig
     base_model_prefix = "model"
-    # _no_split_modules = ["LLaDABlock", "LLaDASequentialBlock", "LLaDALlamaBlock"]
-    _no_split_modules = ["LLaDALlamaBlock"]
+    # _no_split_modules = ["FastDLLMLLaDABlock", "FastDLLMLLaDASequentialBlock", "FastDLLMLLaDALlamaBlock"]
+    _no_split_modules = ["FastDLLMLLaDALlamaBlock"]
 
-    def __init__(self, config: LLaDAConfig, model: Optional[LLaDAModel] = None, init_params: bool = False):
+    def __init__(self, config: FastDLLMLLaDAConfig, model: Optional[FastDLLMLLaDAModel] = None, init_params: bool = False):
         super().__init__(config)
 
         if not model:
             model_config = create_model_config_from_pretrained_config(config)
             # Initialize model (always on CPU to start with so we don't run out of GPU memory).
             model_config.init_device = "cuda"
-            self.model = LLaDAModel(model_config, init_params=init_params)
+            self.model = FastDLLMLLaDAModel(model_config, init_params=init_params)
         else:
             self.model = model
 
@@ -1475,15 +1579,15 @@ class LLaDAModelLM(LLaDAPreTrainedModel):
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
         cache_position: Optional[Cache] = None,  # This is a hack mitigation of an issue in transformers `4.39.x`
+        replace_position: Optional[torch.Tensor] = None,
     ) -> Union[Tuple, CausalLMOutputWithPast]:
         if use_cache is None:
             use_cache = self.config.use_cache
 
         if output_attentions:
-            raise ValueError("output_attentions is not yet supported in LLaDA")
+            raise ValueError("output_attentions is not yet supported in FastDLLMLLaDA")
 
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
-
         # decoder outputs consists of (dec_features, layer_state, dec_hidden, dec_attn)
         outputs = self.model.forward(
             input_ids=input_ids,
@@ -1493,6 +1597,7 @@ class LLaDAModelLM(LLaDAPreTrainedModel):
             past_key_values=past_key_values,
             use_cache=use_cache,
             output_hidden_states=output_hidden_states,
+            replace_position=replace_position,
         )
 
         logits = outputs.logits
@@ -1501,7 +1606,7 @@ class LLaDAModelLM(LLaDAPreTrainedModel):
         loss = None
         if labels is not None:
             import warnings
-            warnings.warn("Note that for LLaDA, you cannot calculate the loss here.", UserWarning)
+            warnings.warn("Note that for FastDLLMLLaDA, you cannot calculate the loss here.", UserWarning)
         if not return_dict:
             output = (logits,) + outputs[1:]
             return (loss,) + output if loss is not None else output
