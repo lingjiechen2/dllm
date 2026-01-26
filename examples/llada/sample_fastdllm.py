@@ -23,13 +23,13 @@ class ScriptArguments:
 
 @dataclass
 class SamplerConfig(dllm.core.samplers.FastDLLMSamplerConfig):
-    steps: int = 512
-    max_new_tokens: int = 512
+    steps: int = 1024
+    max_new_tokens: int = 1024
     block_size: int = 32
     temperature: float = 0.0
     remasking: str = "low_confidence"
-    use_cache: str = "dual"
-    threshold: float = 0.7
+    use_cache: str = "none" # "none", "prefix", "dual"
+    threshold: float = None
     factor: float = None
     begin_suppress_tokens: list[int] = None # Suppress special tokens at beginning
 
@@ -50,8 +50,7 @@ print("TEST: llada.sample()".center(80))
 print("=" * 80)
 
 messages = [
-    # [{"role": "user", "content": "Lily runs 12 km/h for 4 hours. How far in 8 hours?"}],
-    [{"role": "user", "content": "Write a love story in New York City."}],
+    [{"role": "user", "content": "Lily runs 12 km/h for 4 hours. How far in 8 hours?"}],
 ]
 
 inputs = tokenizer.apply_chat_template(

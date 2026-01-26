@@ -55,10 +55,10 @@ def get_transfer_index(
 
     # 2) Confidence (or random)
     if remasking == "low_confidence":
-        p = F.softmax(logits.to(torch.float64), dim=-1)
-        conf = torch.gather(p, dim=-1, index=x0.unsqueeze(-1)).squeeze(-1)  # (B, L) float64
+        p = F.softmax(logits.to(torch.float32), dim=-1)
+        conf = torch.gather(p, dim=-1, index=x0.unsqueeze(-1)).squeeze(-1)  # (B, L) float32
     elif remasking == "random":
-        conf = torch.rand(x0.shape, device=x0.device, dtype=torch.float64)
+        conf = torch.rand(x0.shape, device=x0.device, dtype=torch.float32)
     else:
         raise NotImplementedError(remasking)
 
@@ -148,7 +148,7 @@ class FastDLLMSamplerConfig(SamplerConfig):
     temperature: float = 0.0
     remasking: str = "low_confidence"
     stochastic_transfer: bool = False
-    cfg_scale: float = 0.0
+    cfg_scale: float = 0.0  # Unused within Fast-dLLM
     cfg_keep_tokens: list[int] | None = None
     suppress_tokens: list[int] | None = None
     begin_suppress_tokens: list[int] | None = None
@@ -194,7 +194,7 @@ class FastDLLMSampler(BaseSampler):
         suppress_tokens = kwargs.get("suppress_tokens", config.suppress_tokens)
         begin_suppress_tokens = kwargs.get("begin_suppress_tokens", config.begin_suppress_tokens)
 
-        use_cache_mode = kwargs.get("use_cache", config.use_cache)
+        use_cache = kwargs.get("use_cache", config.use_cache)
         threshold = kwargs.get("threshold", config.threshold)
         factor = kwargs.get("factor", config.factor)
 
@@ -269,16 +269,24 @@ class FastDLLMSampler(BaseSampler):
         steps_per_block = math.ceil(steps / num_blocks)
 
         # Cache modes assume a single shared prompt length (like NVLabs reference code)
-        if use_cache_mode in ("prefix", "dual"):
+        if use_cache == "none":
+            use_cache = None
+        if use_cache not in (None, "prefix", "dual"):
+            raise RuntimeError(
+                f"Unknown use_cache mode: {use_cache}. Expected None, 'prefix', or 'dual'."
+            )
+        # Fast-dLLM cache modes require batchsize = 1 or equal prompt lengths
+        if use_cache is None:
+            prompt_len = None
+        else:
             if len(set(prompt_lens)) != 1:
                 raise ValueError(
-                    f"use_cache={use_cache_mode!r} requires equal prompt lengths in batch. "
+                    f"use_cache={use_cache!r} requires equal prompt lengths in batch. "
                     f"Got prompt_lens={prompt_lens}. "
                     f"Either batch by prompt length or set use_cache=None."
                 )
-            prompt_len = prompt_lens[0]
-        else:
-            prompt_len = None
+            else:
+                prompt_len = prompt_lens[0]
 
         # Helper: apply token suppressions to logits (in-place)
         def _apply_suppressions(logits_: torch.Tensor):
@@ -332,7 +340,7 @@ class FastDLLMSampler(BaseSampler):
             # -------------------------
             # Mode 1: No cache
             # -------------------------
-            if use_cache_mode is None:
+            if use_cache is None:
                 for i_step in range(effective_steps):
                     # mask only within current block (per-sample)
                     mask_allowed = torch.zeros_like(x, dtype=torch.bool)
@@ -365,12 +373,17 @@ class FastDLLMSampler(BaseSampler):
                         factor=factor,
                     )
 
+                    x = torch.where(transfer_idx, x0, x)
+
+                    if histories is not None:
+                        histories.append(x.clone())
+
                 continue  # next block
 
             # -------------------------
             # Mode 2: Prefix cache
             # -------------------------
-            if use_cache_mode == "prefix":
+            if use_cache == "prefix":
                 # Warm cache on full x once per block
                 out_full = self.model(x, attention_mask=attention_mask, use_cache=True)
                 logits_full = out_full.logits
@@ -455,7 +468,7 @@ class FastDLLMSampler(BaseSampler):
             # -------------------------
             # Mode 3: Dual cache
             # -------------------------
-            if use_cache_mode == "dual":
+            if use_cache == "dual":
                 # Warm cache on full x once per block
                 out_full = self.model(x, attention_mask=attention_mask, use_cache=True)
                 logits_full = out_full.logits
@@ -533,7 +546,7 @@ class FastDLLMSampler(BaseSampler):
 
                 continue  # next block
 
-            raise ValueError(f"Unknown use_cache mode: {use_cache_mode!r}")
+            raise ValueError(f"Unknown use_cache mode: {use_cache!r}")
 
         # ----- Output format -----
         if not return_dict:

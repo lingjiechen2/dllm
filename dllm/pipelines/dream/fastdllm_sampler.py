@@ -68,7 +68,7 @@ class DreamFastDLLMSamplerConfig(SamplerConfig):
     right_shift_logits: bool = True
     threshold: float | None = None
     use_cache: str | None = None  # None | "prefix" | "dual"
-    block_length: int = 32
+    block_size: int = 32
 
 
 @dataclass
@@ -103,7 +103,7 @@ class DreamFastDLLMSampler(BaseSampler):
         )
         threshold = kwargs.get("threshold", config.threshold)
         use_cache = kwargs.get("use_cache", config.use_cache)
-        block_length = kwargs.get("block_length", config.block_length)
+        block_size = kwargs.get("block_size", config.block_size)
         return_dict = kwargs.get("return_dict", config.return_dict)
         right_shift_logits = kwargs.get("right_shift_logits", config.right_shift_logits)
 
@@ -216,15 +216,8 @@ class DreamFastDLLMSampler(BaseSampler):
                         continue
 
                     # Budget this step: top-k where k = num_transfer + leftover from past steps
-                    current_transfer_tokens = (
-                        (x == mask_token_id).sum().item()
-                        - num_transfer_tokens_list[:, i + 1 :].sum().item()
-                    )
-                    current_transfer_tokens_test = (
-                        num_transfer_tokens_list[:, : (i + 1)].sum().item()
-                        - (max_new_tokens - (x == mask_token_id).sum().item())
-                    )
-                    assert current_transfer_tokens == current_transfer_tokens_test
+                    current_transfer_tokens = int(mask_index[0].sum().item())
+
                     # Only masked positions are meaningful; clamp k to avoid selecting -inf slots
                     num_masked = int(mask_index[0].sum().item())
                     k = min(int(current_transfer_tokens), num_masked)
@@ -251,6 +244,11 @@ class DreamFastDLLMSampler(BaseSampler):
                     x_[mask_index] = x0.clone()
                     x[transfer_index] = x_[transfer_index]
                     i += 1
+                    
+                    x = generation_tokens_hook_func(i, x, logits)
+                    if histories is not None:
+                        histories.append(x.clone())
+
                     if not torch.any(x == mask_token_id):
                         break
 
@@ -291,9 +289,9 @@ class DreamFastDLLMSampler(BaseSampler):
                             x_[mask_index] = x0.clone()
                             x[j, transfer_index] = x_[j, transfer_index]
 
-                x = generation_tokens_hook_func(i, x, logits)
-                if histories is not None:
-                    histories.append(x.clone())
+                    x = generation_tokens_hook_func(i, x, logits)
+                    if histories is not None:
+                        histories.append(x.clone())
 
             if not return_dict:
                 return x
@@ -304,13 +302,13 @@ class DreamFastDLLMSampler(BaseSampler):
             dual_cache = use_cache == "dual"
 
             gen_length = max_new_tokens
-            if block_length is None:
-                block_length = gen_length
-            assert gen_length % block_length == 0, (
-                f"gen_length ({gen_length}) must be divisible by block_length "
-                f"({block_length})"
+            if block_size is None:
+                block_size = gen_length
+            assert gen_length % block_size == 0, (
+                f"gen_length ({gen_length}) must be divisible by block_size "
+                f"({block_size})"
             )
-            num_blocks = gen_length // block_length
+            num_blocks = gen_length // block_size
 
             assert steps % num_blocks == 0, (
                 f"steps ({steps}) must be divisible by num_blocks ({num_blocks})"
@@ -338,8 +336,8 @@ class DreamFastDLLMSampler(BaseSampler):
             past_key_values = None
 
             for num_block in range(num_blocks):
-                current_block_start = gen_start + num_block * block_length
-                current_block_end = current_block_start + block_length
+                current_block_start = gen_start + num_block * block_size
+                current_block_end = current_block_start + block_size
 
                 # update cache
                 model_output = self.model(
@@ -378,7 +376,7 @@ class DreamFastDLLMSampler(BaseSampler):
                     region = x[:, current_block_start:end]
 
                     mask_index = region == mask_token_id
-                    mask_index[:, block_length:] = False
+                    mask_index[:, block_size:] = False
 
                     if cache_attention_mask != "full":
                         current_attention_mask = cache_attention_mask[
@@ -419,7 +417,7 @@ class DreamFastDLLMSampler(BaseSampler):
                         dtype=logits.dtype,
                     )
                     full_confidence[mask_index] = confidence
-                    full_confidence[:, block_length:] = -torch.inf
+                    full_confidence[:, block_size:] = -torch.inf
                     x_ = torch.full_like(region, mask_token_id, device=self.model.device)
                     x_[mask_index] = x0.clone()
 
