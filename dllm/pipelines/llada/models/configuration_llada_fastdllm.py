@@ -430,8 +430,8 @@ class ActivationCheckpointingStrategy(StrEnum):
     """
 
 
-class FastDLLMLLaDAConfig(PretrainedConfig):
-    model_type = "fastdllm_llada"
+class LLaDAFastDLLMConfig(PretrainedConfig):
+    model_type = "llada_fastdllm"
     keys_to_ignore_at_inference = ["past_key_values"]  # TODO: confirm
 
     def __init__(self, use_cache: bool = False, **kwargs):
@@ -441,7 +441,7 @@ class FastDLLMLLaDAConfig(PretrainedConfig):
         all_kwargs.update({"use_cache": use_cache})
         all_kwargs.update(
             {
-                "architectures": all_kwargs.get("architectures", ["FastDLLMLLaDAModelLM"])
+                "architectures": all_kwargs.get("architectures", ["LLaDAFastDLLMModelLM"])
             }
         )
         super().__init__(**all_kwargs)

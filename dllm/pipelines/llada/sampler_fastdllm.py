@@ -140,7 +140,7 @@ def get_transfer_index(
 
 
 @dataclass
-class FastDLLMSamplerConfig(SamplerConfig):
+class LLaDAFastDLLMSamplerConfig(SamplerConfig):
     max_new_tokens: int = 128
     max_length: int = None
     block_size: int = 128
@@ -163,12 +163,12 @@ class FastDLLMSamplerConfig(SamplerConfig):
 
 
 @dataclass
-class FastDLLMSampler(BaseSampler):
+class LLaDAFastDLLMSampler(BaseSampler):
     @torch.no_grad()
     def sample(
         self,
         inputs: Union[List[torch.Tensor], List[List[int]], torch.Tensor],
-        config: Optional[FastDLLMSamplerConfig] = None,
+        config: Optional[LLaDAFastDLLMSamplerConfig] = None,
         **kwargs,
     ) -> SamplerOutput | torch.Tensor:
         """
@@ -179,7 +179,7 @@ class FastDLLMSampler(BaseSampler):
           - use_cache="dual": dual cache (requires model forward supports replace_position)
         """
         if config is None:
-            config = FastDLLMSamplerConfig()
+            config = LLaDAFastDLLMSamplerConfig()
 
         # ----- pull args from config, allow kwargs to override -----
         steps = kwargs.get("steps", config.steps)
@@ -557,7 +557,7 @@ class FastDLLMSampler(BaseSampler):
     def infill(
         self,
         inputs: list[torch.Tensor, list],
-        config: FastDLLMSamplerConfig | None = None,
+        config: LLaDAFastDLLMSamplerConfig | None = None,
         **kwargs,
     ) -> SamplerOutput:
         raise NotImplementedError

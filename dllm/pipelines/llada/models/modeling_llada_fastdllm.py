@@ -31,8 +31,8 @@ from transformers.modeling_outputs import CausalLMOutputWithPast
 from transformers.models.auto import AutoModel
 from transformers.cache_utils import Cache
 
-from .configuration_fastdllmllada import (
-    FastDLLMLLaDAConfig,
+from .configuration_llada_fastdllm import (
+    LLaDAFastDLLMConfig,
     StrEnum,
     InitFnType,
     ActivationType,
@@ -59,12 +59,12 @@ __all__ = [
     "GELU",
     "ReLU",
     "SwiGLU",
-    "FastDLLMLLaDABlock",
-    "FastDLLMLLaDASequentialBlock",
-    "FastDLLMLLaDAPreTrainedModel",
-    "FastDLLMLLaDAModel",
-    "FastDLLMLLaDAOutput",
-    "FastDLLMLLaDAGenerateOutput",
+    "LLaDAFastDLLMBlock",
+    "LLaDAFastDLLMSequentialBlock",
+    "LLaDAFastDLLMPreTrainedModel",
+    "LLaDAFastDLLMModel",
+    "LLaDAFastDLLMOutput",
+    "LLaDAFastDLLMGenerateOutput",
 ]
 
 
@@ -560,7 +560,7 @@ def alibi_attention_bias(seq_len: int, config: ModelConfig, device: torch.device
     return alibi_bias * (1.0 / (2 ** m.view(1, config.n_heads, 1, 1)))  # type: ignore
 
 
-class FastDLLMLLaDABlock(nn.Module):
+class LLaDAFastDLLMBlock(nn.Module):
     """
     A base class for transformer block implementations.
     """
@@ -835,16 +835,16 @@ class FastDLLMLLaDABlock(nn.Module):
         raise NotImplementedError
 
     @classmethod
-    def build(cls, layer_id: int, config: ModelConfig, cache: BufferCache) -> FastDLLMLLaDABlock:
+    def build(cls, layer_id: int, config: ModelConfig, cache: BufferCache) -> LLaDAFastDLLMBlock:
         if config.block_type == BlockType.sequential:
-            return FastDLLMLLaDASequentialBlock(layer_id, config, cache)
+            return LLaDAFastDLLMSequentialBlock(layer_id, config, cache)
         elif config.block_type == BlockType.llama:
-            return FastDLLMLLaDALlamaBlock(layer_id, config, cache)
+            return LLaDAFastDLLMLlamaBlock(layer_id, config, cache)
         else:
             raise NotImplementedError(f"Unknown block type: '{config.block_type}'")
 
 
-class FastDLLMLLaDASequentialBlock(FastDLLMLLaDABlock):
+class LLaDAFastDLLMSequentialBlock(LLaDAFastDLLMBlock):
     """
     This is a typical transformer block where the output is computed as ``MLP(LN(x + Attention(LN(x))))``
     (plus another skip connection).
@@ -934,10 +934,10 @@ class FastDLLMLLaDASequentialBlock(FastDLLMLLaDABlock):
         return x, cache
 
 
-class FastDLLMLLaDALlamaBlock(FastDLLMLLaDABlock):
+class LLaDAFastDLLMLlamaBlock(LLaDAFastDLLMBlock):
     """
     This is a transformer block where the output is computed as ``MLP(LN(x + Attention(LN(x))))``
-    (plus another skip connection). This block is similar to `FastDLLMLLaDASequentialBlock`
+    (plus another skip connection). This block is similar to `LLaDAFastDLLMSequentialBlock`
     but some operations have slightly different implementations to imitate the
     behavior of Llama.
     """
@@ -1036,7 +1036,7 @@ class FastDLLMLLaDALlamaBlock(FastDLLMLLaDABlock):
         return x, cache
 
 
-class FastDLLMLLaDAOutput(NamedTuple):
+class LLaDAFastDLLMOutput(NamedTuple):
     logits: torch.FloatTensor
     """
     A tensor of shape `(batch_size, seq_len, vocab_size)` representing the log probabilities
@@ -1054,7 +1054,7 @@ class FastDLLMLLaDAOutput(NamedTuple):
     """
 
 
-class FastDLLMLLaDAGenerateOutput(NamedTuple):
+class LLaDAFastDLLMGenerateOutput(NamedTuple):
     token_ids: torch.LongTensor
     """
     The generated token IDs, a tensor of shape `(batch_size, beam_size, max_steps)`.
@@ -1067,7 +1067,7 @@ class FastDLLMLLaDAGenerateOutput(NamedTuple):
     """
 
 
-class FastDLLMLLaDABlockGroup(nn.ModuleList):
+class LLaDAFastDLLMBlockGroup(nn.ModuleList):
     def __init__(self, config: ModelConfig, layer_offset: int, modules: Optional[Iterable[nn.Module]] = None):
         super().__init__(modules)
         self.config = config
@@ -1123,22 +1123,22 @@ class FastDLLMLLaDABlockGroup(nn.ModuleList):
             block.set_activation_checkpointing(strategy)
 
 
-class FastDLLMLLaDAPreTrainedModel(PreTrainedModel):
+class LLaDAFastDLLMPreTrainedModel(PreTrainedModel):
     """
     Minimal HF-compatible base to enable gradient checkpointing hooks and centralize
     parameter initialization.
     """
 
-    config_class = FastDLLMLLaDAConfig
+    config_class = LLaDAFastDLLMConfig
     base_model_prefix = "model"
-    _no_split_modules = ["FastDLLMLLaDALlamaBlock"]
+    _no_split_modules = ["LLaDAFastDLLMLlamaBlock"]
     _supports_gradient_checkpointing = True  # backward compat
     supports_gradient_checkpointing = True   # transformers >=4.38
 
     def __init__(self, config, *model_args, **model_kwargs):
         hf_config = config
         if not hasattr(hf_config, "to_dict"):
-            hf_config = FastDLLMLLaDAConfig(**config.__dict__)
+            hf_config = LLaDAFastDLLMConfig(**config.__dict__)
         super().__init__(hf_config, *model_args, **model_kwargs)
 
     def _init_weights(self, module):
@@ -1156,17 +1156,17 @@ class FastDLLMLLaDAPreTrainedModel(PreTrainedModel):
     ):
         """
         New-format hook expected by `PreTrainedModel.gradient_checkpointing_enable`.
-        Only FastDLLMLLaDAModel (the heavy transformer) actually toggles checkpointing.
+        Only LLaDAFastDLLMModel (the heavy transformer) actually toggles checkpointing.
         """
         from torch.utils.checkpoint import checkpoint  # local import to avoid hard dep at import time
 
         if gradient_checkpointing_func is None:
             gradient_checkpointing_func = checkpoint
 
-        # When called on the HF wrapper (FastDLLMLLaDAModelLM), reach into the inner FastDLLMLLaDAModel.
-        target = self.model if isinstance(self, FastDLLMLLaDAModelLM) else self
+        # When called on the HF wrapper (LLaDAFastDLLMModelLM), reach into the inner LLaDAFastDLLMModel.
+        target = self.model if isinstance(self, LLaDAFastDLLMModelLM) else self
 
-        if isinstance(target, FastDLLMLLaDAModel):
+        if isinstance(target, LLaDAFastDLLMModel):
             target._gradient_checkpointing_func = gradient_checkpointing_func
             target.gradient_checkpointing = enable
             strategy = ActivationCheckpointingStrategy.whole_layer if enable else None
@@ -1175,7 +1175,7 @@ class FastDLLMLLaDAPreTrainedModel(PreTrainedModel):
 
         # Fallback: walk modules to find the core model.
         for module in self.modules():
-            if isinstance(module, FastDLLMLLaDAModel):
+            if isinstance(module, LLaDAFastDLLMModel):
                 module._gradient_checkpointing_func = gradient_checkpointing_func
                 module.gradient_checkpointing = enable
                 strategy = ActivationCheckpointingStrategy.whole_layer if enable else None
@@ -1183,8 +1183,8 @@ class FastDLLMLLaDAPreTrainedModel(PreTrainedModel):
                 break
 
 
-class FastDLLMLLaDAModel(FastDLLMLLaDAPreTrainedModel):
-    def __init__(self, config: FastDLLMLLaDAConfig | ModelConfig, init_params: bool = True):
+class LLaDAFastDLLMModel(LLaDAFastDLLMPreTrainedModel):
+    def __init__(self, config: LLaDAFastDLLMConfig | ModelConfig, init_params: bool = True):
         super().__init__(config)
         self.gradient_checkpointing: bool = False
         self.__cache = BufferCache()
@@ -1228,10 +1228,10 @@ class FastDLLMLLaDAModel(FastDLLMLLaDAPreTrainedModel):
             )
         )
 
-        blocks = [FastDLLMLLaDABlock.build(i, config, self.__cache) for i in range(config.n_layers)]
+        blocks = [LLaDAFastDLLMBlock.build(i, config, self.__cache) for i in range(config.n_layers)]
         if self.config.block_group_size > 1:
             block_groups = [
-                FastDLLMLLaDABlockGroup(config, i, blocks[i : i + config.block_group_size])
+                LLaDAFastDLLMBlockGroup(config, i, blocks[i : i + config.block_group_size])
                 for i in range(0, config.n_layers, config.block_group_size)
             ]
             self.transformer.update({"block_groups": nn.ModuleList(block_groups)})
@@ -1344,7 +1344,7 @@ class FastDLLMLLaDAModel(FastDLLMLLaDAPreTrainedModel):
         last_logits_only: bool = False,
         output_hidden_states: Optional[bool] = None,
         replace_position: Optional[torch.Tensor] = None,
-    ) -> FastDLLMLLaDAOutput:
+    ) -> LLaDAFastDLLMOutput:
         """
         :param input_ids: A tensor of shape `(batch_size, seq_len)`.
         :param input_embeddings: A tensor of shape `(batch_size, seq_len, d_model)` with input
@@ -1529,10 +1529,10 @@ class FastDLLMLLaDAModel(FastDLLMLLaDAPreTrainedModel):
         if self.config.scale_logits:
             logits.mul_(1 / math.sqrt(self.config.d_model))
 
-        return FastDLLMLLaDAOutput(logits=logits, attn_key_values=attn_key_values, hidden_states=tuple(all_hidden_states) if output_hidden_states else None)  # type: ignore[arg-type]
+        return LLaDAFastDLLMOutput(logits=logits, attn_key_values=attn_key_values, hidden_states=tuple(all_hidden_states) if output_hidden_states else None)  # type: ignore[arg-type]
 
 
-def create_model_config_from_pretrained_config(config: FastDLLMLLaDAConfig):
+def create_model_config_from_pretrained_config(config: LLaDAFastDLLMConfig):
     """
     Utility function
     """
@@ -1545,24 +1545,24 @@ def create_model_config_from_pretrained_config(config: FastDLLMLLaDAConfig):
     return model_config
 
 
-class FastDLLMLLaDAModelLM(FastDLLMLLaDAPreTrainedModel):
+class LLaDAFastDLLMModelLM(LLaDAFastDLLMPreTrainedModel):
     """
     Extremely barebones HF model wrapper.
     """
 
-    config_class = FastDLLMLLaDAConfig
+    config_class = LLaDAFastDLLMConfig
     base_model_prefix = "model"
-    # _no_split_modules = ["FastDLLMLLaDABlock", "FastDLLMLLaDASequentialBlock", "FastDLLMLLaDALlamaBlock"]
-    _no_split_modules = ["FastDLLMLLaDALlamaBlock"]
+    # _no_split_modules = ["LLaDAFastDLLMBlock", "LLaDAFastDLLMSequentialBlock", "LLaDAFastDLLMLlamaBlock"]
+    _no_split_modules = ["LLaDAFastDLLMLlamaBlock"]
 
-    def __init__(self, config: FastDLLMLLaDAConfig, model: Optional[FastDLLMLLaDAModel] = None, init_params: bool = False):
+    def __init__(self, config: LLaDAFastDLLMConfig, model: Optional[LLaDAFastDLLMModel] = None, init_params: bool = False):
         super().__init__(config)
 
         if not model:
             model_config = create_model_config_from_pretrained_config(config)
             # Initialize model (always on CPU to start with so we don't run out of GPU memory).
             model_config.init_device = "cuda"
-            self.model = FastDLLMLLaDAModel(model_config, init_params=init_params)
+            self.model = LLaDAFastDLLMModel(model_config, init_params=init_params)
         else:
             self.model = model
 
@@ -1585,7 +1585,7 @@ class FastDLLMLLaDAModelLM(FastDLLMLLaDAPreTrainedModel):
             use_cache = self.config.use_cache
 
         if output_attentions:
-            raise ValueError("output_attentions is not yet supported in FastDLLMLLaDA")
+            raise ValueError("output_attentions is not yet supported in LLaDAFastDLLM")
 
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
         # decoder outputs consists of (dec_features, layer_state, dec_hidden, dec_attn)
@@ -1606,7 +1606,7 @@ class FastDLLMLLaDAModelLM(FastDLLMLLaDAPreTrainedModel):
         loss = None
         if labels is not None:
             import warnings
-            warnings.warn("Note that for FastDLLMLLaDA, you cannot calculate the loss here.", UserWarning)
+            warnings.warn("Note that for LLaDAFastDLLM, you cannot calculate the loss here.", UserWarning)
         if not return_dict:
             output = (logits,) + outputs[1:]
             return (loss,) + output if loss is not None else output

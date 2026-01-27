@@ -18,7 +18,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""PyTorch FastDLLMDream model."""
+"""PyTorch DreamFastDLLM model."""
 
 import math
 from typing import List, Optional, Tuple, Union
@@ -43,7 +43,7 @@ from transformers.utils import (
     logging,
 )
 from transformers import PretrainedConfig
-from .configuration_fastdllmdream import FastDLLMDreamConfig
+from .configuration_dream_fastdllm import DreamFastDLLMConfig
 from .generation_utils import DreamGenerationMixin, DreamGenerationConfig
 
 if is_flash_attn_2_available():
@@ -54,7 +54,7 @@ logger = logging.get_logger(__name__)
 
 
 _CHECKPOINT_FOR_DOC = "Dream-7B"
-_CONFIG_FOR_DOC = "FastDLLMDreamConfig"
+_CONFIG_FOR_DOC = "DreamFastDLLMConfig"
 
 class BaseModelOutputWithPast(BaseModelOutput):
     def __init__(self, last_hidden_state: torch.FloatTensor, hidden_states: Optional[Tuple[torch.FloatTensor]] = None, attentions: Optional[Tuple[torch.FloatTensor]] = None, past_key_values: Optional[Tuple[torch.FloatTensor]] = None):
@@ -67,11 +67,11 @@ class MaskedLMOutputWithPastKeyValues(MaskedLMOutput):
         super().__init__(**kwargs)
         self.past_key_values = past_key_values
 
-# Copied from transformers.models.llama.modeling_llama.LlamaRMSNorm with Llama->FastDLLMDream
-class FastDLLMDreamRMSNorm(nn.Module):
+# Copied from transformers.models.llama.modeling_llama.LlamaRMSNorm with Llama->DreamFastDLLM
+class DreamFastDLLMRMSNorm(nn.Module):
     def __init__(self, hidden_size, eps=1e-6):
         """
-        FastDLLMDreamRMSNorm is equivalent to T5LayerNorm
+        DreamFastDLLMRMSNorm is equivalent to T5LayerNorm
         """
         super().__init__()
         self.weight = nn.Parameter(torch.ones(hidden_size))
@@ -88,8 +88,8 @@ class FastDLLMDreamRMSNorm(nn.Module):
         return f"{tuple(self.weight.shape)}, eps={self.variance_epsilon}"
 
 
-# Copied from transformers.models.llama.modeling_llama.LlamaRotaryEmbedding with Llama->FastDLLMDream
-class FastDLLMDreamRotaryEmbedding(nn.Module):
+# Copied from transformers.models.llama.modeling_llama.LlamaRotaryEmbedding with Llama->DreamFastDLLM
+class DreamFastDLLMRotaryEmbedding(nn.Module):
     def __init__(
         self,
         dim=None,
@@ -98,14 +98,14 @@ class FastDLLMDreamRotaryEmbedding(nn.Module):
         device=None,
         scaling_factor=1.0,
         rope_type="default",
-        config: Optional[FastDLLMDreamConfig] = None,
+        config: Optional[DreamFastDLLMConfig] = None,
     ):
         super().__init__()
         # TODO (joao): remove the `if` below, only used for BC
         self.rope_kwargs = {}
         if config is None:
             logger.warning_once(
-                "`FastDLLMDreamRotaryEmbedding` can now be fully parameterized by passing the model config through the "
+                "`DreamFastDLLMRotaryEmbedding` can now be fully parameterized by passing the model config through the "
                 "`config` argument. All other arguments will be removed in v4.46"
             )
             self.rope_kwargs = {
@@ -242,8 +242,8 @@ def apply_rotary_pos_emb(q, k, cos, sin, position_ids=None, unsqueeze_dim=1, blo
 
 
 
-# Copied from transformers.models.mistral.modeling_mistral.MistralMLP with Mistral->FastDLLMDream
-class FastDLLMDreamMLP(nn.Module):
+# Copied from transformers.models.mistral.modeling_mistral.MistralMLP with Mistral->DreamFastDLLM
+class DreamFastDLLMMLP(nn.Module):
     def __init__(self, config):
         super().__init__()
         self.hidden_size = config.hidden_size
@@ -270,13 +270,13 @@ def repeat_kv(hidden_states: torch.Tensor, n_rep: int) -> torch.Tensor:
     return hidden_states.reshape(batch, num_key_value_heads * n_rep, slen, head_dim)
 
 
-class FastDLLMDreamAttention(nn.Module):
+class DreamFastDLLMAttention(nn.Module):
     """
     Multi-headed attention from 'Attention Is All You Need' paper. Modified to use sliding window attention: Longformer
     and "Generating Long Sequences with Sparse Transformers".
     """
 
-    def __init__(self, config: FastDLLMDreamConfig, layer_idx: Optional[int] = None):
+    def __init__(self, config: DreamFastDLLMConfig, layer_idx: Optional[int] = None):
         super().__init__()
         self.config = config
         self.layer_idx = layer_idx
@@ -307,7 +307,7 @@ class FastDLLMDreamAttention(nn.Module):
         self.v_proj = nn.Linear(self.hidden_size, self.num_key_value_heads * self.head_dim, bias=True)
         self.o_proj = nn.Linear(self.num_heads * self.head_dim, self.hidden_size, bias=False)
 
-        self.rotary_emb = FastDLLMDreamRotaryEmbedding(config=self.config)
+        self.rotary_emb = DreamFastDLLMRotaryEmbedding(config=self.config)
 
     def forward(
         self,
@@ -377,14 +377,14 @@ class FastDLLMDreamAttention(nn.Module):
         return attn_output, attn_weights, past_key_value
     
 
-class FastDLLMDreamSdpaAttention(FastDLLMDreamAttention):
+class DreamFastDLLMSdpaAttention(DreamFastDLLMAttention):
     """
-    FastDLLMDream attention module using torch.nn.functional.scaled_dot_product_attention. This module inherits from
-    `FastDLLMDreamAttention` as the weights of the module stays untouched. The only changes are on the forward pass to adapt to
+    DreamFastDLLM attention module using torch.nn.functional.scaled_dot_product_attention. This module inherits from
+    `DreamFastDLLMAttention` as the weights of the module stays untouched. The only changes are on the forward pass to adapt to
     SDPA API.
     """
 
-    # Adapted from FastDLLMDreamAttention.forward
+    # Adapted from DreamFastDLLMAttention.forward
     def forward(
         self,
         hidden_states: torch.Tensor,
@@ -401,7 +401,7 @@ class FastDLLMDreamSdpaAttention(FastDLLMDreamAttention):
         if output_attentions:
             # TODO: Improve this warning with e.g. `model.config.attn_implementation = "manual"` once this is implemented.
             logger.warning_once(
-                "FastDLLMDreamModel is using FastDLLMDreamSdpaAttention, but `torch.nn.functional.scaled_dot_product_attention` does not support `output_attentions=True`. Falling back to the manual attention implementation, "
+                "DreamFastDLLMModel is using DreamFastDLLMSdpaAttention, but `torch.nn.functional.scaled_dot_product_attention` does not support `output_attentions=True`. Falling back to the manual attention implementation, "
                 'but specifying the manual implementation will be required from Transformers version v5.0.0 onwards. This warning can be removed using the argument `attn_implementation="eager"` when loading the model.'
             )
             return super().forward(
@@ -523,8 +523,8 @@ class FastDLLMDreamSdpaAttention(FastDLLMDreamAttention):
         return attn_output, None, past_key_value
 
 
-class FastDLLMDreamDecoderLayer(nn.Module):
-    def __init__(self, config: FastDLLMDreamConfig, layer_idx: int):
+class DreamFastDLLMDecoderLayer(nn.Module):
+    def __init__(self, config: DreamFastDLLMConfig, layer_idx: int):
         super().__init__()
         self.hidden_size = config.hidden_size
 
@@ -534,12 +534,12 @@ class FastDLLMDreamDecoderLayer(nn.Module):
                 "unexpected results may be encountered."
             )
         
-        # self.self_attn = FastDLLMDream_ATTENTION_CLASSES[config._attn_implementation](config, layer_idx)
-        self.self_attn = FastDLLMDreamSdpaAttention(config, layer_idx)
+        # self.self_attn = DreamFastDLLM_ATTENTION_CLASSES[config._attn_implementation](config, layer_idx)
+        self.self_attn = DreamFastDLLMSdpaAttention(config, layer_idx)
 
-        self.mlp = FastDLLMDreamMLP(config)
-        self.input_layernorm = FastDLLMDreamRMSNorm(config.hidden_size, eps=config.rms_norm_eps)
-        self.post_attention_layernorm = FastDLLMDreamRMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+        self.mlp = DreamFastDLLMMLP(config)
+        self.input_layernorm = DreamFastDLLMRMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+        self.post_attention_layernorm = DreamFastDLLMRMSNorm(config.hidden_size, eps=config.rms_norm_eps)
 
     def forward(
         self,
@@ -612,11 +612,11 @@ class FastDLLMDreamDecoderLayer(nn.Module):
 
         return outputs
 
-class FastDLLMDreamPreTrainedModel(PreTrainedModel):
-    config_class = FastDLLMDreamConfig
+class DreamFastDLLMPreTrainedModel(PreTrainedModel):
+    config_class = DreamFastDLLMConfig
     base_model_prefix = "model"
     supports_gradient_checkpointing = True
-    _no_split_modules = ["FastDLLMDreamDecoderLayer"]
+    _no_split_modules = ["DreamFastDLLMDecoderLayer"]
     _skip_keys_device_placement = "past_key_values"
     _supports_flash_attn_2 = True
     _supports_sdpa = True
@@ -688,26 +688,26 @@ class FastDLLMDreamPreTrainedModel(PreTrainedModel):
         )
         return _model
 
-class FastDLLMDreamBaseModel(FastDLLMDreamPreTrainedModel):
+class DreamFastDLLMBaseModel(DreamFastDLLMPreTrainedModel):
     """
-    Transformer decoder consisting of *config.num_hidden_layers* layers. Each layer is a [`FastDLLMDreamDecoderLayer`]
+    Transformer decoder consisting of *config.num_hidden_layers* layers. Each layer is a [`DreamFastDLLMDecoderLayer`]
 
     Args:
-        config: FastDLLMDreamConfig
+        config: DreamFastDLLMConfig
     """
 
-    def __init__(self, config: FastDLLMDreamConfig):
+    def __init__(self, config: DreamFastDLLMConfig):
         super().__init__(config)
         self.padding_idx = config.pad_token_id
         self.vocab_size = config.vocab_size
 
         self.embed_tokens = nn.Embedding(config.vocab_size, config.hidden_size, self.padding_idx)
         self.layers = nn.ModuleList(
-            [FastDLLMDreamDecoderLayer(config, layer_idx) for layer_idx in range(config.num_hidden_layers)]
+            [DreamFastDLLMDecoderLayer(config, layer_idx) for layer_idx in range(config.num_hidden_layers)]
         )
         self._attn_implementation = config._attn_implementation
-        self.norm = FastDLLMDreamRMSNorm(config.hidden_size, eps=config.rms_norm_eps)
-        self.rotary_emb = FastDLLMDreamRotaryEmbedding(config=config)
+        self.norm = DreamFastDLLMRMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+        self.rotary_emb = DreamFastDLLMRotaryEmbedding(config=config)
 
         self.gradient_checkpointing = False
         # Initialize weights and apply final processing
@@ -855,12 +855,12 @@ class FastDLLMDreamBaseModel(FastDLLMDreamPreTrainedModel):
         )
 
 
-class FastDLLMDreamModel(DreamGenerationMixin, FastDLLMDreamPreTrainedModel):
+class DreamFastDLLMModel(DreamGenerationMixin, DreamFastDLLMPreTrainedModel):
     _tied_weights_keys = ["lm_head.weight"]
 
     def __init__(self, config):
         super().__init__(config)
-        self.model = FastDLLMDreamBaseModel(config)
+        self.model = DreamFastDLLMBaseModel(config)
         self.vocab_size = config.vocab_size
         self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
 

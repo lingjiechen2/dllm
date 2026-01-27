@@ -22,26 +22,26 @@ class ScriptArguments:
         )
 
 @dataclass
-class SamplerConfig(dllm.core.samplers.FastDLLMSamplerConfig):
+class SamplerConfig(dllm.pipelines.llada.LLaDAFastDLLMSamplerConfig):
     steps: int = 1024
     max_new_tokens: int = 1024
     block_size: int = 32
     temperature: float = 0.0
     remasking: str = "low_confidence"
-    use_cache: str = "none" # "none", "prefix", "dual"
-    threshold: float = None
+    use_cache: str = "prefix" # "none", "prefix", "dual"
+    threshold: float = 0.9
     factor: float = None
     begin_suppress_tokens: list[int] = None # Suppress special tokens at beginning
 
 parser = transformers.HfArgumentParser((ScriptArguments, SamplerConfig))
 script_args, sampler_config = parser.parse_args_into_dataclasses()
 transformers.set_seed(script_args.seed)
-fastdllm_config = dllm.pipelines.llada.models.FastDLLMLLaDAConfig.from_pretrained(script_args.model_name_or_path)
+fastdllm_config = dllm.pipelines.llada.models.LLaDAFastDLLMConfig.from_pretrained(script_args.model_name_or_path)
 
 # Load model & tokenizer
 model = dllm.utils.get_model(model_args=script_args, config=fastdllm_config).eval()
 tokenizer = dllm.utils.get_tokenizer(model_args=script_args)
-sampler = dllm.core.samplers.FastDLLMSampler(model=model, tokenizer=tokenizer)
+sampler = dllm.pipelines.llada.LLaDAFastDLLMSampler(model=model, tokenizer=tokenizer)
 terminal_visualizer = dllm.utils.TerminalVisualizer(tokenizer=tokenizer)
 
 # --- Example 1: Batch sampling ---
