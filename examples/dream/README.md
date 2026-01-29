@@ -135,6 +135,10 @@ We also support interactive multi-turn dialogue with visualization:
 ```shell
 python examples/dream/chat.py --model_name_or_path "Dream-org/Dream-v0-Instruct-7B"
 ```
+We support [Fast-dLLM](https://github.com/NVlabs/Fast-dLLM) sampling:
+```shell
+python examples/dream/sample_fastdllm.py --model_name_or_path "Dream-org/Dream-v0-Instruct-7B" --use_cache prefix --alg confidence_threshold --threshold 0.9
+````
 
 ## Evaluation  
 > Read [(optional) Evaluation setup](/README.md/#optional-evaluation-setup) before running evaluation. 
@@ -155,6 +159,11 @@ To automatically evaluate [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/
 ```shell
 bash examples/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Instruct-7B" --instruct True
 bash examples/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --instruct False
+```
+
+Fast-dLLM is supported for evaluation. To evaluate [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B) with the Fast-dLLM sampler, run:
+```shell
+bash examples/dream/eval_fastdllm.sh --model_name_or_path "Dream-org/Dream-v0-Instruct-7B" --instruct True
 ```
 
 ### Evaluation results

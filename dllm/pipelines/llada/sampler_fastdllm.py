@@ -341,7 +341,8 @@ class LLaDAFastDLLMSampler(BaseSampler):
             # Mode 1: No cache
             # -------------------------
             if use_cache is None:
-                for i_step in range(effective_steps):
+                i = 0
+                while True:
                     # mask only within current block (per-sample)
                     mask_allowed = torch.zeros_like(x, dtype=torch.bool)
 
@@ -361,7 +362,7 @@ class LLaDAFastDLLMSampler(BaseSampler):
                     if right_shift_logits:
                         logits = torch.cat([logits[:, :1], logits[:, :-1]], dim=1)
 
-                    quota = None if threshold is not None else num_transfer_tokens[:, 0]
+                    quota = None if threshold is not None else num_transfer_tokens[:, i]
                     x0, transfer_idx = get_transfer_index(
                         logits=logits,
                         temperature=temperature,
@@ -374,6 +375,7 @@ class LLaDAFastDLLMSampler(BaseSampler):
                     )
 
                     x = torch.where(transfer_idx, x0, x)
+                    i += 1
 
                     if histories is not None:
                         histories.append(x.clone())
@@ -420,7 +422,8 @@ class LLaDAFastDLLMSampler(BaseSampler):
                 past_key_values = _trim_past_key_values(past_key_values, s)
 
                 # Refinement steps on suffix with prefix cache
-                for i_step in range(1, effective_steps):
+                i = 1
+                while True:
                     if (x[:, s:e] == mask_id).sum() == 0:
                         break
 
@@ -445,7 +448,7 @@ class LLaDAFastDLLMSampler(BaseSampler):
                     if right_shift_logits:
                         logits_suf = torch.cat([logits_suf[:, :1], logits_suf[:, :-1]], dim=1)
 
-                    quota = None if threshold is not None else num_transfer_tokens[:, 0]
+                    quota = None if (threshold is not None or factor is not None) else num_transfer_tokens[:, i]
                     x0_suf, transfer_suf = get_transfer_index(
                         logits=logits_suf,
                         temperature=temperature,
@@ -460,6 +463,7 @@ class LLaDAFastDLLMSampler(BaseSampler):
                     x_suffix_new = torch.where(transfer_suf, x0_suf, x_suffix)
                     x = torch.cat([x[:, :s], x_suffix_new], dim=1)
 
+                    i += 1
                     if histories is not None:
                         histories.append(x.clone())
 
@@ -505,7 +509,7 @@ class LLaDAFastDLLMSampler(BaseSampler):
                     if histories is not None:
                         histories.append(x.clone())
 
-                # Refinement steps: run only current block with dual cache + replace_position
+                # Use for loop here for better compilation performance according to original implementation
                 for i_step in range(1, effective_steps):
                     blk = x[:, s:e]
                     mask_blk = (blk == mask_id)
@@ -526,7 +530,7 @@ class LLaDAFastDLLMSampler(BaseSampler):
                     if right_shift_logits:
                         logits_blk = torch.cat([logits_blk[:, :1], logits_blk[:, :-1]], dim=1)
 
-                    quota = None if threshold is not None else num_transfer_tokens[:, 0]
+                    quota = None if threshold is not None else num_transfer_tokens[:, i_step]
                     x0_blk, transfer_blk = get_transfer_index(
                         logits=logits_blk,
                         temperature=temperature,

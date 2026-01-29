@@ -157,6 +157,10 @@ We also support interactive multi-turn dialogue with visualization:
 ```shell
 python examples/llada/chat.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct"
 ```
+We support [Fast-dLLM](https://github.com/NVlabs/Fast-dLLM) sampling:
+```shell
+python examples/llada/sample_fastdllm.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct" --use_cache prefix --threshold 0.9
+````
 
 ## Evaluation
 > Read [(optional) Evaluation setup](/README.md/#optional-evaluation-setup) before running evaluation. 
@@ -177,6 +181,11 @@ To automatically evaluate [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA
 ```shell
 bash examples/llada/eval.sh --model_name_or_path GSAI-ML/LLaDA-8B-Instruct --instruct True
 bash examples/llada/eval.sh --model_name_or_path GSAI-ML/LLaDA-8B-Base --instruct False
+```
+
+Fast-dLLM is supported for evaluation. To evaluate [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) with the Fast-dLLM sampler, run:
+```shell
+bash examples/llada/eval_fastdllm.sh --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct" --instruct True
 ```
 
 ### Evaluation results

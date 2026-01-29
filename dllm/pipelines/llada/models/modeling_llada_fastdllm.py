@@ -1,3 +1,20 @@
+# Copyright 2025 NVIDIA CORPORATION & AFFILIATES
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# SPDX-License-Identifier: Apache-2.0
+# Modified from LLaDA repos: https://github.com/ML-GSAI/LLaDA
+
 from __future__ import annotations
 
 import logging
@@ -20,7 +37,11 @@ from typing import (
 )
 from dataclasses import fields
 from typing import List, Optional, Tuple, Union
-
+try:
+    from torch.nn.attention.flex_attention import flex_attention, create_block_mask
+    FLEX_ATTN_AVAILABLE = True
+except:
+    FLEX_ATTN_AVAILABLE = False
 import torch
 import torch.backends.cuda
 import torch.nn as nn
@@ -31,8 +52,8 @@ from transformers.modeling_outputs import CausalLMOutputWithPast
 from transformers.models.auto import AutoModel
 from transformers.cache_utils import Cache
 
-from .configuration_llada_fastdllm import (
-    LLaDAFastDLLMConfig,
+from .configuration_llada import (
+    LLaDAConfig,
     StrEnum,
     InitFnType,
     ActivationType,
@@ -41,6 +62,7 @@ from .configuration_llada_fastdllm import (
     ModelConfig,
     ActivationCheckpointingStrategy,
 )
+from .configuration_llada_fastdllm import LLaDAFastDLLMConfig
 
 if sys.version_info.minor > 8:
     from collections.abc import MutableMapping
@@ -61,8 +83,11 @@ __all__ = [
     "SwiGLU",
     "LLaDAFastDLLMBlock",
     "LLaDAFastDLLMSequentialBlock",
-    "LLaDAFastDLLMPreTrainedModel",
+    "LLaDAFastDLLMLlamaBlock",
+    "LLaDAFastDLLMBlockDiffBlock",
+    "LLaDAFastDLLMBlockGroup",
     "LLaDAFastDLLMModel",
+    "LLaDAFastDLLMModelLM",
     "LLaDAFastDLLMOutput",
     "LLaDAFastDLLMGenerateOutput",
 ]
@@ -70,6 +95,9 @@ __all__ = [
 
 log = logging.getLogger(__name__)
 
+@torch.compile()
+def scaled_dot_product_attention(q, k, v, mask=None, attn_mask=None, dropout_p=0.0, is_causal=False):
+    return F.scaled_dot_product_attention(q, k, v, attn_mask=attn_mask, dropout_p=dropout_p, is_causal=is_causal)
 
 class ModuleType(StrEnum):
     in_module = "in"
@@ -88,6 +116,7 @@ def init_weights(
 ) -> None:
     """
     Initialize weights of a linear or embedding module.
+
     :param config: The model config.
     :param module: The linear or embedding submodule to initialize.
     :param d: The effective input dimensionality of the weights. This could be smaller than the actual dimensions
@@ -408,30 +437,6 @@ class RotaryEmbedding(nn.Module):
     def apply_rotary_pos_emb(self, pos_sin: torch.Tensor, pos_cos: torch.Tensor, t: torch.Tensor) -> torch.Tensor:
         return ((t * pos_cos) + (self.rotate_half(t) * pos_sin)).to(t.dtype)
 
-    ###########################################################
-    # Modified modeling_llama.py start
-    ###########################################################
-    # def forward(self, q: torch.Tensor, k: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
-    #     if self.config.rope_full_precision:
-    #         q_, k_ = q.float(), k.float()
-    #     else:
-    #         q_, k_ = q, k
-
-    #     with torch.autocast(q.device.type, enabled=False):
-    #         query_len, key_len = q_.shape[-2], k_.shape[-2]  # could be different if layer_past not None
-    #         pos_sin, pos_cos = self.get_rotary_embedding(key_len, q_.device)
-    #         pos_sin = pos_sin.type_as(q_)
-    #         pos_cos = pos_cos.type_as(q_)
-    #         q_ = self.apply_rotary_pos_emb(
-    #             pos_sin[:, :, key_len - query_len : key_len, :],
-    #             pos_cos[:, :, key_len - query_len : key_len, :],
-    #             q_,
-    #         )
-    #         k_ = self.apply_rotary_pos_emb(pos_sin, pos_cos, k_)
-    #     return q_.type_as(q), k_.type_as(k)
-
-    ############################################################
-    # Modified modeling_llama.py start
     def forward(self, q: torch.Tensor, k: torch.Tensor,
                 block_end_index: Optional[torch.Tensor] = None) -> Tuple[torch.Tensor, torch.Tensor]:
         if self.config.rope_full_precision:
@@ -465,9 +470,7 @@ class RotaryEmbedding(nn.Module):
             k_ = self.apply_rotary_pos_emb(pos_sin, pos_cos, k_)
 
         return q_.type_as(q), k_.type_as(k)
-    ###########################################################
-    # Modified modeling_llama.py end
-    ###########################################################
+
 
 
 class Activation(nn.Module):
@@ -691,8 +694,8 @@ class LLaDAFastDLLMBlock(nn.Module):
                 k = k.repeat_interleave(num_q_heads // num_kv_heads, dim=1, output_size=num_q_heads)
                 v = v.repeat_interleave(num_q_heads // num_kv_heads, dim=1, output_size=num_q_heads)
 
-            # Modify: MDM set causal to False.
-            return F.scaled_dot_product_attention(
+            # Modify: MDM set causal to False, and with no attn_mask.
+            return scaled_dot_product_attention(
                 q,
                 k,
                 v,
@@ -706,6 +709,7 @@ class LLaDAFastDLLMBlock(nn.Module):
         q: torch.Tensor,
         k: torch.Tensor,
         v: torch.Tensor,
+        mask: Optional[torch.Tensor] = None,
         attention_bias: Optional[torch.Tensor] = None,
         layer_past: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
         use_cache: bool = False,
@@ -715,33 +719,19 @@ class LLaDAFastDLLMBlock(nn.Module):
         dtype = k.dtype
 
         # Optionally apply layer norm to keys and queries.
-        if self.q_norm is not None and self.k_norm is not None:
+        if self.q_norm is not None and self.k_norm is not None: #self.q_norm: None, self.k_norm: None
             q = self.q_norm(q).to(dtype=dtype)
             k = self.k_norm(k).to(dtype=dtype)
 
         # Move head forward to be next to the batch dim.
         # shape: (B, nh, T, hs)
+        # self.config.n_heads: 32
         q = q.view(B, T, self.config.n_heads, C // self.config.n_heads).transpose(1, 2)
         # shape: (B, n_kv_h, T, hs)
         k = k.view(B, T, self.config.effective_n_kv_heads, C // self.config.n_heads).transpose(1, 2)
         # shape: (B, n_kv_h, T, hs)
         v = v.view(B, T, self.config.effective_n_kv_heads, C // self.config.n_heads).transpose(1, 2)
 
-        ########################################################
-        # Original modeling_llama.py start
-        ########################################################
-        # if layer_past is not None:
-        #     past_key, past_value = layer_past
-        #     k = torch.cat((past_key, k), dim=-2)
-        #     v = torch.cat((past_value, v), dim=-2)
-        ########################################################
-        # Original modeling_llama.py end
-        ########################################################
-
-
-        ########################################################
-        # Modified modeling_llama.py start
-        ########################################################
         if layer_past is not None: 
             past_key, past_value = layer_past
             if replace_position is None:
@@ -765,26 +755,10 @@ class LLaDAFastDLLMBlock(nn.Module):
                 
                 k = past_key
                 v = past_value
-        ########################################################
-        # Modified modeling_llama.py end
-        ########################################################
 
-        present = (k, v) if use_cache else None
+        present = (k, v) if use_cache else None #present: None
         query_len, key_len = q.shape[-2], k.shape[-2]  # could be different if layer_past not None
 
-        ##########################################################
-        # Original modeling_llama.py start
-        ##########################################################
-        # if self.config.rope:
-        #     # Apply rotary embeddings.
-        #     q, k = self.rotary_emb(q, k)
-        ##########################################################
-        # Original modeling_llama.py end
-        ##########################################################
-
-        ##########################################################
-        # Modified modeling_llama.py start
-        ##########################################################
         if self.config.rope:
             # Apply rotary embeddings.
             if replace_position is None:
@@ -793,9 +767,6 @@ class LLaDAFastDLLMBlock(nn.Module):
                 # For batched replace_position, use the maximum position across all batches
                 max_replace_pos = replace_position.nonzero(as_tuple=True)[1].max() + 1 if replace_position.any() else key_len
                 q, k = self.rotary_emb(q, k, max_replace_pos)
-        ##########################################################
-        # Modified modeling_llama.py end
-        ##########################################################
 
         if attention_bias is not None:
             # Resize and cast attention bias.
@@ -813,16 +784,16 @@ class LLaDAFastDLLMBlock(nn.Module):
             q,
             k,
             v,
-            attn_mask=attention_bias,
+            attn_mask=None,
             dropout_p=0.0 if not self.training else self.config.attention_dropout,
             is_causal=False,
         )
-
         # Re-assemble all head outputs side-by-side.
         att = att.transpose(1, 2).contiguous().view(B, T, C)
 
         # Apply output projection.
         return self.attn_out(att), present
+
 
     @abstractmethod
     def forward(
@@ -999,6 +970,116 @@ class LLaDAFastDLLMLlamaBlock(LLaDAFastDLLMBlock):
         #                      k, v: (batch_size, seq_len, d_model // n_heads)
         #  - for group query attn q: (batch_size, seq_len, d_model)
         #                      k, v: (batch_size, seq_len, d_model // n_kv_heads)
+        x_normed = self.attn_norm(x) #x:torch.Size([2, 168, 4096])
+        q = self.q_proj(x_normed) #q:torch.Size([2, 168, 4096])
+        k = self.k_proj(x_normed) #k:torch.Size([2, 168, 4096])
+        v = self.v_proj(x_normed) #v:torch.Size([2, 168, 4096])
+        # attention_bias: None
+        # layer_past: None
+        # use_cache: False
+        # Get attention scores.
+        if self._activation_checkpoint_fn is not None:
+            att, cache = self._activation_checkpoint_fn(  # type: ignore
+                self.attention, q, k, v, attention_bias, layer_past=layer_past, use_cache=use_cache,replace_position=replace_position
+            )
+        else:
+            att, cache = self.attention(q, k, v, attention_bias, layer_past=layer_past, use_cache=use_cache,replace_position=replace_position)
+
+        # Add attention scores.
+        # shape: (B, T, C)
+        x = x + self.dropout(att)
+
+        # Add feed-forward projection.
+        # shape: (batch_size, seq_len, d_model)
+        og_x = x
+        if self._activation_checkpoint_fn is not None:
+            x = self._activation_checkpoint_fn(self.ff_norm, x)  # type: ignore
+        else:
+            x = self.ff_norm(x)
+        x, x_up = self.ff_proj(x), self.up_proj(x) # new add
+        if self._activation_checkpoint_fn is not None:
+            x = self._activation_checkpoint_fn(self.act, x)  # type: ignore
+        else:
+            x = self.act(x)
+        x = x * x_up # new add
+        x = self.ff_out(x)
+        x = self.dropout(x)
+        x = og_x + x
+
+        return x, cache
+
+
+class LLaDAFastDLLMBlockDiffBlock(LLaDAFastDLLMBlock):
+    """
+    This is a transformer block where the output is computed as ``MLP(LN(x + Attention(LN(x))))``
+    (plus another skip connection). This block is similar to `LLaDAFastDLLMSequentialBlock`
+    but some operations have slightly different implementations to imitate the
+    behavior of Llama.
+    """
+
+    def __init__(self, layer_id: int, config: ModelConfig, cache: BufferCache):
+        super().__init__(layer_id, config, cache)
+        # Layer norms.
+        self.attn_norm = LayerNorm.build(config)
+        self.ff_norm = LayerNorm.build(config)
+        self.__cache = cache
+
+        # Attention input projection. Projects x -> (q, k, v)
+        head_dim = config.d_model // config.n_heads
+        q_proj_out_dim = config.d_model
+        k_proj_out_dim = config.effective_n_kv_heads * head_dim
+        v_proj_out_dim = config.effective_n_kv_heads * head_dim
+        self.q_proj = nn.Linear(
+            config.d_model, q_proj_out_dim, bias=config.include_bias | config.include_qkv_bias, device=config.init_device
+        )
+        self.k_proj = nn.Linear(
+            config.d_model, k_proj_out_dim, bias=config.include_bias | config.include_qkv_bias, device=config.init_device
+        )
+        self.v_proj = nn.Linear(
+            config.d_model, v_proj_out_dim, bias=config.include_bias | config.include_qkv_bias, device=config.init_device
+        )
+
+        # Feed-forward input projection.
+        self.ff_proj = nn.Linear(
+            config.d_model, self.hidden_size, bias=config.include_bias, device=config.init_device
+        )
+        # new add
+        self.up_proj = nn.Linear(
+            config.d_model, self.hidden_size, bias=config.include_bias, device=config.init_device
+        )
+
+    def reset_parameters(self):
+        super().reset_parameters()
+        self.attn_norm.reset_parameters()
+        self.ff_norm.reset_parameters()
+        # NOTE: the standard deviation for these weights does not depend on the layer.
+        init_weights(self.config, self.q_proj, d=self.config.d_model, layer_id=None)
+        init_weights(self.config, self.k_proj, d=self.config.d_model, layer_id=None)
+        init_weights(self.config, self.v_proj, d=self.config.d_model, layer_id=None)
+        init_weights(self.config, self.ff_proj, d=self.config.d_model, layer_id=None)
+        init_weights(self.config, self.up_proj, d=self.config.d_model, layer_id=None)  # new add
+
+    def cross_attn_flex(self, qkv, mask=None):
+        qkv = rearrange(qkv, 'b s three h d -> b h three s d', h=self.n_heads)
+        x = fused_flex_attention(
+        qkv[:, :, 0], qkv[:, :, 1], qkv[:, :, 2], mask=mask)
+        x = rearrange(x, 'b h s d -> b s (h d)')
+        return x
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        attention_bias: Optional[torch.Tensor] = None,
+        layer_past: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
+        use_cache: bool = False,
+    ) -> Tuple[torch.Tensor, Optional[Tuple[torch.Tensor, torch.Tensor]]]:
+        # Get query, key, value projections.
+        # shape:
+        #  - for regular attn q, k, v: (batch_size, seq_len, d_model)
+        #  - for multi-query attn q: (batch_size, seq_len, d_model)
+        #                      k, v: (batch_size, seq_len, d_model // n_heads)
+        #  - for group query attn q: (batch_size, seq_len, d_model)
+        #                      k, v: (batch_size, seq_len, d_model // n_kv_heads)
         x_normed = self.attn_norm(x)
         q = self.q_proj(x_normed)
         k = self.k_proj(x_normed)
@@ -1007,10 +1088,10 @@ class LLaDAFastDLLMLlamaBlock(LLaDAFastDLLMBlock):
         # Get attention scores.
         if self._activation_checkpoint_fn is not None:
             att, cache = self._activation_checkpoint_fn(  # type: ignore
-                self.attention, q, k, v, attention_bias, layer_past=layer_past, use_cache=use_cache, replace_position=replace_position
+                self.attention, q, k, v, attention_bias, layer_past=layer_past, use_cache=use_cache
             )
         else:
-            att, cache = self.attention(q, k, v, attention_bias, layer_past=layer_past, use_cache=use_cache, replace_position=replace_position)
+            att, cache = self.attention(q, k, v, attention_bias, layer_past=layer_past, use_cache=use_cache)
 
         # Add attention scores.
         # shape: (B, T, C)
@@ -1123,70 +1204,10 @@ class LLaDAFastDLLMBlockGroup(nn.ModuleList):
             block.set_activation_checkpointing(strategy)
 
 
-class LLaDAFastDLLMPreTrainedModel(PreTrainedModel):
-    """
-    Minimal HF-compatible base to enable gradient checkpointing hooks and centralize
-    parameter initialization.
-    """
-
-    config_class = LLaDAFastDLLMConfig
-    base_model_prefix = "model"
-    _no_split_modules = ["LLaDAFastDLLMLlamaBlock"]
-    _supports_gradient_checkpointing = True  # backward compat
-    supports_gradient_checkpointing = True   # transformers >=4.38
-
-    def __init__(self, config, *model_args, **model_kwargs):
-        hf_config = config
-        if not hasattr(hf_config, "to_dict"):
-            hf_config = LLaDAFastDLLMConfig(**config.__dict__)
-        super().__init__(hf_config, *model_args, **model_kwargs)
-
-    def _init_weights(self, module):
-        # Avoid double-initializing by short-circuiting once a module (and its children)
-        # have been reset.
-        if getattr(module, "_fastdllmllada_params_initialized", False):
-            return
-        if hasattr(module, "reset_parameters"):
-            module.reset_parameters()
-            for child in module.modules():
-                setattr(child, "_fastdllmllada_params_initialized", True)
-
-    def _set_gradient_checkpointing(
-        self, enable: bool = True, gradient_checkpointing_func: Callable = None
-    ):
-        """
-        New-format hook expected by `PreTrainedModel.gradient_checkpointing_enable`.
-        Only LLaDAFastDLLMModel (the heavy transformer) actually toggles checkpointing.
-        """
-        from torch.utils.checkpoint import checkpoint  # local import to avoid hard dep at import time
-
-        if gradient_checkpointing_func is None:
-            gradient_checkpointing_func = checkpoint
-
-        # When called on the HF wrapper (LLaDAFastDLLMModelLM), reach into the inner LLaDAFastDLLMModel.
-        target = self.model if isinstance(self, LLaDAFastDLLMModelLM) else self
-
-        if isinstance(target, LLaDAFastDLLMModel):
-            target._gradient_checkpointing_func = gradient_checkpointing_func
-            target.gradient_checkpointing = enable
-            strategy = ActivationCheckpointingStrategy.whole_layer if enable else None
-            target.set_activation_checkpointing(strategy)
-            return
-
-        # Fallback: walk modules to find the core model.
-        for module in self.modules():
-            if isinstance(module, LLaDAFastDLLMModel):
-                module._gradient_checkpointing_func = gradient_checkpointing_func
-                module.gradient_checkpointing = enable
-                strategy = ActivationCheckpointingStrategy.whole_layer if enable else None
-                module.set_activation_checkpointing(strategy)
-                break
-
-
-class LLaDAFastDLLMModel(LLaDAFastDLLMPreTrainedModel):
-    def __init__(self, config: LLaDAFastDLLMConfig | ModelConfig, init_params: bool = True):
-        super().__init__(config)
-        self.gradient_checkpointing: bool = False
+class LLaDAFastDLLMModel(nn.Module):
+    def __init__(self, config: ModelConfig, init_params: bool = True):
+        super().__init__()
+        self.config = config
         self.__cache = BufferCache()
 
         # Validate config.
@@ -1255,13 +1276,13 @@ class LLaDAFastDLLMModel(LLaDAFastDLLMPreTrainedModel):
             )
         # When `init_device="meta"` FSDP will call `reset_parameters()` to initialize weights.
         if init_params and self.config.init_device != "meta":
-            self.post_init()
+            self.reset_parameters()
         self.__num_fwd_flops: Optional[int] = None
-
         # Warm up cache.
         if self.config.alibi:
             get_causal_attention_bias(self.__cache, config.max_sequence_length, _non_meta_init_device(config))
             self.get_alibi_attention_bias(config.max_sequence_length, _non_meta_init_device(config))
+
 
     def set_activation_checkpointing(self, strategy: Optional[ActivationCheckpointingStrategy]):
         self.activation_checkpointing_strategy = strategy
@@ -1319,20 +1340,7 @@ class LLaDAFastDLLMModel(LLaDAFastDLLMPreTrainedModel):
             alibi_bias = alibi_attention_bias(seq_len, self.config, device)
         self.__cache["alibi_attention_bias"] = alibi_bias
         return alibi_bias
-    
-    def get_bidirectional_attention_bias(self, seq_len: int, device: torch.device) -> torch.Tensor:
-        if (bidirectional_bias := self.__cache.get("bidirectional_attention_bias")) is not None and bidirectional_bias.shape[
-            -1
-        ] >= seq_len:
-            if bidirectional_bias.device != device:
-                bidirectional_bias = bidirectional_bias.to(device)
-                self.__cache["bidirectional_attention_bias"] = bidirectional_bias
-            return bidirectional_bias
-        with torch.autocast(device.type, enabled=False):
-            bidirectional_bias = torch.zeros((1, 1, seq_len, seq_len), device=device, dtype=torch.float)
-        self.__cache["bidirectional_attention_bias"] = bidirectional_bias
-        return bidirectional_bias
-    
+
     def forward(
         self,
         input_ids: torch.LongTensor,
@@ -1353,16 +1361,20 @@ class LLaDAFastDLLMModel(LLaDAFastDLLMPreTrainedModel):
             which input IDs are masked. A `1` value in the mask means that
             the corresponding input ID should *not* be ignored. A `0` means
             that the corresponding input ID is masked.
+
             This has the same meaning as the `attention_mask` in HuggingFace's `transformers`
             library.
         :param attention_bias: A tensor of shape `(batch_size, 1, seq_len, seq_len)`,
             `(1, 1, seq_len, seq_len)`, or `(seq_len, seq_len)`. This is used
             to introduce causal or other biases.
+
             If the tensor is a bool or byte tensor, a `True` or `1` at `attention_bias[:, :, i, j]`
             indicates that the i-th element in the sequence is allowed to attend to the j-th
             element in the sequence.
+
             If the tensor is a float tensor, it will just be added to the attention
             scores before the softmax.
+
             The default is causal, which corresponds to a lower-diagonal byte matrix of ones.
         :param past_key_values: Pre-computed keys and values for each attention block.
             Can be used to speed up sequential decoding. The `input_ids` which have
@@ -1374,8 +1386,7 @@ class LLaDAFastDLLMModel(LLaDAFastDLLMPreTrainedModel):
         # Add Basic MDM Model config check
         assert not self.config.alibi, "Alibi length extrapolation is not supported for MDM."
         assert self.config.rope, "Rope must be used in Llama-Encoder for MDM."
-        # Enable fast-dllm sampler
-        # assert (past_key_values is None and not use_cache), "The kvcache is not supported for MDM."
+        # assert (past_key_values is None and not use_cache), "The kvcache is not suppotred for MDM."
 
         output_hidden_states = output_hidden_states if output_hidden_states is not None else False
 
@@ -1430,7 +1441,7 @@ class LLaDAFastDLLMModel(LLaDAFastDLLMPreTrainedModel):
                     self.__cache, past_length + seq_len, x.device
                 ) + self.get_alibi_attention_bias(past_length + seq_len, x.device)
             elif attention_bias is None:
-                attention_bias = self.get_bidirectional_attention_bias(past_length + seq_len, x.device)
+                attention_bias = get_causal_attention_bias(self.__cache, past_length + seq_len, x.device)
             elif attention_bias.dtype in (torch.int8, torch.bool):
                 attention_bias = attention_bias.to(dtype=torch.float)
                 attention_bias.masked_fill_(attention_bias == 0.0, torch.finfo(attention_bias.dtype).min)
@@ -1481,11 +1492,11 @@ class LLaDAFastDLLMModel(LLaDAFastDLLMPreTrainedModel):
                 ):
                     # shape: (batch_size, seq_len, d_model)
                     x, cache = self._activation_checkpoint_fn(
-                        block, x, attention_bias=attention_bias, layer_past=layer_past, use_cache=use_cache, replace_position=replace_position
+                        block, x, attention_bias=attention_bias, layer_past=layer_past, use_cache=use_cache,replace_position=replace_position
                     )
                 else:
                     # shape: (batch_size, seq_len, d_model)
-                    x, cache = block(x, attention_bias=attention_bias, layer_past=layer_past, use_cache=use_cache, replace_position=replace_position)
+                    x, cache = block(x, attention_bias=attention_bias, layer_past=layer_past, use_cache=use_cache,replace_position=replace_position)
                 if attn_key_values is not None:
                     assert cache is not None
                     attn_key_values.append(cache)
@@ -1532,7 +1543,7 @@ class LLaDAFastDLLMModel(LLaDAFastDLLMPreTrainedModel):
         return LLaDAFastDLLMOutput(logits=logits, attn_key_values=attn_key_values, hidden_states=tuple(all_hidden_states) if output_hidden_states else None)  # type: ignore[arg-type]
 
 
-def create_model_config_from_pretrained_config(config: LLaDAFastDLLMConfig):
+def create_model_config_from_pretrained_config(config: Union[LLaDAFastDLLMConfig, LLaDAConfig]):
     """
     Utility function
     """
@@ -1545,15 +1556,14 @@ def create_model_config_from_pretrained_config(config: LLaDAFastDLLMConfig):
     return model_config
 
 
-class LLaDAFastDLLMModelLM(LLaDAFastDLLMPreTrainedModel):
+class LLaDAFastDLLMModelLM(PreTrainedModel):
     """
     Extremely barebones HF model wrapper.
     """
 
     config_class = LLaDAFastDLLMConfig
     base_model_prefix = "model"
-    # _no_split_modules = ["LLaDAFastDLLMBlock", "LLaDAFastDLLMSequentialBlock", "LLaDAFastDLLMLlamaBlock"]
-    _no_split_modules = ["LLaDAFastDLLMLlamaBlock"]
+    _no_split_modules = ["LLaDAFastDLLMBlock", "LLaDAFastDLLMSequentialBlock", "LLaDAFastDLLMLlamaBlock"]
 
     def __init__(self, config: LLaDAFastDLLMConfig, model: Optional[LLaDAFastDLLMModel] = None, init_params: bool = False):
         super().__init__(config)
@@ -1561,7 +1571,7 @@ class LLaDAFastDLLMModelLM(LLaDAFastDLLMPreTrainedModel):
         if not model:
             model_config = create_model_config_from_pretrained_config(config)
             # Initialize model (always on CPU to start with so we don't run out of GPU memory).
-            model_config.init_device = "cuda"
+            model_config.init_device = "cpu"
             self.model = LLaDAFastDLLMModel(model_config, init_params=init_params)
         else:
             self.model = model
@@ -1578,8 +1588,7 @@ class LLaDAFastDLLMModelLM(LLaDAFastDLLMPreTrainedModel):
         output_attentions: Optional[bool] = None,
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
-        cache_position: Optional[Cache] = None,  # This is a hack mitigation of an issue in transformers `4.39.x`
-        replace_position: Optional[torch.Tensor] = None,
+        replace_position: Optional[torch.Tensor] = None,  # This is a hack mitigation of an issue in transformers `4.39.x`
     ) -> Union[Tuple, CausalLMOutputWithPast]:
         if use_cache is None:
             use_cache = self.config.use_cache
@@ -1588,7 +1597,9 @@ class LLaDAFastDLLMModelLM(LLaDAFastDLLMPreTrainedModel):
             raise ValueError("output_attentions is not yet supported in LLaDAFastDLLM")
 
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
+        # import pdb; pdb.set_trace()
         # decoder outputs consists of (dec_features, layer_state, dec_hidden, dec_attn)
+
         outputs = self.model.forward(
             input_ids=input_ids,
             input_embeddings=inputs_embeds,
@@ -1599,7 +1610,7 @@ class LLaDAFastDLLMModelLM(LLaDAFastDLLMPreTrainedModel):
             output_hidden_states=output_hidden_states,
             replace_position=replace_position,
         )
-
+        # import pdb; pdb.set_trace()
         logits = outputs.logits
         hidden_states = outputs.hidden_states
 
@@ -1632,15 +1643,6 @@ class LLaDAFastDLLMModelLM(LLaDAFastDLLMPreTrainedModel):
         model_inputs["use_cache"] = kwargs.pop("use_cache", self.config.use_cache)
         return model_inputs
 
-    # TODO: these are required to make the implementation complete.
-    # def resize_position_embeddings(self, new_num_position_embeddings: int):
-    #     pass
-    #
-    # def get_position_embeddings(self) -> Union[nn.Embedding, Tuple[nn.Embedding]]:
-    #     pass
-    #
-    # def _reorder_cache(self, past_key_values, beam_idx):
-    #     pass
 
     def get_input_embeddings(self) -> torch.nn.Module:
         return self.model.transformer.wte
@@ -1663,3 +1665,6 @@ class LLaDAFastDLLMModelLM(LLaDAFastDLLMPreTrainedModel):
     def tie_weights(self):
         if self.config.weight_tying:
             self.model.transformer.ff_out = self.model.transformer.wte
+
+# Register the model so that it is available for transformer pipelines, auto-loading, etc.
+AutoModel.register(LLaDAFastDLLMConfig, LLaDAFastDLLMModelLM)

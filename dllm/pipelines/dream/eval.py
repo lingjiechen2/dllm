@@ -24,7 +24,13 @@ from lm_eval.models.utils import get_dtype
 from tqdm import tqdm
 
 import dllm
-from dllm.pipelines.dream import DreamSampler, DreamSamplerConfig
+from dllm.pipelines.dream import (
+    DreamSampler,
+    DreamSamplerConfig,
+    DreamFastDLLMSampler,
+    DreamFastDLLMSamplerConfig,
+    DreamFastDLLMConfig,
+)
 
 eval_logger = logging.getLogger(__name__)
 
@@ -50,6 +56,10 @@ class DreamEvalConfig(DreamSamplerConfig):
     classifier_free_guidance: float = 1.0
     sampling_eps: float = 1e-3
     escape_until: bool = False
+    sampler: str = "baseline"  # "baseline" | "fastdllm"
+    use_cache: str | None = None  # None | "prefix" | "dual"
+    block_size: int = 32
+    threshold: float | None = None
 
 
 @register_model("dream")
@@ -87,6 +97,10 @@ class DreamEvalHarness(LM):
         alg = kwargs.get("alg", config.alg)
         alg_temp = kwargs.get("alg_temp", config.alg_temp)
         escape_until = kwargs.get("escape_until", config.escape_until)
+        sampler_choice = kwargs.get("sampler", config.sampler)
+        use_cache = kwargs.get("use_cache", config.use_cache)
+        block_size = kwargs.get("block_size", config.block_size)
+        threshold = kwargs.get("threshold", config.threshold)
 
         accelerator = accelerate.Accelerator()
 
@@ -101,9 +115,16 @@ class DreamEvalHarness(LM):
             self._world_size = 1
 
         # Use accelerator for device placement
-        self.model = dllm.utils.get_model(
-            SimpleNamespace(model_name_or_path=pretrained, dtype=get_dtype(dtype))
-        )
+        if sampler_choice == "fastdllm":
+            fast_config = DreamFastDLLMConfig.from_pretrained(pretrained)
+            self.model = dllm.utils.get_model(
+                SimpleNamespace(model_name_or_path=pretrained, dtype=get_dtype(dtype)),
+                config=fast_config,
+            )
+        else:
+            self.model = dllm.utils.get_model(
+                SimpleNamespace(model_name_or_path=pretrained, dtype=get_dtype(dtype))
+            )
         self.model.eval()
 
         if accelerator.num_processes > 1:
@@ -136,6 +157,10 @@ class DreamEvalHarness(LM):
         self.alg = alg
         self.alg_temp = alg_temp
         self.escape_until = escape_until
+        self.sampler_choice = sampler_choice
+        self.use_cache = use_cache
+        self.block_size = block_size
+        self.threshold = threshold
 
         # loglikelihood params
         self.nll_type = nll_type
@@ -143,6 +168,12 @@ class DreamEvalHarness(LM):
         self.mc_num = mc_num
         self.classifier_free_guidance = classifier_free_guidance
         self.sampling_eps = sampling_eps
+
+        # initialize sampler
+        if self.sampler_choice == "fastdllm":
+            self.sampler = DreamFastDLLMSampler(model=self.model, tokenizer=self.tokenizer)
+        else:
+            self.sampler = DreamSampler(model=self.model, tokenizer=self.tokenizer)
 
     @property
     def rank(self):
@@ -202,7 +233,6 @@ class DreamEvalHarness(LM):
             disable=(disable_tqdm or (self.rank != 0)),
             desc="Running generate_until requests",
         )
-        sampler = DreamSampler(model=self.model, tokenizer=self.tokenizer)
         for batch_idx in range(0, len(requests), self.batch_size):
             batch_requests = requests[batch_idx : batch_idx + self.batch_size]
             contexts, gen_args = zip(*[req.args for req in batch_requests])
@@ -230,18 +260,35 @@ class DreamEvalHarness(LM):
                 prompt_ids = [p_id[-cutoff_len:] for p_id in prompt_ids]
 
             # generation
-            generation_ids = sampler.sample(
-                max_new_tokens=self.max_new_tokens,
-                inputs=prompt_ids,
-                steps=self.steps,
-                temperature=self.temperature,
-                top_p=self.top_p,
-                top_k=self.top_k,
-                alg=self.alg,
-                alg_temp=self.alg_temp,
-                output_history=False,
-                return_dict=False,
-            )
+            if self.sampler_choice == "fastdllm":
+                generation_ids = self.sampler.sample(
+                    max_new_tokens=self.max_new_tokens,
+                    inputs=prompt_ids,
+                    steps=self.steps,
+                    temperature=self.temperature,
+                    top_p=self.top_p,
+                    top_k=self.top_k,
+                    alg=self.alg,
+                    alg_temp=self.alg_temp,
+                    use_cache=self.use_cache,
+                    block_size=self.block_size,
+                    threshold=self.threshold,
+                    output_history=False,
+                    return_dict=False,
+                )
+            else:
+                generation_ids = self.sampler.sample(
+                    max_new_tokens=self.max_new_tokens,
+                    inputs=prompt_ids,
+                    steps=self.steps,
+                    temperature=self.temperature,
+                    top_p=self.top_p,
+                    top_k=self.top_k,
+                    alg=self.alg,
+                    alg_temp=self.alg_temp,
+                    output_history=False,
+                    return_dict=False,
+                )
             # decode and cleanup
             cleaned_generation_ids = [
                 (

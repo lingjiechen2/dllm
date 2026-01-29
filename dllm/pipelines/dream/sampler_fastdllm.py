@@ -216,11 +216,7 @@ class DreamFastDLLMSampler(BaseSampler):
                         continue
 
                     # Budget this step: top-k where k = num_transfer + leftover from past steps
-                    current_transfer_tokens = int(mask_index[0].sum().item())
-
-                    # Only masked positions are meaningful; clamp k to avoid selecting -inf slots
-                    num_masked = int(mask_index[0].sum().item())
-                    k = min(int(current_transfer_tokens), num_masked)
+                    current_transfer_tokens = int(mask_index.sum().item()) - num_transfer_tokens_list[0, i+1:].sum().item() if i + 1 < effective_steps else int(mask_index.sum().item())
 
                     selected_confidence, select_index = torch.topk(
                         full_confidence, current_transfer_tokens
@@ -233,7 +229,7 @@ class DreamFastDLLMSampler(BaseSampler):
                     transfer_index[0, select_index[0]] = True
 
                     # Threshold-filter within top-k (keep top-1 always, so start from 1)
-                    for kk in range(1, k):
+                    for kk in range(1, current_transfer_tokens):
                         if selected_confidence[0, kk] < threshold:
                             transfer_index[0, select_index[0, kk]] = False
 
@@ -244,7 +240,6 @@ class DreamFastDLLMSampler(BaseSampler):
                     x_[mask_index] = x0.clone()
                     x[transfer_index] = x_[transfer_index]
                     i += 1
-                    
                     x = generation_tokens_hook_func(i, x, logits)
                     if histories is not None:
                         histories.append(x.clone())
@@ -467,9 +462,9 @@ class DreamFastDLLMSampler(BaseSampler):
                             x[:, current_block_start:end][transfer_index] = x_[transfer_index]
 
                             x = generation_tokens_hook_func(global_step, x, logits)
-                            if histories is not None:
-                                histories.append(x.clone())
-                            global_step += 1
+                    if histories is not None:
+                        histories.append(x.clone())
+                    global_step += 1
 
                     inner_step += 1
                     if (

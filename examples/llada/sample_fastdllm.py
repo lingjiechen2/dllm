@@ -1,5 +1,5 @@
 """
-python -u examples/llada/fastdllm_sample.py --model_name_or_path "YOUR_MODEL_PATH"
+python -u examples/llada/sample_fastdllm.py --model_name_or_path "YOUR_MODEL_PATH"
 """
 
 import time
@@ -23,8 +23,8 @@ class ScriptArguments:
 
 @dataclass
 class SamplerConfig(dllm.pipelines.llada.LLaDAFastDLLMSamplerConfig):
-    steps: int = 1024
-    max_new_tokens: int = 1024
+    steps: int = 512
+    max_new_tokens: int = 512
     block_size: int = 32
     temperature: float = 0.0
     remasking: str = "low_confidence"
@@ -71,9 +71,9 @@ for iter, s in enumerate(sequences):
     print(s.strip() if s.strip() else "<empty>")
 print("\n" + "=" * 80 + "\n")
 
-print(f"Config: use_cache={sampler_config.use_cache}, threshold={sampler_config.threshold}, factor={sampler_config.factor}")
-print(f"Total NFE:{len(outputs.histories)}. Time taken for sampling: {end - start:.2f} seconds")
-print(f"Token speed: {(len(outputs.sequences[0])-len(inputs[0]))*1.0/(end - start):.2f} tokens/s")
-
 if script_args.visualize:
     terminal_visualizer.visualize(outputs.histories, rich=True)
+
+print(f"Config: use_cache={sampler_config.use_cache}, threshold={sampler_config.threshold}, factor={sampler_config.factor}")
+print(f"Total NFE:{len(outputs.histories) - 1}. Time taken for sampling: {end - start:.2f} seconds")
+print(f"Token speed: {(len(outputs.sequences[0])-len(inputs[0]))*1.0/(end - start):.2f} tokens/s")

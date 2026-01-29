@@ -1,5 +1,5 @@
 """
-python -u examples/dream/fastdllm_sample.py --model_name_or_path "YOUR_MODEL_PATH"
+python -u examples/dream/sample_fastdllm.py --model_name_or_path "YOUR_MODEL_PATH"
 """
 
 import time
@@ -29,11 +29,11 @@ class SamplerConfig(dllm.pipelines.dream.DreamFastDLLMSamplerConfig):
     temperature: float = 0.0 # Recommended to be 0.0 for alg=="confidence_threshold"
     top_p: float = None
     top_k: int = None
-    alg: str = "confidence_threshold"
+    alg: str = "confidence_threshold" # "entropy", "confidence_threshold"
     alg_temp: float = 0.0
     threshold: float = 0.9
     use_cache: str = "prefix" # "none", "prefix", "dual"
-    block_size: int = 32
+    # block_size: int = 32
 
 parser = transformers.HfArgumentParser((ScriptArguments, SamplerConfig))
 script_args, sampler_config = parser.parse_args_into_dataclasses()
@@ -75,9 +75,9 @@ for iter, s in enumerate(sequences):
     print(s.strip() if s.strip() else "<empty>")
 print("\n" + "=" * 80 + "\n")
 
-print(f"Config: use_cache={sampler_config.use_cache}, threshold={sampler_config.threshold}, factor={sampler_config.steps}")
-print(f"Total NFE:{len(outputs.histories)}. Time taken for sampling: {end - start:.2f} seconds")
-print(f"Token speed: {(len(outputs.sequences[0])-len(inputs[0]))*1.0/(end - start):.2f} tokens/s")
-
 if script_args.visualize:
     terminal_visualizer.visualize(outputs.histories, rich=True)
+
+print(f"Config: use_cache={sampler_config.use_cache}, threshold={sampler_config.threshold}, factor={sampler_config.steps}")
+print(f"Total NFE:{len(outputs.histories) - 1}. Time taken for sampling: {end - start:.2f} seconds")
+print(f"Token speed: {(len(outputs.sequences[0])-len(inputs[0]))*1.0/(end - start):.2f} tokens/s")
