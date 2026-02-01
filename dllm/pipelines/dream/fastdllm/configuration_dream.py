@@ -12,12 +12,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""DreamFastDLLM model configuration."""
+"""DreamFastdLLM model configuration."""
 
-from .configuration_dream import DreamConfig
+from ..models.configuration_dream import DreamConfig
 
 
-class DreamFastDLLMConfig(DreamConfig):
+class DreamFastdLLMConfig(DreamConfig):
     """
     Thin wrapper over :class:`~dllm.pipelines.dream.models.configuration_dream.DreamConfig` that only
     changes the `model_type` used for auto-registration.
@@ -27,4 +27,3 @@ class DreamFastDLLMConfig(DreamConfig):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-

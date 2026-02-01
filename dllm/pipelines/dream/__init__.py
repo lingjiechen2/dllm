@@ -1,9 +1,9 @@
-from . import models, sampler, trainer, utils
+from . import fastdllm, models, sampler, trainer, utils
 from .models.configuration_dream import DreamConfig
-from .models.configuration_dream_fastdllm import DreamFastDLLMConfig
+from .fastdllm.configuration_dream import DreamFastdLLMConfig
 from .models.modeling_dream import DreamModel
-from .models.modeling_dream_fastdllm import DreamFastDLLMModel
+from .fastdllm.modeling_dream import DreamFastdLLMModel
 from .models.tokenization_dream import DreamTokenizer
 from .sampler import DreamSampler, DreamSamplerConfig
-from .sampler_fastdllm import DreamFastDLLMSampler, DreamFastDLLMSamplerConfig
+from .fastdllm.sampler import DreamFastdLLMSampler, DreamFastdLLMSamplerConfig
 from .trainer import DreamTrainer

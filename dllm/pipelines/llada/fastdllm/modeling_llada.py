@@ -62,7 +62,7 @@ from ..models.configuration_llada import (
     ModelConfig,
     ActivationCheckpointingStrategy,
 )
-from .configuration_llada_fastdllm import LLaDAFastdLLMConfig
+from .configuration_llada import LLaDAFastdLLMConfig
 
 if sys.version_info.minor > 8:
     from collections.abc import MutableMapping

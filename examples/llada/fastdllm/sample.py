@@ -1,5 +1,5 @@
 """
-python -u examples/llada/fastdllm/sample_fastdllm.py --model_name_or_path "YOUR_MODEL_PATH"
+python -u examples/llada/fastdllm/sample.py --model_name_or_path "YOUR_MODEL_PATH"
 """
 
 import time

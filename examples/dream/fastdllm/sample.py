@@ -1,5 +1,5 @@
 """
-python -u examples/dream/sample_fastdllm.py --model_name_or_path "YOUR_MODEL_PATH"
+python -u examples/dream/fastdllm/sample.py --model_name_or_path "YOUR_MODEL_PATH"
 """
 
 import time
@@ -23,7 +23,7 @@ class ScriptArguments:
 
 
 @dataclass
-class SamplerConfig(dllm.pipelines.dream.DreamFastDLLMSamplerConfig):
+class SamplerConfig(dllm.pipelines.dream.fastdllm.DreamFastdLLMSamplerConfig):
     steps: int = 512
     max_new_tokens: int = 512
     temperature: float = 0.0 # Recommended to be 0.0 for alg=="confidence_threshold"
@@ -38,14 +38,14 @@ class SamplerConfig(dllm.pipelines.dream.DreamFastDLLMSamplerConfig):
 parser = transformers.HfArgumentParser((ScriptArguments, SamplerConfig))
 script_args, sampler_config = parser.parse_args_into_dataclasses()
 transformers.set_seed(script_args.seed)
-dreamfastdllm_config = dllm.pipelines.dream.models.DreamFastDLLMConfig.from_pretrained(
+dreamfastdllm_config = dllm.pipelines.dream.fastdllm.DreamFastdLLMConfig.from_pretrained(
     script_args.model_name_or_path
 )
 
 # Load model & tokenizer
 model = dllm.utils.get_model(model_args=script_args, config=dreamfastdllm_config).eval()
 tokenizer = dllm.utils.get_tokenizer(model_args=script_args)
-sampler = dllm.pipelines.dream.DreamFastDLLMSampler(model=model, tokenizer=tokenizer)
+sampler = dllm.pipelines.dream.fastdllm.DreamFastdLLMSampler(model=model, tokenizer=tokenizer)
 terminal_visualizer = dllm.utils.TerminalVisualizer(tokenizer=tokenizer)
 
 # --- Example 1: Batch sampling ---

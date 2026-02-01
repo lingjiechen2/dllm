@@ -54,7 +54,7 @@ def sample_tokens(
 
 
 @dataclass
-class DreamFastDLLMSamplerConfig(SamplerConfig):
+class DreamFastdLLMSamplerConfig(SamplerConfig):
     max_new_tokens: int = 20
     max_length: int = None  # Uses prompt length + max_new_tokens when None
     steps: int = 512
@@ -72,12 +72,12 @@ class DreamFastDLLMSamplerConfig(SamplerConfig):
 
 
 @dataclass
-class DreamFastDLLMSampler(BaseSampler):
+class DreamFastdLLMSampler(BaseSampler):
     @torch.no_grad()
     def sample(
         self,
         inputs: list[torch.Tensor, list],
-        config: DreamFastDLLMSamplerConfig | None = None,
+        config: DreamFastdLLMSamplerConfig | None = None,
         generation_tokens_hook_func=lambda step, x, logits: x,
         generation_logits_hook_func=lambda step, x, logits: logits,
         **kwargs,
@@ -86,7 +86,7 @@ class DreamFastDLLMSampler(BaseSampler):
         Diffusion-style masked decoding for *generation from inputs*.
         (docstring unchanged)
         """
-        config = config or DreamFastDLLMSamplerConfig()
+        config = config or DreamFastdLLMSamplerConfig()
 
         # Pull args from config with kwargs overrides
         max_new_tokens = kwargs.get("max_new_tokens", config.max_new_tokens)
@@ -482,7 +482,7 @@ class DreamFastDLLMSampler(BaseSampler):
     def infill(
         self,
         inputs: list[torch.Tensor, list],
-        config: DreamFastDLLMSamplerConfig | None = None,
+        config: DreamFastdLLMSamplerConfig | None = None,
         **kwargs,
     ) -> SamplerOutput:
         raise NotImplementedError

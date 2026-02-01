@@ -1,5 +1,5 @@
-from .configuration_llada_fastdllm import LLaDAFastdLLMConfig
-from .modeling_llada_fastdllm import LLaDAFastdLLMModelLM
+from .configuration_llada import LLaDAFastdLLMConfig
+from .modeling_llada import LLaDAFastdLLMModelLM
 from .sampler_fastdllm import LLaDAFastdLLMSampler, LLaDAFastdLLMSamplerConfig
 
 # Optional: register with transformers Auto classes when available
