@@ -1,5 +1,5 @@
 """
-python -u examples/llada/sample_fastdllm.py --model_name_or_path "YOUR_MODEL_PATH"
+python -u examples/llada/fastdllm/sample_fastdllm.py --model_name_or_path "YOUR_MODEL_PATH"
 """
 
 import time
@@ -22,7 +22,7 @@ class ScriptArguments:
         )
 
 @dataclass
-class SamplerConfig(dllm.pipelines.llada.LLaDAFastDLLMSamplerConfig):
+class SamplerConfig(dllm.pipelines.llada.fastdllm.LLaDAFastdLLMSamplerConfig):
     steps: int = 512
     max_new_tokens: int = 512
     block_size: int = 32
@@ -36,12 +36,12 @@ class SamplerConfig(dllm.pipelines.llada.LLaDAFastDLLMSamplerConfig):
 parser = transformers.HfArgumentParser((ScriptArguments, SamplerConfig))
 script_args, sampler_config = parser.parse_args_into_dataclasses()
 transformers.set_seed(script_args.seed)
-fastdllm_config = dllm.pipelines.llada.models.LLaDAFastDLLMConfig.from_pretrained(script_args.model_name_or_path)
+fastdllm_config = dllm.pipelines.llada.fastdllm.LLaDAFastdLLMConfig.from_pretrained(script_args.model_name_or_path)
 
 # Load model & tokenizer
 model = dllm.utils.get_model(model_args=script_args, config=fastdllm_config).eval()
 tokenizer = dllm.utils.get_tokenizer(model_args=script_args)
-sampler = dllm.pipelines.llada.LLaDAFastDLLMSampler(model=model, tokenizer=tokenizer)
+sampler = dllm.pipelines.llada.fastdllm.LLaDAFastdLLMSampler(model=model, tokenizer=tokenizer)
 terminal_visualizer = dllm.utils.TerminalVisualizer(tokenizer=tokenizer)
 
 # --- Example 1: Batch sampling ---
