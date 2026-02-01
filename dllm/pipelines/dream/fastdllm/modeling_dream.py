@@ -214,28 +214,17 @@ def apply_rotary_pos_emb(q, k, cos, sin, position_ids=None, unsqueeze_dim=1, blo
     cos = cos.unsqueeze(unsqueeze_dim)
     sin = sin.unsqueeze(unsqueeze_dim)
 
-    ##########################################################
-    # Original code without block_end_index
-    ##########################################################
-    # q_embed = (q * cos) + (rotate_half(q) * sin)
-    # k_embed = (k * cos) + (rotate_half(k) * sin)
-    ##########################################################
-    # End of original code without block_end_index
-    ##########################################################
-
-    ##########################################################
-    # New code with block_end_index
-    ##########################################################
     query_len, key_len = q.shape[-2], k.shape[-2]
 
     if block_end_index is None:
         q_embed = (q * cos[:, :, key_len - query_len : key_len, :]) + (rotate_half(q) * sin[:, :, key_len - query_len : key_len, :])
     else:
-        q_embed = (q * cos[:, :, block_end_index.item() - query_len : block_end_index.item(), :]) + (rotate_half(q) * sin[:, :, block_end_index.item() - query_len : block_end_index.item(), :])
+        start = (block_end_index - query_len).to(dtype=torch.long)
+        idx = torch.arange(query_len, device=q.device, dtype=torch.long) + start
+        cos_slice = cos.index_select(2, idx)
+        sin_slice = sin.index_select(2, idx)
+        q_embed = (q * cos_slice) + (rotate_half(q) * sin_slice)
     k_embed = (k * cos) + (rotate_half(k) * sin)
-    ##########################################################
-    # End of new code with block_end_index
-    ##########################################################
 
     return q_embed, k_embed
 
@@ -419,9 +408,6 @@ class DreamFastdLLMSdpaAttention(DreamFastdLLMAttention):
         key_states = self.k_proj(hidden_states)
         value_states = self.v_proj(hidden_states)
 
-        ##########################################################
-        # New code to handle past_key_value for SDPA
-        ##########################################################
         if past_key_value is not None:
             if dual_cache:
                 past_key, past_value = past_key_value
@@ -440,19 +426,6 @@ class DreamFastdLLMSdpaAttention(DreamFastdLLMAttention):
         query_states = query_states.view(bsz, q_len, self.num_heads, self.head_dim).transpose(1, 2)
         key_states = key_states.view(bsz, -1, self.num_key_value_heads, self.head_dim).transpose(1, 2)
         value_states = value_states.view(bsz, -1, self.num_key_value_heads, self.head_dim).transpose(1, 2)
-        ##########################################################
-        # End of new code to handle past_key_value for SDPA
-        ##########################################################
-
-        ##########################################################
-        # Original code to handle past_key_value for SDPA
-        ##########################################################
-        # query_states = query_states.view(bsz, q_len, self.num_heads, self.head_dim).transpose(1, 2)
-        # key_states = key_states.view(bsz, q_len, self.num_key_value_heads, self.head_dim).transpose(1, 2)
-        # value_states = value_states.view(bsz, q_len, self.num_key_value_heads, self.head_dim).transpose(1, 2)
-        ##########################################################
-        # End of original code to handle past_key_value for SDPA
-        ##########################################################
 
 
         if position_embeddings is None:
@@ -466,26 +439,10 @@ class DreamFastdLLMSdpaAttention(DreamFastdLLMAttention):
         else:
             cos, sin = position_embeddings
 
-        ##########################################################
-        # New code to handle dual cache RoPE for SDPA
-        ##########################################################
         if dual_cache:
             query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin, block_end_index=replace_indices.max()+1)
         else:
             query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)
-        ##########################################################
-        # End of new code to handle dual cache RoPE for SDPA
-        ##########################################################
-
-        ##########################################################
-        # Original code to handle past_key_value for SDPA
-        ##########################################################
-        # if past_key_value is not None:
-        #     cache_kwargs = {"sin": sin, "cos": cos, "cache_position": cache_position}  # Specific to RoPE models
-        #     key_states, value_states = past_key_value.update(key_states, value_states, self.layer_idx, cache_kwargs)
-        ##########################################################
-        # End of original code to handle past_key_value for SDPA
-        ##########################################################
 
         key_states = repeat_kv(key_states, self.num_key_value_groups)
         value_states = repeat_kv(value_states, self.num_key_value_groups)
@@ -755,27 +712,6 @@ class DreamFastdLLMBaseModel(DreamFastdLLMPreTrainedModel):
         if inputs_embeds is None:
             inputs_embeds = self.embed_tokens(input_ids)
 
-        ##########################################################
-        # Original code to handle cache initialization
-        ##########################################################
-        # if use_cache and past_key_values is None:
-        #     past_key_values = DynamicCache()
-
-        # if cache_position is None:
-        #     past_seen_tokens = past_key_values.get_seq_length() if past_key_values is not None else 0
-        #     cache_position = torch.arange(
-        #         past_seen_tokens, past_seen_tokens + inputs_embeds.shape[1], device=inputs_embeds.device
-        #     )
-
-        # if position_ids is None:
-        #     position_ids = cache_position.unsqueeze(0)
-        ##########################################################
-        # End of original code to handle cache initialization
-        ##########################################################
-
-        ##########################################################
-        # New code to handle cache initialization
-        ##########################################################
         past_seen_tokens = past_key_values[0][0].shape[1] if past_key_values is not None else 0
         if not dual_cache:
             position_ids = torch.arange(past_seen_tokens + inputs_embeds.shape[1], device=inputs_embeds.device).unsqueeze(0)
@@ -785,9 +721,6 @@ class DreamFastdLLMBaseModel(DreamFastdLLMPreTrainedModel):
             else:
                 position_ids = torch.arange(inputs_embeds.shape[1], device=inputs_embeds.device).unsqueeze(0)
         attn_key_values: Optional[List[Tuple[torch.Tensor, torch.Tensor]]] = [] if use_cache else None
-        ##########################################################
-        # End of new code to handle cache initialization
-        ##########################################################
 
         hidden_states = inputs_embeds
 

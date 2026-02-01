@@ -10,7 +10,7 @@ export NCCL_DEBUG=warn                      # Show NCCL warnings for better diag
 export TORCH_DISTRIBUTED_DEBUG=DETAIL       # Provide detailed logging for PyTorch distributed debugging
 
 # ===== Input Arguments =====
-model_name_or_path="/home/lingjie7/models/huggingface/Dream-org/Dream-v0-Instruct-7B"
+model_name_or_path="Dream-org/Dream-v0-Instruct-7B"
 instruct=True
 num_gpu=1
 while [[ $# -gt 0 ]]; do
@@ -39,6 +39,11 @@ fi
 # GSM8K Task Evaluation
 # =======================
 
+# Baseline （25.14s/it)
+accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
+    --tasks gsm8k --num_fewshot 5 ${common_args} \
+    --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False,escape_until=False"
+
 # Prefix cache (7.49s/it)
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/fastdllm/eval.py \
     --tasks gsm8k --num_fewshot 5 ${common_args} \
@@ -64,18 +69,23 @@ accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/fastdllm/eva
 # Humaneval Task Evaluation
 # ===========================
 
+# Baseline
+accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
+    --tasks humaneval_instruct_dream --num_fewshot 0 ${common_args} \
+    --model_args "pretrained=${model_name_or_path},max_new_tokens=768,steps=768,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False,escape_until=False" \
+    --confirm_run_unsafe_code
+
 # Prefix cache (6.64s/it)
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/fastdllm/eval.py \
-    --tasks humaneval_instruct_dream --num_fewshot 5 ${common_args} \
+    --tasks humaneval_instruct_dream --num_fewshot 0 ${common_args} \
     --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=256,steps=256,block_size=32,temperature=0.0,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False,escape_until=False" \
     --confirm_run_unsafe_code
 
 # Parallel (3.17s/it)
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/fastdllm/eval.py \
-    --tasks humaneval_instruct_dream --num_fewshot 5 ${common_args} \
+    --tasks humaneval_instruct_dream --num_fewshot 0 ${common_args} \
     --model_args "pretrained=${model_name_or_path},use_cache=none,max_new_tokens=256,steps=8,block_size=32,temperature=0.0,top_p=0.9,alg=confidence_threshold,threshold=0.9,dtype=bfloat16,add_bos_token=False,escape_until=False" \
     --confirm_run_unsafe_code
-
 
 # Prefix cache + Parallel (1.65s)
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/fastdllm/eval.py \

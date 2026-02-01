@@ -113,6 +113,7 @@ class LLaDAEvalHarness(LM):
             self._world_size = 1
 
         # Use accelerator for device placement
+        pretrained = dllm.utils.resolve_with_base_env(pretrained, "BASE_MODELS_DIR")
         fast_config = LLaDAFastdLLMConfig.from_pretrained(pretrained)
         self.model = dllm.utils.get_model(
             SimpleNamespace(model_name_or_path=pretrained, dtype=get_dtype(dtype)),

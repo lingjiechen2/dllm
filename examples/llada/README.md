@@ -31,7 +31,7 @@ dllm/pipelines/llada
 ├── fastdllm/
 │   ├── configuration_llada.py      # Fast-dLLM LLaDA model configuration
 │   ├── modeling_llada.py           # Fast-dLLM LLaDA model architecture
-│   ├── sampler_fastdllm.py         # Fast-dLLM inference module
+│   ├── sampler.py                  # Fast-dLLM inference module
 │   └── eval.py                     # Fast-dLLM evaluation module
 ├── models/
 │   ├── configuration_lladamoe.py   # LLaDA-MoE model configuration

@@ -65,11 +65,6 @@ accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eva
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
     --tasks gsm8k --num_fewshot 5 ${common_args} \
     --model_args "pretrained=${model_name_or_path},use_cache=dual,max_new_tokens=256,steps=256,block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]"
-  
-# Prefix cache + Parallel threshold (4.39s/it)
-accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
-    --tasks minerva_math_algebra --num_fewshot 4 ${common_args} \
-    --model_args "pretrained=${model_name_or_path},use_cache=prefix,threshold=${threshold},max_new_tokens=512,steps=16,block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]"
     
 # Prefix cache + Parallel threshold (4.39s/it)
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
@@ -97,48 +92,48 @@ accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eva
 
 # Baseline (12.03s/it)
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/eval.py \
-    --tasks humaneval_instruct_llada --num_fewshot 5 ${common_args} \
+    --tasks humaneval_instruct_llada --num_fewshot 0 ${common_args} \
     --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]" \
     --confirm_run_unsafe_code
 
 # Parallel threshold (4.20s/it)
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
-    --tasks humaneval_instruct_llada --num_fewshot 5 ${common_args} \
+    --tasks humaneval_instruct_llada --num_fewshot 0 ${common_args} \
     --model_args "pretrained=${model_name_or_path},use_cache=none,threshold=${threshold},max_new_tokens=256,steps=8,block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]" \
     --confirm_run_unsafe_code
 
 # Prefix cache + Parallel threshold (2.95/it)
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
-    --tasks humaneval_instruct_llada --num_fewshot 5 ${common_args} \
+    --tasks humaneval_instruct_llada --num_fewshot 0 ${common_args} \
     --model_args "pretrained=${model_name_or_path},use_cache=prefix,threshold=${threshold},max_new_tokens=256,steps=8,block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]" \
     --confirm_run_unsafe_code
 
 # Prefix cache + Parallel factor (2.39)
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
-    --tasks humaneval_instruct_llada --num_fewshot 5 ${common_args} \
+    --tasks humaneval_instruct_llada --num_fewshot 0 ${common_args} \
     --model_args "pretrained=${model_name_or_path},use_cache=prefix,factor=${factor},max_new_tokens=256,steps=8,block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]" \
     --confirm_run_unsafe_code
 
 # Prefix cache (7.33s/it)
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
-    --tasks humaneval_instruct_llada --num_fewshot 5 ${common_args} \
+    --tasks humaneval_instruct_llada --num_fewshot 0 ${common_args} \
     --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=256,steps=256,block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]" \
     --confirm_run_unsafe_code
 
 # Dual cache (9.19s/it)
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
-    --tasks humaneval_instruct_llada --num_fewshot 5 ${common_args} \
+    --tasks humaneval_instruct_llada --num_fewshot 0 ${common_args} \
     --model_args "pretrained=${model_name_or_path},use_cache=dual,max_new_tokens=256,steps=256,block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]" \
     --confirm_run_unsafe_code
   
 # Dual cache + Parallel threshold (3.90s/it)
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
-    --tasks humaneval_instruct_llada --num_fewshot 5 ${common_args} \
+    --tasks humaneval_instruct_llada --num_fewshot 0 ${common_args} \
     --model_args "pretrained=${model_name_or_path},use_cache=dual,threshold=${threshold},max_new_tokens=256,steps=256,block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]" \
     --confirm_run_unsafe_code
 
 # Dual cache + Parallel factor (3.15s/it)
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
-    --tasks humaneval_instruct_llada --num_fewshot 5 ${common_args} \
+    --tasks humaneval_instruct_llada --num_fewshot 0 ${common_args} \
     --model_args "pretrained=${model_name_or_path},use_cache=dual,factor=${factor},max_new_tokens=256,steps=256,block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]" \
     --confirm_run_unsafe_code
