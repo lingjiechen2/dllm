@@ -74,8 +74,8 @@ def decode_infill(tokenizer, seq_ids_list, input_ids_list) -> str:
         pad_id = getattr(tokenizer, "pad_token_id", None)
         # breakpoint()
         if pad_id is not None:
-            while len(full) and full[0] == pad_id:
-                full.pop(0)
+            while full.numel() and full[0].item() == pad_id:
+                full = full[1:]
 
         masked_index = (prompt == tokenizer.mask_token_id)
         infill = full[masked_index]
