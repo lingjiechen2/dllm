@@ -145,7 +145,7 @@ python examples/dream/chat.py --model_name_or_path "Dream-org/Dream-v0-Instruct-
 ```
 We support [Fast-dLLM](https://github.com/NVlabs/Fast-dLLM) sampling:
 ```shell
-python examples/dream/fastdllm/sample.py --model_name_or_path "Dream-org/Dream-v0-Instruct-7B" --use_cache prefix --alg confidence_threshold --threshold 0.9
+python examples/fastdllm/dream/sample.py --model_name_or_path "Dream-org/Dream-v0-Instruct-7B" --use_cache prefix --alg confidence_threshold --threshold 0.9
 ````
 
 ## Evaluation  
@@ -169,9 +169,9 @@ bash examples/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Instruct-7B
 bash examples/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --instruct False
 ```
 
-Fast-dLLM is supported for evaluation. To evaluate [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B) with the Fast-dLLM sampler, run:
+Fast-dLLM is supported for evaluation. To evaluate [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) with the Fast-dLLM sampler, run:
 ```shell
-bash examples/dream/fastdllm/eval.sh --model_name_or_path "Dream-org/Dream-v0-Instruct-7B" --instruct True
+bash examples/fastdllm/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --instruct Base
 ```
 
 ### Evaluation results

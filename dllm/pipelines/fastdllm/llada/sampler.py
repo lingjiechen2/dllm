@@ -29,7 +29,7 @@ def _trim_past_key_values(
     return new_pkv
 
 
-def get_transfer_index(
+def _get_transfer_index(
     logits: torch.Tensor,
     temperature: float,
     remasking: str,
@@ -154,7 +154,7 @@ def get_transfer_index(
 
 
 @dataclass
-class LLaDAFastdLLMSamplerConfig(SamplerConfig):
+class FastdLLMLLaDASamplerConfig(SamplerConfig):
     max_new_tokens: int = 128
     max_length: int = None
     block_size: int = 128
@@ -177,12 +177,12 @@ class LLaDAFastdLLMSamplerConfig(SamplerConfig):
 
 
 @dataclass
-class LLaDAFastdLLMSampler(BaseSampler):
+class FastdLLMLLaDASampler(BaseSampler):
     @torch.no_grad()
     def sample(
         self,
         inputs: Union[List[torch.Tensor], List[List[int]], torch.Tensor],
-        config: Optional[LLaDAFastdLLMSamplerConfig] = None,
+        config: Optional[FastdLLMLLaDASamplerConfig] = None,
         **kwargs,
     ) -> SamplerOutput | torch.Tensor:
         """
@@ -193,7 +193,7 @@ class LLaDAFastdLLMSampler(BaseSampler):
           - use_cache="dual": dual cache (requires model forward supports replace_position)
         """
         if config is None:
-            config = LLaDAFastdLLMSamplerConfig()
+            config = FastdLLMLLaDASamplerConfig()
 
         # ----- pull args from config, allow kwargs to override -----
         steps = kwargs.get("steps", config.steps)
@@ -612,8 +612,8 @@ class LLaDAFastdLLMSampler(BaseSampler):
     @torch.no_grad()
     def infill(
         self,
-        inputs: list[torch.Tensor, list],
-        config: LLaDAFastdLLMSamplerConfig | None = None,
+        inputs: Union[List[torch.Tensor], List[List[int]]],
+        config: FastdLLMLLaDASamplerConfig | None = None,
         **kwargs,
     ) -> SamplerOutput:
         raise NotImplementedError

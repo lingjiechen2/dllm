@@ -54,7 +54,7 @@ from transformers.modeling_outputs import CausalLMOutputWithPast
 from transformers.models.auto import AutoModel
 from transformers.cache_utils import Cache
 
-from ..models.configuration_llada import (
+from dllm.pipelines.llada.models.configuration_llada import (
     LLaDAConfig,
     StrEnum,
     InitFnType,
@@ -64,7 +64,7 @@ from ..models.configuration_llada import (
     ModelConfig,
     ActivationCheckpointingStrategy,
 )
-from .configuration_llada import LLaDAFastdLLMConfig
+from .configuration_llada import FastdLLMLLaDAConfig
 
 if sys.version_info.minor > 8:
     from collections.abc import MutableMapping
@@ -83,15 +83,15 @@ __all__ = [
     "GELU",
     "ReLU",
     "SwiGLU",
-    "LLaDAFastdLLMBlock",
-    "LLaDAFastdLLMSequentialBlock",
-    "LLaDAFastdLLMLlamaBlock",
-    "LLaDAFastdLLMBlockDiffBlock",
-    "LLaDAFastdLLMBlockGroup",
-    "LLaDAFastdLLMModel",
-    "LLaDAFastdLLMModelLM",
-    "LLaDAFastdLLMOutput",
-    "LLaDAFastdLLMGenerateOutput",
+    "FastdLLMLLaDABlock",
+    "FastdLLMLLaDASequentialBlock",
+    "FastdLLMLLaDALlamaBlock",
+    "FastdLLMLLaDABlockDiffBlock",
+    "FastdLLMLLaDABlockGroup",
+    "FastdLLMLLaDAModel",
+    "FastdLLMLLaDAModelLM",
+    "FastdLLMLLaDAOutput",
+    "FastdLLMLLaDAGenerateOutput",
 ]
 
 
@@ -652,7 +652,7 @@ def alibi_attention_bias(
     return alibi_bias * (1.0 / (2 ** m.view(1, config.n_heads, 1, 1)))  # type: ignore
 
 
-class LLaDAFastdLLMBlock(nn.Module):
+class FastdLLMLLaDABlock(nn.Module):
     """
     A base class for transformer block implementations.
     """
@@ -934,16 +934,16 @@ class LLaDAFastdLLMBlock(nn.Module):
     @classmethod
     def build(
         cls, layer_id: int, config: ModelConfig, cache: BufferCache
-    ) -> LLaDAFastdLLMBlock:
+    ) -> FastdLLMLLaDABlock:
         if config.block_type == BlockType.sequential:
-            return LLaDAFastdLLMSequentialBlock(layer_id, config, cache)
+            return FastdLLMLLaDASequentialBlock(layer_id, config, cache)
         elif config.block_type == BlockType.llama:
-            return LLaDAFastdLLMLlamaBlock(layer_id, config, cache)
+            return FastdLLMLLaDALlamaBlock(layer_id, config, cache)
         else:
             raise NotImplementedError(f"Unknown block type: '{config.block_type}'")
 
 
-class LLaDAFastdLLMSequentialBlock(LLaDAFastdLLMBlock):
+class FastdLLMLLaDASequentialBlock(FastdLLMLLaDABlock):
     """
     This is a typical transformer block where the output is computed as ``MLP(LN(x + Attention(LN(x))))``
     (plus another skip connection).
@@ -1055,10 +1055,10 @@ class LLaDAFastdLLMSequentialBlock(LLaDAFastdLLMBlock):
         return x, cache
 
 
-class LLaDAFastdLLMLlamaBlock(LLaDAFastdLLMBlock):
+class FastdLLMLLaDALlamaBlock(FastdLLMLLaDABlock):
     """
     This is a transformer block where the output is computed as ``MLP(LN(x + Attention(LN(x))))``
-    (plus another skip connection). This block is similar to `LLaDAFastdLLMSequentialBlock`
+    (plus another skip connection). This block is similar to `FastdLLMLLaDASequentialBlock`
     but some operations have slightly different implementations to imitate the
     behavior of Llama.
     """
@@ -1191,10 +1191,10 @@ class LLaDAFastdLLMLlamaBlock(LLaDAFastdLLMBlock):
         return x, cache
 
 
-class LLaDAFastdLLMBlockDiffBlock(LLaDAFastdLLMBlock):
+class FastdLLMLLaDABlockDiffBlock(FastdLLMLLaDABlock):
     """
     This is a transformer block where the output is computed as ``MLP(LN(x + Attention(LN(x))))``
-    (plus another skip connection). This block is similar to `LLaDAFastdLLMSequentialBlock`
+    (plus another skip connection). This block is similar to `FastdLLMLLaDASequentialBlock`
     but some operations have slightly different implementations to imitate the
     behavior of Llama.
     """
@@ -1323,7 +1323,7 @@ class LLaDAFastdLLMBlockDiffBlock(LLaDAFastdLLMBlock):
         return x, cache
 
 
-class LLaDAFastdLLMOutput(NamedTuple):
+class FastdLLMLLaDAOutput(NamedTuple):
     logits: torch.FloatTensor
     """
     A tensor of shape `(batch_size, seq_len, vocab_size)` representing the log probabilities
@@ -1341,7 +1341,7 @@ class LLaDAFastdLLMOutput(NamedTuple):
     """
 
 
-class LLaDAFastdLLMGenerateOutput(NamedTuple):
+class FastdLLMLLaDAGenerateOutput(NamedTuple):
     token_ids: torch.LongTensor
     """
     The generated token IDs, a tensor of shape `(batch_size, beam_size, max_steps)`.
@@ -1354,7 +1354,7 @@ class LLaDAFastdLLMGenerateOutput(NamedTuple):
     """
 
 
-class LLaDAFastdLLMBlockGroup(nn.ModuleList):
+class FastdLLMLLaDABlockGroup(nn.ModuleList):
     def __init__(
         self,
         config: ModelConfig,
@@ -1436,7 +1436,7 @@ class LLaDAFastdLLMBlockGroup(nn.ModuleList):
             block.set_activation_checkpointing(strategy)
 
 
-class LLaDAFastdLLMModel(nn.Module):
+class FastdLLMLLaDAModel(nn.Module):
     def __init__(self, config: ModelConfig, init_params: bool = True):
         super().__init__()
         self.config = config
@@ -1496,12 +1496,12 @@ class LLaDAFastdLLMModel(nn.Module):
         )
 
         blocks = [
-            LLaDAFastdLLMBlock.build(i, config, self.__cache)
+            FastdLLMLLaDABlock.build(i, config, self.__cache)
             for i in range(config.n_layers)
         ]
         if self.config.block_group_size > 1:
             block_groups = [
-                LLaDAFastdLLMBlockGroup(
+                FastdLLMLLaDABlockGroup(
                     config, i, blocks[i : i + config.block_group_size]
                 )
                 for i in range(0, config.n_layers, config.block_group_size)
@@ -1620,7 +1620,7 @@ class LLaDAFastdLLMModel(nn.Module):
         last_logits_only: bool = False,
         output_hidden_states: Optional[bool] = None,
         replace_position: Optional[torch.Tensor] = None,
-    ) -> LLaDAFastdLLMOutput:
+    ) -> FastdLLMLLaDAOutput:
         """
         :param input_ids: A tensor of shape `(batch_size, seq_len)`.
         :param input_embeddings: A tensor of shape `(batch_size, seq_len, d_model)` with input
@@ -1854,11 +1854,11 @@ class LLaDAFastdLLMModel(nn.Module):
         if self.config.scale_logits:
             logits.mul_(1 / math.sqrt(self.config.d_model))
 
-        return LLaDAFastdLLMOutput(logits=logits, attn_key_values=attn_key_values, hidden_states=tuple(all_hidden_states) if output_hidden_states else None)  # type: ignore[arg-type]
+        return FastdLLMLLaDAOutput(logits=logits, attn_key_values=attn_key_values, hidden_states=tuple(all_hidden_states) if output_hidden_states else None)  # type: ignore[arg-type]
 
 
 def create_model_config_from_pretrained_config(
-    config: Union[LLaDAFastdLLMConfig, LLaDAConfig],
+    config: Union[FastdLLMLLaDAConfig, LLaDAConfig],
 ):
     """
     Utility function
@@ -1872,23 +1872,23 @@ def create_model_config_from_pretrained_config(
     return model_config
 
 
-class LLaDAFastdLLMModelLM(PreTrainedModel):
+class FastdLLMLLaDAModelLM(PreTrainedModel):
     """
     Extremely barebones HF model wrapper.
     """
 
-    config_class = LLaDAFastdLLMConfig
+    config_class = FastdLLMLLaDAConfig
     base_model_prefix = "model"
     _no_split_modules = [
-        "LLaDAFastdLLMBlock",
-        "LLaDAFastdLLMSequentialBlock",
-        "LLaDAFastdLLMLlamaBlock",
+        "FastdLLMLLaDABlock",
+        "FastdLLMLLaDASequentialBlock",
+        "FastdLLMLLaDALlamaBlock",
     ]
 
     def __init__(
         self,
-        config: LLaDAFastdLLMConfig,
-        model: Optional[LLaDAFastdLLMModel] = None,
+        config: FastdLLMLLaDAConfig,
+        model: Optional[FastdLLMLLaDAModel] = None,
         init_params: bool = False,
     ):
         super().__init__(config)
@@ -1897,7 +1897,7 @@ class LLaDAFastdLLMModelLM(PreTrainedModel):
             model_config = create_model_config_from_pretrained_config(config)
             # Initialize model (always on CPU to start with so we don't run out of GPU memory).
             model_config.init_device = "cpu"
-            self.model = LLaDAFastdLLMModel(model_config, init_params=init_params)
+            self.model = FastdLLMLLaDAModel(model_config, init_params=init_params)
         else:
             self.model = model
 
@@ -1921,7 +1921,7 @@ class LLaDAFastdLLMModelLM(PreTrainedModel):
             use_cache = self.config.use_cache
 
         if output_attentions:
-            raise ValueError("output_attentions is not yet supported in LLaDAFastdLLM")
+            raise ValueError("output_attentions is not yet supported in FastdLLMLLaDA")
 
         return_dict = (
             return_dict if return_dict is not None else self.config.use_return_dict
@@ -1948,7 +1948,7 @@ class LLaDAFastdLLMModelLM(PreTrainedModel):
             import warnings
 
             warnings.warn(
-                "Note that for LLaDAFastdLLM, you cannot calculate the loss here.",
+                "Note that for FastdLLMLLaDA, you cannot calculate the loss here.",
                 UserWarning,
             )
         if not return_dict:
@@ -2003,4 +2003,4 @@ class LLaDAFastdLLMModelLM(PreTrainedModel):
 
 
 # Register the model so that it is available for transformer pipelines, auto-loading, etc.
-AutoModel.register(LLaDAFastdLLMConfig, LLaDAFastdLLMModelLM)
+AutoModel.register(FastdLLMLLaDAConfig, FastdLLMLLaDAModelLM)

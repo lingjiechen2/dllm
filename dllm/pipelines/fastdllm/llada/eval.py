@@ -1,12 +1,12 @@
 """
 accelerate launch \
     --num_processes 4 \
-    dllm/pipelines/llada/eval.py \
+    dllm/pipelines/fastdllm/llada/eval.py \
     --tasks gsm8k_cot \
-    --model llada \
+    --model fastdllm_llada \
     --apply_chat_template \
     --num_fewshot 5 \
-    --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,max_new_tokens=512,steps=512,block_size=512,cfg=0.0"
+    --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,max_new_tokens=512,steps=512,block_size=512"
 """
 
 from types import SimpleNamespace
@@ -23,15 +23,15 @@ from lm_eval.api.registry import register_model
 from lm_eval.models.utils import get_dtype
 
 import dllm
-from dllm.core.samplers import MDLMSamplerConfig
-from dllm.pipelines.llada.fastdllm import (
-    LLaDAFastdLLMSampler,
-    LLaDAFastdLLMConfig,
+from dllm.pipelines.fastdllm.llada import (
+    FastdLLMLLaDASampler,
+    FastdLLMLLaDAConfig,
+    FastdLLMLLaDASamplerConfig,
 )
 
 
 @dataclass
-class LLaDAEvalConfig(MDLMSamplerConfig):
+class FastdLLMLLaDAEvalConfig(FastdLLMLLaDASamplerConfig):
     # According to LLaDA's opencompass implementation: https://github.com/ML-GSAI/LLaDA/blob/main/opencompass/opencompass/models/dllm.py
     max_new_tokens: int = 1024
     max_length: int = 4096
@@ -49,8 +49,8 @@ class LLaDAEvalConfig(MDLMSamplerConfig):
     factor: float | None = None
 
 
-@register_model("llada")
-class LLaDAEvalHarness(LM):
+@register_model("fastdllm_llada")
+class FastdLLMLLaDAEvalHarness(LM):
     @staticmethod
     def _parse_token_list(value):
         """Parse token list from string format like '[126081;126348]' or list."""
@@ -69,12 +69,12 @@ class LLaDAEvalHarness(LM):
 
     def __init__(
         self,
-        config: LLaDAEvalConfig | None = None,
+        config: FastdLLMLLaDAEvalConfig | None = None,
         **kwargs,
     ):
         super().__init__()
         if config is None:
-            config = LLaDAEvalConfig()
+            config = FastdLLMLLaDAEvalConfig()
 
         # Pull args from config, allow kwargs to override
         pretrained = kwargs.get("pretrained", config.pretrained)
@@ -83,7 +83,6 @@ class LLaDAEvalHarness(LM):
         mc_num = kwargs.get("mc_num", config.mc_num)
         is_check_greedy = kwargs.get("is_check_greedy", config.is_check_greedy)
         device = kwargs.get("device", config.device)
-        cfg = kwargs.get("cfg", config.cfg_scale)
         steps = kwargs.get("steps", config.steps)
         max_new_tokens = kwargs.get("max_new_tokens", config.max_new_tokens)
         block_size = kwargs.get("block_size", config.block_size)
@@ -114,7 +113,7 @@ class LLaDAEvalHarness(LM):
 
         # Use accelerator for device placement
         pretrained = dllm.utils.resolve_with_base_env(pretrained, "BASE_MODELS_DIR")
-        fast_config = LLaDAFastdLLMConfig.from_pretrained(pretrained)
+        fast_config = FastdLLMLLaDAConfig.from_pretrained(pretrained)
         self.model = dllm.utils.get_model(
             SimpleNamespace(model_name_or_path=pretrained, dtype=get_dtype(dtype)),
             config=fast_config,
@@ -145,7 +144,6 @@ class LLaDAEvalHarness(LM):
         self.max_new_tokens = int(max_new_tokens)
         self.block_size = int(block_size)
         self.steps = int(steps)
-        self.cfg = float(cfg)
         self.remasking = remasking
         self.is_check_greedy = is_check_greedy
         self.suppress_tokens = suppress_tokens
@@ -161,7 +159,7 @@ class LLaDAEvalHarness(LM):
         self.sampling_eps = 0.0
 
         # initialize sampler
-        self.sampler = LLaDAFastdLLMSampler(model=self.model, tokenizer=self.tokenizer)
+        self.sampler = FastdLLMLLaDASampler(model=self.model, tokenizer=self.tokenizer)
 
     def apply_chat_template(
         self, chat_history: list[dict[str, str]], add_generation_prompt: bool = True
@@ -229,18 +227,7 @@ class LLaDAEvalHarness(LM):
     def get_logits(
         self, batch: torch.Tensor, prompt_index: torch.Tensor
     ) -> torch.Tensor:
-        if self.cfg > 0.0:
-            assert len(prompt_index) == batch.shape[1]
-            prompt_index = prompt_index.unsqueeze(0).repeat(batch.shape[0], 1)
-            un_batch = batch.clone()
-            un_batch[prompt_index] = self.mask_id
-            batch = torch.cat([batch, un_batch])
-
         logits = self.model(batch).logits
-
-        if self.cfg > 0.0:
-            logits, un_logits = torch.chunk(logits, 2, dim=0)
-            logits = un_logits + (self.cfg + 1) * (logits - un_logits)
         return logits[:, : batch.shape[1]]
 
     @torch.no_grad()

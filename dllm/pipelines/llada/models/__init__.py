@@ -10,7 +10,7 @@ __all__ = [
     "LLaDAMoEModelLM",
 ]
 
-# Register with HuggingFace Auto classes for local usage (llada_fastdllm is registered in fastdllm/__init__.py)
+# Register with HuggingFace Auto classes for local usage (fastdllm_llada is registered in dllm.pipelines.fastdllm.llada)
 try:
     from transformers import AutoConfig, AutoModel, AutoModelForMaskedLM
 

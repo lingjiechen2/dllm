@@ -1,9 +1,9 @@
 """
 accelerate launch \
     --num_processes 4 \
-    dllm/pipelines/dream/fastdllm/eval.py \
+    dllm/pipelines/fastdllm/dream/eval.py \
     --tasks gsm8k_cot \
-    --model dream \
+    --model fastdllm_dream \
     --apply_chat_template \
     --num_fewshot 0 \
     --model_args "pretrained=Dream-org/Dream-v0-Instruct-7B,max_new_tokens=256,steps=256,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16"
@@ -24,17 +24,17 @@ from lm_eval.models.utils import get_dtype
 from tqdm import tqdm
 
 import dllm
-from dllm.pipelines.dream.fastdllm import (
-    DreamFastdLLMSampler,
-    DreamFastdLLMSamplerConfig,
-    DreamFastdLLMConfig,
+from dllm.pipelines.fastdllm.dream import (
+    FastdLLMDreamSampler,
+    FastdLLMDreamSamplerConfig,
+    FastdLLMDreamConfig,
 )
 
 eval_logger = logging.getLogger(__name__)
 
 
 @dataclass
-class DreamEvalConfig(DreamFastdLLMSamplerConfig):
+class FastdLLMDreamEvalConfig(FastdLLMDreamSamplerConfig):
     top_p: float | None = None
     top_k: float | None = None
     max_new_tokens: int = 128
@@ -51,23 +51,22 @@ class DreamEvalConfig(DreamFastdLLMSamplerConfig):
     nll_type: str = "mc"
     log_type: str = "ftb"
     mc_num: int = 128
-    classifier_free_guidance: float = 1.0
     sampling_eps: float = 1e-3
     escape_until: bool = False
 
 
-@register_model("dream")
-class DreamEvalHarness(LM):
+@register_model("fastdllm_dream")
+class FastdLLMDreamEvalHarness(LM):
     def __init__(
         self,
-        config: DreamEvalConfig | None = None,
+        config: FastdLLMDreamEvalConfig | None = None,
         **kwargs,
     ) -> None:
         super().__init__()
 
         # Initialize config if not provided
         if config is None:
-            config = DreamEvalConfig()
+            config = FastdLLMDreamEvalConfig()
 
         # Pull args from config, allow kwargs to override
         pretrained = kwargs.get("pretrained", config.pretrained)
@@ -80,9 +79,6 @@ class DreamEvalHarness(LM):
         log_type = kwargs.get("log_type", config.log_type)
         mc_num = kwargs.get("mc_num", config.mc_num)
         max_new_tokens = kwargs.get("max_new_tokens", config.max_new_tokens)
-        classifier_free_guidance = kwargs.get(
-            "classifier_free_guidance", config.classifier_free_guidance
-        )
         sampling_eps = kwargs.get("sampling_eps", config.sampling_eps)
         steps = kwargs.get("steps", config.steps)
         temperature = kwargs.get("temperature", config.temperature)
@@ -109,7 +105,7 @@ class DreamEvalHarness(LM):
 
         # Use accelerator for device placement
         pretrained = dllm.utils.resolve_with_base_env(pretrained, "BASE_MODELS_DIR")
-        fast_config = DreamFastdLLMConfig.from_pretrained(pretrained)
+        fast_config = FastdLLMDreamConfig.from_pretrained(pretrained)
         self.model = dllm.utils.get_model(
             SimpleNamespace(model_name_or_path=pretrained, dtype=get_dtype(dtype)),
             config=fast_config,
@@ -154,11 +150,10 @@ class DreamEvalHarness(LM):
         self.nll_type = nll_type
         self.log_type = log_type
         self.mc_num = mc_num
-        self.classifier_free_guidance = classifier_free_guidance
         self.sampling_eps = sampling_eps
 
         # initialize sampler
-        self.sampler = DreamFastdLLMSampler(model=self.model, tokenizer=self.tokenizer)
+        self.sampler = FastdLLMDreamSampler(model=self.model, tokenizer=self.tokenizer)
 
     @property
     def rank(self):
@@ -319,13 +314,6 @@ class DreamEvalHarness(LM):
         """
         prompt_index : 1D bool tensor, length=batch.shape[1]
         """
-        if self.classifier_free_guidance > 1.0:
-            assert len(prompt_index) == batch.shape[1]
-            prompt_index = prompt_index.unsqueeze(0).repeat(batch.shape[0], 1)
-            un_batch = batch.clone()
-            un_batch[prompt_index] = self.mask_id
-            batch = torch.cat([batch, un_batch])
-
         input = batch
 
         with torch.amp.autocast("cuda", dtype=torch.bfloat16):
@@ -333,9 +321,6 @@ class DreamEvalHarness(LM):
             # since bos always unmask, the first logits will not be used
             logits = torch.cat([logits[:, :1], logits[:, :-1]], dim=1)
 
-        if self.classifier_free_guidance > 1.0:
-            logits, un_logits = torch.chunk(logits, 2, dim=0)
-            logits = un_logits + self.cfg * (logits - un_logits)
         return logits[:, : batch.shape[1]]
 
     @torch.no_grad()

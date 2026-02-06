@@ -307,7 +307,7 @@ accelerate launch --num_processes 4 \
 
 To automatically evaluate [`Qwen3-0.6B-diffusion-mdlm-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1) and [`Qwen3-0.6B-diffusion-bd3lm-v0.1`](https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-bd3lm-v0.1) on all benchmarks, run:
 ```shell
-bash examples/a2d/bd3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1" 
+bash examples/a2d/mdlm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1" 
 bash examples/a2d/bd3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B-diffusion-bd3lm-v0.1" 
 ```
 
