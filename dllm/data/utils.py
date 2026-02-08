@@ -26,6 +26,7 @@ def load_sft_dataset(
     """
     from dllm.data.alpaca import load_dataset_alpaca
     from dllm.data.opc import load_dataset_opc_sft
+    from dllm.data.hendryck_math import load_dataset_math
 
     specs = [p.strip() for p in re.split(r"[|+]", dataset_args) if p.strip()]
     all_parts = []
@@ -58,6 +59,28 @@ def load_sft_dataset(
         elif _match(dataset_name_or_path, "HuggingFaceH4/ultrachat_200k"):
             ds = load_dataset(dataset_name_or_path)
             ds = DatasetDict({"train": ds["train_sft"], "test": ds["test_sft"]})
+        elif _match(dataset_name_or_path, "open-thoughts/OpenThoughts-114k"):
+            ds = load_dataset(dataset_name_or_path)
+            ds = ds.map(
+                lambda x: {"messages": x["conversations"]},
+                remove_columns=["system", "conversations"],
+            )
+            ds = ds.map(
+                lambda x: {"messages": [{"role": m["from"], "content": m["value"]} for m in x["messages"]]}
+            )
+            ds = ds["train"].train_test_split(test_size=0.1, seed=42)
+        elif _match(dataset_name_or_path, "AI-MO/NuminaMath-CoT"):
+            ds = load_dataset(dataset_name_or_path)
+            ds = DatasetDict({
+                split: ds[split].remove_columns(
+                    [c for c in ds[split].column_names if c != "messages"]
+                )
+                for split in ds
+            })
+            ds["train"] = ds["train"].select(range(min(7500, len(ds["train"]))))
+            ds["test"] = ds["test"].select(range(min(500, len(ds["test"]))))
+        elif _match(dataset_name_or_path, "EleutherAI/hendrycks_math"):
+            ds = load_dataset_math(dataset_name_or_path)
         else:
             ds = load_dataset(dataset_name_or_path)
 

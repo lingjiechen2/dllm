@@ -88,6 +88,53 @@ accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eva
     --tasks gsm8k --num_fewshot 5 ${common_args} \
     --model_args "pretrained=${model_name_or_path},use_cache=dual,factor=${factor},max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]"
 
+
+# =======================
+# MATH Task Evaluation
+# =======================
+
+# Baseline (29.35s/it)
+accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/eval.py \
+    --tasks minerva_math --num_fewshot 4 ${common_args} \
+    --model_args "pretrained=${model_name_or_path},max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]"
+
+# Parallel threshold (12.60s/it)
+accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
+    --tasks minerva_math --num_fewshot 4 ${common_args} \
+    --model_args "pretrained=${model_name_or_path},use_cache=none,threshold=${threshold},max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]"
+
+# Prefix cache (9.25s/it)
+accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
+    --tasks minerva_math --num_fewshot 4 ${common_args} \
+    --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]"
+git add 
+# Dual cache (9.53s/it))
+accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
+    --tasks minerva_math --num_fewshot 4 ${common_args} \
+    --model_args "pretrained=${model_name_or_path},use_cache=dual,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]"
+    
+# Prefix cache + Parallel threshold (4.39s/it)
+accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
+    --tasks minerva_math --num_fewshot 4 ${common_args} \
+    --model_args "pretrained=${model_name_or_path},use_cache=prefix,threshold=${threshold},max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]"
+
+# Dual cache + Parallel threshold(4.83s/it)
+accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
+    --tasks minerva_math --num_fewshot 4 ${common_args} \
+    --model_args "pretrained=${model_name_or_path},use_cache=dual,threshold=${threshold},max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]"
+
+# Prefix cache + Parallel factor(3.68s/it)
+accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
+    --tasks minerva_math --num_fewshot 4 ${common_args} \
+    --model_args "pretrained=${model_name_or_path},use_cache=prefix,factor=${factor},max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]"
+
+# Dual cache + Parallel factor(3.78s/it)
+accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
+    --tasks minerva_math --num_fewshot 4 ${common_args} \
+    --model_args "pretrained=${model_name_or_path},use_cache=dual,factor=${factor},max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]"
+
+
+
 # ===========================
 # Humaneval Task Evaluation
 # ===========================
@@ -138,4 +185,56 @@ accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eva
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
     --tasks humaneval_instruct_llada --num_fewshot 0 ${common_args} \
     --model_args "pretrained=${model_name_or_path},use_cache=dual,factor=${factor},max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]" \
+    --confirm_run_unsafe_code
+
+# ===========================
+# MBPP Task Evaluation
+# ===========================
+
+# Baseline (12.03s/it)
+accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/eval.py \
+    --tasks mbpp_instruct --num_fewshot 3 ${common_args} \
+    --model_args "pretrained=${model_name_or_path},max_new_tokens=${max_new_token},steps=${max_new_token},block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]" \
+    --confirm_run_unsafe_code
+
+# Parallel threshold (4.20s/it)
+accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
+    --tasks mbpp_instruct --num_fewshot 3 ${common_args} \
+    --model_args "pretrained=${model_name_or_path},use_cache=none,threshold=${threshold},max_new_tokens=${max_new_token},steps=${max_new_token},block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]" \
+    --confirm_run_unsafe_code
+
+# Prefix cache + Parallel threshold (2.95s/it)
+accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
+    --tasks mbpp_instruct --num_fewshot 3 ${common_args} \
+    --model_args "pretrained=${model_name_or_path},use_cache=prefix,threshold=${threshold},max_new_tokens=${max_new_token},steps=${max_new_token},block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]" \
+    --confirm_run_unsafe_code
+
+# Prefix cache + Parallel factor (2.39s/it)
+accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
+    --tasks mbpp_instruct --num_fewshot 3 ${common_args} \
+    --model_args "pretrained=${model_name_or_path},use_cache=prefix,factor=${factor},max_new_tokens=${max_new_token},steps=${max_new_token},block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]" \
+    --confirm_run_unsafe_code
+
+# Prefix cache (7.33s/it)
+accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
+    --tasks mbpp_instruct --num_fewshot 3 ${common_args} \
+    --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=${max_new_token},steps=${max_new_token},block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]" \
+    --confirm_run_unsafe_code
+
+# Dual cache (9.19s/it)
+accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
+    --tasks mbpp_instruct --num_fewshot 3 ${common_args} \
+    --model_args "pretrained=${model_name_or_path},use_cache=dual,max_new_tokens=${max_new_token},steps=${max_new_token},block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]" \
+    --confirm_run_unsafe_code
+
+# Dual cache + Parallel threshold (3.90s/it)
+accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
+    --tasks mbpp_instruct --num_fewshot 3 ${common_args} \
+    --model_args "pretrained=${model_name_or_path},use_cache=dual,threshold=${threshold},max_new_tokens=${max_new_token},steps=${max_new_token},block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]" \
+    --confirm_run_unsafe_code
+
+# Dual cache + Parallel factor (3.15s/it)
+accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/fastdllm/eval.py \
+    --tasks mbpp_instruct --num_fewshot 3 ${common_args} \
+    --model_args "pretrained=${model_name_or_path},use_cache=dual,factor=${factor},max_new_tokens=${max_new_token},steps=${max_new_token},block_size=32,cfg=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]" \
     --confirm_run_unsafe_code
