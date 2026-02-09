@@ -62,7 +62,8 @@ class BaseEvalHarness(LM):
     ):
         super().__init__()
         eval_config = eval_config or BaseEvalConfig()
-        model_args = model_args or ModelArguments()
+        # Ensure model path is in kwargs and we have a safe default for ModelArguments(__post_init__).
+        model_args = model_args or ModelArguments(model_name_or_path=kwargs.get("pretrained"))
         device = kwargs.get("device", eval_config.device)
 
         # ── Distributed ──────────────────────────────────────────
@@ -173,3 +174,7 @@ class BaseEvalHarness(LM):
 
     def loglikelihood(self, requests):
         raise NotImplementedError
+
+    def loglikelihood_rolling(self, requests):
+        """Not supported by this harness; required by lm_eval LM interface."""
+        raise NotImplementedError("loglikelihood_rolling is not supported.")
