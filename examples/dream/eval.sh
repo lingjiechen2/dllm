@@ -2,7 +2,7 @@
 # ===== Mandatory for proper import and evaluation =====
 export PYTHONPATH=.:$PYTHONPATH             
 export HF_ALLOW_CODE_EVAL=1                 # Allow code evaluation
-export HF_DATASETS_TRUST_REMOTE_CODE=True   # For cmmlu dataset
+export HF_DATASETS_TRUST_REMOTE_CODE=True   # For datasets that use remote code
 
 # ===== Optional but recommended for stability and debugging =====
 export TORCH_NCCL_ASYNC_ERROR_HANDLING=1    # Enable async error handling for multi-GPU communication to avoid deadlocks
@@ -35,9 +35,9 @@ else
     common_args="--model dream"
 fi
 
-# ================
+# =======================
 # Dream-v0 Tasks
-# ================
+# =======================
 
 if [ "$instruct" = "True" ]; then
     # Instruct Tasks
@@ -59,7 +59,7 @@ if [ "$instruct" = "True" ]; then
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks gpqa_main_n_shot --num_fewshot 5 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},mc_num=32"
+        --model_args "pretrained=${model_name_or_path},mc_num=32" --batch_size 8
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks humaneval_instruct_dream --num_fewshot 0 ${common_args} \
@@ -78,7 +78,7 @@ if [ "$instruct" = "True" ]; then
 else
     # Base Tasks
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
-        --tasks humaneval --num_fewshot 0 ${common_args} \
+        --tasks humaneval_instruct --num_fewshot 0 ${common_args} \
         --model_args "pretrained=${model_name_or_path},max_new_tokens=512,steps=512,temperature=0.2,top_p=0.95,add_bos_token=True,escape_until=False" \
         --confirm_run_unsafe_code
 
@@ -101,33 +101,33 @@ else
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks mmlu --num_fewshot 5 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},add_bos_token=True"
+        --model_args "pretrained=${model_name_or_path},add_bos_token=True,mc_num=16" --batch_size 16
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks arc_easy --num_fewshot 0 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},add_bos_token=True"
+        --model_args "pretrained=${model_name_or_path},add_bos_token=True" --batch_size 32
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks arc_challenge --num_fewshot 0 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},add_bos_token=True"
+        --model_args "pretrained=${model_name_or_path},add_bos_token=True" --batch_size 32
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks hellaswag --num_fewshot 0 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},add_bos_token=True"
+        --model_args "pretrained=${model_name_or_path},add_bos_token=True" --batch_size 32
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks piqa --num_fewshot 0 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},add_bos_token=True"
+        --model_args "pretrained=${model_name_or_path},add_bos_token=True" --batch_size 32
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks gpqa_main_n_shot --num_fewshot 5 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},add_bos_token=True"
+        --model_args "pretrained=${model_name_or_path},add_bos_token=True,mc_num=32" --batch_size 8
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks winogrande --num_fewshot 5 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},add_bos_token=True"
+        --model_args "pretrained=${model_name_or_path},add_bos_token=True" --batch_size 32
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks race --num_fewshot 0 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},add_bos_token=True"
+        --model_args "pretrained=${model_name_or_path},add_bos_token=True" --batch_size 32
 fi

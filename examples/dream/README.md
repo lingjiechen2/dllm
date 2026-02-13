@@ -5,7 +5,6 @@
 Resources and examples for training (finetuning & pretraining) and evaluating diffusion language models **Dream**.
 
 ## Table of Contents
-- [Setup](#setup)
 - [Files](#files)
 - [Training](#training)
 - [Inference](#inference)
@@ -17,17 +16,13 @@ Resources and examples for training (finetuning & pretraining) and evaluating di
 > -->
 
 
-##  Files
+## Files
 ```
-# pipeline modules relevant with Dream
+# Pipeline modules relevant to Dream
 dllm/pipelines/dream
 ├── __init__.py                     # Package initialization
-├── fastdllm/
-│   ├── configuration_dream.py  # Fast-dLLM Dream model configuration
-│   ├── modeling_dream.py       # Fast-dLLM Dream model architecture
-│   ├── sampler.py              # Fast-dLLM inference module
-│   └── eval.py                 # Fast-dLLM evaluation module
 ├── models/
+│   ├── __init__.py
 │   ├── configuration_dream.py      # Dream model configuration
 │   ├── generation_utils.py         # Diffusion-based generation logic
 │   ├── modeling_dream.py           # Core Dream model architecture
@@ -37,13 +32,10 @@ dllm/pipelines/dream
 ├── trainer.py                      # Training module (pretraining and SFT)
 └── utils.py                        # Auxiliary utilities and helper functions
 
-# example entry points for training / inference / evaluation
+# Example entry points for training / inference / evaluation
 examples/dream
 ├── chat.py                         # Interactive inference example
 ├── eval.sh                         # Automatic evaluation example
-├── fastdllm/
-│   ├── eval.sh                      # Fast-dLLM evaluation example
-│   └── sample.py                    # Fast-dLLM inference example
 ├── sample.py                       # Inference example
 ├── pt.py                           # Pretraining example
 ├── README.md                       # Documentation (you are here)
@@ -143,10 +135,6 @@ We also support interactive multi-turn dialogue with visualization:
 ```shell
 python examples/dream/chat.py --model_name_or_path "Dream-org/Dream-v0-Instruct-7B"
 ```
-We support [Fast-dLLM](https://github.com/NVlabs/Fast-dLLM) sampling:
-```shell
-python examples/fastdllm/dream/sample.py --model_name_or_path "Dream-org/Dream-v0-Instruct-7B" --use_cache prefix --alg confidence_threshold --threshold 0.9
-````
 
 ## Evaluation  
 > Read [(optional) Evaluation setup](/README.md/#optional-evaluation-setup) before running evaluation. 
@@ -169,19 +157,16 @@ bash examples/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Instruct-7B
 bash examples/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --instruct False
 ```
 
-Fast-dLLM is supported for evaluation. To evaluate [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) with the Fast-dLLM sampler, run:
-```shell
-bash examples/fastdllm/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --instruct Base
-```
+For **Fast-dLLM** sampling and evaluation with Dream, see the [Fast-dLLM README](../fastdllm/README.md).
 
 ### Evaluation results
 
->  Results (evaluated) are evaluated using our framework, while results (reported) come from the original [paper](https://arxiv.org/abs/2508.15487). All evaluation settings follow the configurations in the [Dream](https://github.com/DreamLM/Dream) repository, with minor adjustments.
+> Results (evaluated) are evaluated using our framework, while results (reported) come from the original [paper](https://arxiv.org/abs/2508.15487). All evaluation settings follow the configurations in the [Dream](https://github.com/DreamLM/Dream) repository, with minor adjustments.
 
 |                 | MMLU | ARC&#8209;C | ARC&#8209;E | Hellaswag | WinoGrande | PIQA | GSM8K | Math | GPQA | HumanEval | MBPP | RACE |
 |:----------------|:-------:|:-------:|:-----:|:-----------:|:------------:|:----:|:-----:|:----:|:----:|:-----------:|:----:|:------:|
 | [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) (reported) | 69.5 | 59.9 | 83.9 | 73.3 | 74.8 | 75.8 | 77.2 | 39.6 | 36.6 | 57.9 | 56.2 | 44.7 | 
-| [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) (evaluated) | 69.8 | 59.3 | 83.7 | 73.1 | 72.9 | 73.0 | 69.6 | 38.3 | 35.5 | 45.8 | 57.2 | 43.0 | 
+| [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) (evaluated) | 70.0 | 59.2 | 83.8 | 72.6 | 74.5 | 72.3 | 77.1 | 42.4 | 34.6 | 56.7 | 56.0 | 44.2 | 
 
 
 <p align="center" style="color: #808080; font-size: 0.9em;">
@@ -194,7 +179,7 @@ Table 1. Evaluation results of
 |  | MMLU | MMLU-Pro | GSM8K | Math | GPQA | HumanEval | MBPP | IFEval |
 |:----------------|:----:|:---------:|:-----:|:----:|:----:|:-----------:|:----:|:----:|
 | [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B)(reported)  | 67.0 | 43.3 | 81.0 | 39.2 | 33.0 | 55.5 | 58.8 | 62.5 |
-| [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B)(evaluated) | 68.2 | 43.0 | 82.0 | 39.9 | 32.4 | 59.1 | 58.2 | 62.3 |
+| [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B)(evaluated) | 69.8 | 49.6 | 82.0 | 48.6 | 31.5 | 57.9 | 58.2 | 59.7 |
 
 <p align="center" style="color: #808080; font-size: 0.9em;">
 Table 2. Evaluation results of 
