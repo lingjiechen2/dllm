@@ -117,7 +117,7 @@ python -u examples/bert/chat.py \
 ```
 
 ## `BERT-Chat`
-Here we show the exact commands we use to train / interact with / evaluation the [`BERT-Chat`](https://huggingface.co/collections/dllm-collection/bert-chat) models: 
+Here we show the exact commands we use to train / interact with / evaluate the [`BERT-Chat`](https://huggingface.co/collections/dllm-collection/bert-chat) models: 
 [`ModernBERT-base-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0.1) and [`ModernBERT-large-chat-v0.1`](https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0.1).
 For training curves and other details, please see [![blog](https://img.shields.io/badge/W&B-white?logo=weightsandbiases) BERT-Chat Report](https://api.wandb.ai/links/asap-zzhou/101h5xvg).
 
@@ -228,7 +228,7 @@ bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-larg
     <td style="padding: 8px;">
       <a href="https://huggingface.co/dllm-collection/ModernBERT-base-chat-v0.1"><code>ModernBERT-base-chat-v0.1</code></a>(evaluated)
     </td>
-    <td>49.3</td><td>5.9</td><td>25.0</td><td>17.9</td><td>3.1</td><td>26.1</td><td>49.7</td><td>41.0</td><td>24.3</td>
+    <td>49.3</td><td>3.5</td><td>25.0</td><td>21.0</td><td>3.3</td><td>26.2</td><td>48.6</td><td>34.5</td><td>26.1</td>
   </tr>
 
   <!-- ModernBERT-large -->
@@ -236,7 +236,7 @@ bash examples/bert/eval.sh --model_name_or_path "dllm-collection/ModernBERT-larg
     <td style="padding: 8px;">
       <a href="https://huggingface.co/dllm-collection/ModernBERT-large-chat-v0.1"><code>ModernBERT-large-chat-v0.1</code></a>(evaluated)
     </td>
-    <td>46.3</td><td>17.1</td><td>24.6</td><td>25.1</td><td>3.8</td><td>33.5</td><td>53.1</td><td>45.0</td><td>27.5</td>
+    <td>46.3</td><td>9.4</td><td>26.5</td><td>25.6</td><td>3.8</td><td>29.6</td><td>51.3</td><td>41.3</td><td>26.5</td>
   </tr>
 
   <tr>
