@@ -2,7 +2,7 @@
 # ===== Mandatory for proper import and evaluation =====
 export PYTHONPATH=.:$PYTHONPATH             
 export HF_ALLOW_CODE_EVAL=1                 # Allow code evaluation
-export HF_DATASETS_TRUST_REMOTE_CODE=True   # For cmmlu dataset
+export HF_DATASETS_TRUST_REMOTE_CODE=True   # For datasets that use remote code
 
 # ===== Optional but recommended for stability and debugging =====
 export TORCH_NCCL_ASYNC_ERROR_HANDLING=1    # Enable async error handling for multi-GPU communication to avoid deadlocks
@@ -48,7 +48,7 @@ if [[ "$model_type" == "coder" ]]; then
         --confirm_run_unsafe_code
 
     accelerate launch --num_processes "${num_gpu}" "${eval_script}" \
-        --tasks mbpp_instruct --num_fewshot 3 ${common_args} \
+        --tasks mbpp_instruct --num_fewshot 0 ${common_args} \
         --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg_scale=0.0" \
         --confirm_run_unsafe_code
 
@@ -72,7 +72,7 @@ accelerate launch --num_processes "${num_gpu}" "${eval_script}" \
     --model_args "pretrained=${model_name_or_path},max_new_tokens=3,steps=3,block_size=32,cfg_scale=0.0"
 
 accelerate launch --num_processes "${num_gpu}" "${eval_script}" \
-    --tasks gsm8k_cot --num_fewshot 5 ${common_args} \
+    --tasks gsm8k_cot --num_fewshot 0 ${common_args} \
     --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg_scale=0.0"
 
 accelerate launch --num_processes "${num_gpu}" "${eval_script}" \
@@ -80,7 +80,7 @@ accelerate launch --num_processes "${num_gpu}" "${eval_script}" \
     --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg_scale=0.0"
 
 accelerate launch --num_processes "${num_gpu}" "${eval_script}" \
-    --tasks minerva_math --num_fewshot 4 ${common_args} \
+    --tasks minerva_math --num_fewshot 0 ${common_args} \
     --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg_scale=0.0"
 
 accelerate launch --num_processes "${num_gpu}" "${eval_script}" \
@@ -89,6 +89,6 @@ accelerate launch --num_processes "${num_gpu}" "${eval_script}" \
     --confirm_run_unsafe_code
 
 accelerate launch --num_processes "${num_gpu}" "${eval_script}" \
-    --tasks mbpp_instruct --num_fewshot 3 ${common_args} \
+    --tasks mbpp_instruct --num_fewshot 0 ${common_args} \
     --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg_scale=0.0" \
     --confirm_run_unsafe_code

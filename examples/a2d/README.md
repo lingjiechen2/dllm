@@ -346,8 +346,8 @@ bash examples/a2d/bd3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B
     <td style="padding: 8px;">
       <a href="https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1"><code>Qwen3-0.6B-diffusion-mdlm-v0.1</code></a> (evaluated)
     </td>
-    <td>29.8</td><td>8.8</td><td>27.0</td>
-    <td>17.6</td><td>42.1</td><td>40.0</td>
+    <td>29.3</td><td>8.7</td><td>26.6</td>
+    <td>17.3</td><td>42.1</td><td>40.0</td>
     <td>30.5</td><td>29.2</td>
   </tr>
 
@@ -356,9 +356,9 @@ bash examples/a2d/bd3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B
     <td style="padding: 8px;">
       <a href="https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-bd3lm-v0.1"><code>Qwen3-0.6B-diffusion-bd3lm-v0.1</code></a> (evaluated)
     </td>
-    <td>46.6</td><td>13.9</td><td>27.0</td>
-    <td>14.1</td><td>40.0</td><td>38.8</td>
-    <td>47.6</td><td>32.0</td>
+    <td>46.3</td><td>12.9</td><td>26.6</td>
+    <td>13.8</td><td>39.3</td><td>39.1</td>
+    <td>46.3</td><td>38.2</td>
   </tr>
 
   <!-- Divider -->
@@ -408,8 +408,8 @@ bash examples/a2d/bd3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B
     <td style="padding: 8px;">
       <a href="https://huggingface.co/dllm-collection/Qwen2.5-Coder-0.5B-Instruct-diffusion-bd3lm-v0.1"><code>Qwen2.5-Coder-0.5B-Instruct-diffusion-bd3lm-v0.1</code></a> (evaluated)
     </td>
-    <td>41.5</td>
-    <td>33.6</td>
+    <td>39.0</td>
+    <td>33.2</td>
   </tr>
 
   <!-- open-dcoder -->
