@@ -395,7 +395,7 @@ class FastdLLMLLaDASampler(BaseSampler):
                         logits = torch.cat([logits[:, :1], logits[:, :-1]], dim=1)
 
                     quota = None if threshold is not None else num_transfer_tokens[:, i]
-                    x0, transfer_idx = get_transfer_index(
+                    x0, transfer_idx = _get_transfer_index(
                         logits=logits,
                         temperature=temperature,
                         remasking=remasking,
@@ -435,7 +435,7 @@ class FastdLLMLLaDASampler(BaseSampler):
 
                 if mask_allowed.sum() > 0:
                     quota = None if threshold is not None else num_transfer_tokens[:, 0]
-                    x0, transfer_idx = get_transfer_index(
+                    x0, transfer_idx = _get_transfer_index(
                         logits=logits_full,
                         temperature=temperature,
                         remasking=remasking,
@@ -491,7 +491,7 @@ class FastdLLMLLaDASampler(BaseSampler):
                         if (threshold is not None or factor is not None)
                         else num_transfer_tokens[:, i]
                     )
-                    x0_suf, transfer_suf = get_transfer_index(
+                    x0_suf, transfer_suf = _get_transfer_index(
                         logits=logits_suf,
                         temperature=temperature,
                         remasking=remasking,
@@ -540,7 +540,7 @@ class FastdLLMLLaDASampler(BaseSampler):
 
                 if mask_allowed.sum() > 0:
                     quota = None if threshold is not None else num_transfer_tokens[:, 0]
-                    x0, transfer_idx = get_transfer_index(
+                    x0, transfer_idx = _get_transfer_index(
                         logits=logits_full,
                         temperature=temperature,
                         remasking=remasking,
@@ -583,7 +583,7 @@ class FastdLLMLLaDASampler(BaseSampler):
                         if threshold is not None
                         else num_transfer_tokens[:, i_step]
                     )
-                    x0_blk, transfer_blk = get_transfer_index(
+                    x0_blk, transfer_blk = _get_transfer_index(
                         logits=logits_blk,
                         temperature=temperature,
                         remasking=remasking,
