@@ -190,6 +190,19 @@ def get_tokenizer(model_args: ModelArguments | None = None, **kwargs) -> transfo
         tokenizer.add_special_tokens({"mask_token": "<|mask|>"})
         tokenizer.eot_token = "<|im_end|>"
         tokenizer.eot_token_id = tokenizer.convert_tokens_to_ids(tokenizer.eot_token)
+        # When enable_thinking is not passed, default to False so the chat template
+        # appends <think></think> (add think). Only skip that when enable_thinking=True.
+        _orig_apply_chat_template = tokenizer.apply_chat_template
+
+        def _apply_chat_template(*args, **kwargs):
+            if "enable_thinking" not in kwargs:
+                kwargs["enable_thinking"] = False
+            try:
+                return _orig_apply_chat_template(*args, **kwargs)
+            except TypeError:
+                kwargs.pop("enable_thinking", None)
+                return _orig_apply_chat_template(*args, **kwargs)
+        tokenizer.apply_chat_template = _apply_chat_template
     else:
         print_main("no tokenizer customization for model class:", model_cls)
     return tokenizer

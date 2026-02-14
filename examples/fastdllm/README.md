@@ -233,7 +233,7 @@ bash examples/fastdllm/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Ba
 </tbody>
 </table>
 
-**Table 1**: Evaluation results of [LLaDA-8B-Instruct](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) with Fast-dLLM.
+<p align="center"><strong>Table 1</strong>: Evaluation results of <a href="https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct">LLaDA-8B-Instruct</a> with Fast-dLLM.</p>
 
 <table align="center">
 <colgroup>
@@ -373,4 +373,4 @@ bash examples/fastdllm/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Ba
 </tbody>
 </table>
 
-**Table 2**: Evaluation results of [Dream-v0-Base-7B](https://huggingface.co/Dream-org/Dream-v0-Base-7B) with Fast-dLLM.
+<p align="center"><strong>Table 2</strong>: Evaluation results of <a href="https://huggingface.co/Dream-org/Dream-v0-Base-7B">Dream-v0-Base-7B</a> with Fast-dLLM.</p>

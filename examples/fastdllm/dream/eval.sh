@@ -14,6 +14,7 @@ model_name_or_path="Dream-org/Dream-v0-Base-7B"
 instruct=False
 num_gpu=1
 max_new_tokens=256
+block_size=32
 threshold="0.9"
 
 while [[ $# -gt 0 ]]; do
@@ -26,6 +27,8 @@ while [[ $# -gt 0 ]]; do
       num_gpu="$2"; shift 2 ;;
     --max_new_tokens)
       max_new_tokens="$2"; shift 2 ;;
+    --block_size)
+      block_size="$2"; shift 2 ;;
     --threshold)
       threshold="$2"; shift 2 ;;
     *)
@@ -57,22 +60,22 @@ accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
 # Prefix cache (fastdllm/dream/eval.py, --model fastdllm_dream)
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/fastdllm/dream/eval.py \
     --tasks gsm8k --num_fewshot 5 ${fastdllm_args} \
-    --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,alg=entropy,dtype=bfloat16,add_bos_token=True"
+    --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=${block_size},alg=entropy,dtype=bfloat16,add_bos_token=True"
 
 # Parallel
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/fastdllm/dream/eval.py \
     --tasks gsm8k --num_fewshot 5 ${fastdllm_args} \
-    --model_args "pretrained=${model_name_or_path},use_cache=none,max_new_tokens=${max_new_tokens},steps=$((max_new_tokens/32)),block_size=32,temperature=0.0,top_p=0.9,alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True"
+    --model_args "pretrained=${model_name_or_path},use_cache=none,max_new_tokens=${max_new_tokens},steps=$((max_new_tokens/block_size)),block_size=${block_size},temperature=0.0,top_p=0.9,alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True"
 
 # Prefix cache + Parallel
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/fastdllm/dream/eval.py \
     --tasks gsm8k --num_fewshot 5 ${fastdllm_args} \
-    --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True"
+    --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=${block_size},alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True"
 
 # Dual cache + Parallel
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/fastdllm/dream/eval.py \
     --tasks gsm8k --num_fewshot 5 ${fastdllm_args} \
-    --model_args "pretrained=${model_name_or_path},use_cache=dual,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True"
+    --model_args "pretrained=${model_name_or_path},use_cache=dual,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=${block_size},alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True"
 
 # ===========================
 # Minerva-Math Task Evaluation
@@ -86,22 +89,22 @@ accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
 # Prefix cache
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/fastdllm/dream/eval.py \
     --tasks minerva_math --num_fewshot 0 ${fastdllm_args} \
-    --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,alg=entropy,dtype=bfloat16,add_bos_token=True"
+    --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=${block_size},alg=entropy,dtype=bfloat16,add_bos_token=True"
 
 # Parallel
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/fastdllm/dream/eval.py \
     --tasks minerva_math --num_fewshot 0 ${fastdllm_args} \
-    --model_args "pretrained=${model_name_or_path},use_cache=none,max_new_tokens=${max_new_tokens},steps=$((max_new_tokens/32)),block_size=32,temperature=0.0,top_p=0.9,alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True"
+    --model_args "pretrained=${model_name_or_path},use_cache=none,max_new_tokens=${max_new_tokens},steps=$((max_new_tokens/block_size)),block_size=${block_size},temperature=0.0,top_p=0.9,alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True"
 
 # Prefix cache + Parallel
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/fastdllm/dream/eval.py \
     --tasks minerva_math --num_fewshot 0 ${fastdllm_args} \
-    --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True"
+    --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=${block_size},alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True"
 
 # Dual cache + Parallel
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/fastdllm/dream/eval.py \
     --tasks minerva_math --num_fewshot 0 ${fastdllm_args} \
-    --model_args "pretrained=${model_name_or_path},use_cache=dual,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True"
+    --model_args "pretrained=${model_name_or_path},use_cache=dual,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=${block_size},alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True"
 
 # ===========================
 # Humaneval Task Evaluation
@@ -116,25 +119,25 @@ accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
 # Prefix cache
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/fastdllm/dream/eval.py \
     --tasks humaneval_instruct_dream --num_fewshot 0 ${fastdllm_args} \
-    --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,temperature=0.0,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=True,escape_until=True" \
+    --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=${block_size},temperature=0.0,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=True,escape_until=True" \
     --confirm_run_unsafe_code
 
 # Parallel
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/fastdllm/dream/eval.py \
     --tasks humaneval_instruct_dream --num_fewshot 0 ${fastdllm_args} \
-    --model_args "pretrained=${model_name_or_path},use_cache=none,max_new_tokens=${max_new_tokens},steps=$((max_new_tokens/32)),block_size=32,temperature=0.0,top_p=0.9,alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True,escape_until=True" \
+    --model_args "pretrained=${model_name_or_path},use_cache=none,max_new_tokens=${max_new_tokens},steps=$((max_new_tokens/block_size)),block_size=${block_size},temperature=0.0,top_p=0.9,alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True,escape_until=True" \
     --confirm_run_unsafe_code
 
 # Prefix cache + Parallel
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/fastdllm/dream/eval.py \
     --tasks humaneval_instruct_dream --num_fewshot 0 ${fastdllm_args} \
-    --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,temperature=0.0,top_p=0.9,alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True,escape_until=True" \
+    --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=${block_size},temperature=0.0,top_p=0.9,alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True,escape_until=True" \
     --confirm_run_unsafe_code
 
 # Dual cache + Parallel
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/fastdllm/dream/eval.py \
     --tasks humaneval_instruct_dream --num_fewshot 0 ${fastdllm_args} \
-    --model_args "pretrained=${model_name_or_path},use_cache=dual,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,temperature=0.0,top_p=0.9,alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True,escape_until=True" \
+    --model_args "pretrained=${model_name_or_path},use_cache=dual,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=${block_size},temperature=0.0,top_p=0.9,alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True,escape_until=True" \
     --confirm_run_unsafe_code
 
 # ===========================
@@ -150,23 +153,23 @@ accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
 # Prefix cache
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/fastdllm/dream/eval.py \
     --tasks mbpp --num_fewshot 3 ${fastdllm_args} \
-    --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,alg=entropy,dtype=bfloat16,temperature=0.2,top_p=0.95,add_bos_token=True,escape_until=False" \
+    --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=${block_size},alg=entropy,dtype=bfloat16,temperature=0.2,top_p=0.95,add_bos_token=True,escape_until=False" \
     --confirm_run_unsafe_code
 
 # Parallel
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/fastdllm/dream/eval.py \
     --tasks mbpp --num_fewshot 3 ${fastdllm_args} \
-    --model_args "pretrained=${model_name_or_path},use_cache=none,max_new_tokens=${max_new_tokens},steps=$((max_new_tokens/32)),block_size=32,temperature=0.0,top_p=0.9,alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True,escape_until=False" \
+    --model_args "pretrained=${model_name_or_path},use_cache=none,max_new_tokens=${max_new_tokens},steps=$((max_new_tokens/block_size)),block_size=${block_size},temperature=0.0,top_p=0.9,alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,add_bos_token=True,escape_until=False" \
     --confirm_run_unsafe_code
 
 # Prefix cache + Parallel
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/fastdllm/dream/eval.py \
     --tasks mbpp --num_fewshot 3 ${fastdllm_args} \
-    --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,temperature=0.0,top_p=0.95,add_bos_token=True,escape_until=False" \
+    --model_args "pretrained=${model_name_or_path},use_cache=prefix,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=${block_size},alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,temperature=0.0,top_p=0.95,add_bos_token=True,escape_until=False" \
     --confirm_run_unsafe_code
 
 # Dual cache + Parallel
 accelerate launch --num_processes "${num_gpu}" dllm/pipelines/fastdllm/dream/eval.py \
     --tasks mbpp --num_fewshot 3 ${fastdllm_args} \
-    --model_args "pretrained=${model_name_or_path},use_cache=dual,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=32,alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,temperature=0.0,top_p=0.95,add_bos_token=True,escape_until=False" \
+    --model_args "pretrained=${model_name_or_path},use_cache=dual,max_new_tokens=${max_new_tokens},steps=${max_new_tokens},block_size=${block_size},alg=confidence_threshold,threshold=${threshold},dtype=bfloat16,temperature=0.0,top_p=0.95,add_bos_token=True,escape_until=False" \
     --confirm_run_unsafe_code

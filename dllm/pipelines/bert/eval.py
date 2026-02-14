@@ -29,9 +29,9 @@ class BERTEvalSamplerConfig(MDLMSamplerConfig):
 
 @dataclass
 class BERTEvalConfig(MDLMEvalConfig):
-    """BERT eval config. Overrides max_length for BERT's shorter context."""
+    """BERT eval config."""
 
-    max_length: int = 512
+    max_length: int = 4096
 
 
 @register_model("bert")

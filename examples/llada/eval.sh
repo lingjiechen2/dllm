@@ -62,8 +62,8 @@ if [ "$instruct" = "True" ]; then
         --model_args "pretrained=${model_name_or_path},max_new_tokens=64,steps=64,block_size=64,cfg_scale=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]"
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/eval.py \
-        --tasks gsm8k --num_fewshot 5 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,block_size=32,cfg_scale=0.0,suppress_tokens=[],begin_suppress_tokens=[]"
+        --tasks gsm8k_cot --num_fewshot 5 ${common_args} \
+        --model_args "pretrained=${model_name_or_path},max_new_tokens=512,steps=512,block_size=512,cfg_scale=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]"
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/llada/eval.py \
         --tasks minerva_math --num_fewshot 4 ${common_args} \

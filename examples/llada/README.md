@@ -24,7 +24,7 @@ Resources and examples for training (finetuning & pretraining) and evaluating di
 
 ## Files
 ```
-# pipeline modules relevant to LLaDA
+# Pipeline modules relevant to LLaDA
 dllm/pipelines/llada
 ├── __init__.py                     # Package initialization
 ├── models/
@@ -36,7 +36,7 @@ dllm/pipelines/llada
 ├── sampler.py                      # Inference module
 └── trainer.py                      # Training module (pretraining and SFT)
 
-# example entry points for training / inference / evaluation
+# Example entry points for training / inference / evaluation
 examples/llada
 ├── chat.py                         # Interactive inference example
 ├── eval.sh                         # Automatic evaluation example
@@ -200,7 +200,7 @@ Table 1. Evaluation results of
 |                 | MMLU | MMLU&#8209;Pro | ARC&#8209;C | Hellaswag | GSM8K | Math | GPQA | HumanEval | MBPP | 
 |:----------------|:----:|:---------:|:-----:|:-----------:|:-----:|:----:|:----:|:-----------:|:----:|
 | [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct)(reported) | 65.5 | 37.0 | 88.5 | 74.6 | 69.4 | 31.9 | 33.3 | 49.4 | 41.0 |
-| [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct)(evaluated) | 69.8 | 37.3 | 86.4 | 76.7 | 78.0 | 31.9 | 30.6 | 47.0 | 40.0 |
+| [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct)(evaluated) | 69.8 | 37.3 | 86.4 | 76.7 | 74.7 | 31.9 | 30.6 | 47.0 | 40.0 |
 
 <p align="center" style="color: #808080; font-size: 0.9em;">
 Table 2. Evaluation results of 

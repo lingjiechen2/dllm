@@ -176,5 +176,4 @@ class BaseEvalHarness(LM):
         raise NotImplementedError
 
     def loglikelihood_rolling(self, requests):
-        """Not supported by this harness; required by lm_eval LM interface."""
-        raise NotImplementedError("loglikelihood_rolling is not supported.")
+        raise NotImplementedError
