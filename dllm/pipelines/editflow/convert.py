@@ -19,7 +19,6 @@ import tyro
 
 import dllm
 
-
 EDITFLOW_MAP = {
     "modernbert": {
         "config": dllm.pipelines.editflow.EditFlowModernBertConfig,

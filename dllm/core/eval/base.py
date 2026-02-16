@@ -23,7 +23,7 @@ from dllm.utils.configs import ModelArguments
 @dataclass
 class BaseEvalConfig:
     """Minimal config for base eval: device and batch_size."""
-    
+
     pretrained: str = ""
     device: str = "cuda"
     batch_size: int = 1
@@ -63,7 +63,9 @@ class BaseEvalHarness(LM):
         super().__init__()
         eval_config = eval_config or BaseEvalConfig()
         # Ensure model path is in kwargs and we have a safe default for ModelArguments(__post_init__).
-        model_args = model_args or ModelArguments(model_name_or_path=kwargs.get("pretrained"))
+        model_args = model_args or ModelArguments(
+            model_name_or_path=kwargs.get("pretrained")
+        )
         device = kwargs.get("device", eval_config.device)
 
         # ── Distributed ──────────────────────────────────────────

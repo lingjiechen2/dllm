@@ -169,7 +169,7 @@ accelerate launch --num_processes 4 \
     --model "llada" \
     --apply_chat_template \
     --num_fewshot 5 \
-    --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,max_new_tokens=512,steps=512,block_size=512,cfg=0.0,logits_eos_inf=False,confidence_eos_eot_inf=True"
+    --model_args "pretrained=GSAI-ML/LLaDA-8B-Instruct,max_new_tokens=512,steps=512,block_size=512,cfg_scale=0.0,suppress_tokens=[],begin_suppress_tokens=[126081;126348]"
 ```
 
 To automatically evaluate [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) and [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) on all benchmarks, run:
@@ -182,12 +182,12 @@ For **Fast-dLLM** sampling and evaluation with LLaDA, see the [Fast-dLLM README]
 
 ### Evaluation results
 
->  Results (evaluated) are evaluated using our framework, while results (reported) come from the original [paper](https://arxiv.org/abs/2502.09992). All evaluation settings follow the configurations in the [LLaDA](https://github.com/ML-GSAI/LLaDA) repository, with minor adjustments. 
+> Results (Reproduced) are evaluated using our framework, while results (Official) come from the original [paper](https://arxiv.org/abs/2502.09992). All evaluation settings follow the configurations in the [LLaDA](https://github.com/ML-GSAI/LLaDA) repository, with minor adjustments. 
 
-|               | MMLU | BBH | ARC&#8209;C | Hellaswag | TruthfulQA | WinoGrande | PIQA | GSM8K | GPQA | HumanEval | MBPP | CEval | CMMLU |
-|:----------------|:----:|:-----:|:-----------:|:-----------:|:------------:|:----:|:-----:|:----:|:----:|:-----------:|:----:|:------:|:------:|
-| [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA-8B-Base)(reported)| 65.9 | 49.7 | 45.9 | 70.5 | 46.1 | 74.8 | 73.6 | 70.3 | 25.2 | 35.4 | 40.0 | 70.5 | 69.9 |
-| [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA-8B-Base)(evaluated)| 65.9 | — | 46.6 | 69.2 | 44.8 | 72.8 | 72.8 | 70.7 | 31.9 | 32.9 | 38.8 | 70.4 | 69.8 |
+|               | MMLU | BBH | ARC&#8209;C | Hellaswag | TruthfulQA | WinoGrande | PIQA | GSM8K | Math | GPQA | HumanEval | MBPP | CEval | CMMLU |
+|:----------------|:----:|:-----:|:-----------:|:-----------:|:------------:|:----:|:-----:|:----:|:-----:|:----:|:-----------:|:----:|:------:|:------:|
+| [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) (Official) | 65.9 | 49.7 | 45.9 | 70.5 | 46.1 | 74.8 | 73.6 | 70.3 | 31.4 | 25.2 | 35.4 | 40.0 | 70.5 | 69.9 |
+| [`LLaDA-8B-Base`](https://huggingface.co/GSAI-ML/LLaDA-8B-Base) (Reproduced) | 65.9 | 47.2 | 44.1 | 69.2 | 45.6 | 70.4 | 70.7 | 70.7 | 32.4 | 31.9 | 32.9 | 38.8 | 70.4 | 69.8 |
 
 
 <p align="center" style="color: #808080; font-size: 0.9em;">
@@ -199,8 +199,8 @@ Table 1. Evaluation results of
 
 |                 | MMLU | MMLU&#8209;Pro | ARC&#8209;C | Hellaswag | GSM8K | Math | GPQA | HumanEval | MBPP | 
 |:----------------|:----:|:---------:|:-----:|:-----------:|:-----:|:----:|:----:|:-----------:|:----:|
-| [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct)(reported) | 65.5 | 37.0 | 88.5 | 74.6 | 69.4 | 31.9 | 33.3 | 49.4 | 41.0 |
-| [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct)(evaluated) | 69.8 | 37.3 | 86.4 | 76.7 | 74.7 | 31.9 | 30.6 | 47.0 | 40.0 |
+| [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) (Official) | 65.5 | 37.0 | 88.5 | 74.6 | 69.4 | 31.9 | 33.3 | 49.4 | 41.0 |
+| [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) (Reproduced) | 69.8 | 36.2 | 86.4 | 76.7 | 74.7 | 31.9 | 30.6 | 47.0 | 40.0 |
 
 <p align="center" style="color: #808080; font-size: 0.9em;">
 Table 2. Evaluation results of 

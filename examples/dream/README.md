@@ -148,7 +148,7 @@ accelerate launch --num_processes 4 \
     --model "dream" \
     --apply_chat_template \
     --num_fewshot 0 \
-    --model_args "pretrained=Dream-org/Dream-v0-Instruct-7B,max_new_tokens=256,steps=256,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False,escape_until=False"
+    --model_args "pretrained=Dream-org/Dream-v0-Instruct-7B,max_new_tokens=256,steps=256,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False"
 ```
 
 To automatically evaluate [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) and [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B) on all benchmarks, run:
@@ -161,12 +161,12 @@ For **Fast-dLLM** sampling and evaluation with Dream, see the [Fast-dLLM README]
 
 ### Evaluation results
 
-> Results (evaluated) are evaluated using our framework, while results (reported) come from the original [paper](https://arxiv.org/abs/2508.15487). All evaluation settings follow the configurations in the [Dream](https://github.com/DreamLM/Dream) repository, with minor adjustments.
+> Results (Reproduced) are evaluated using our framework, while results (Official) come from the original [paper](https://arxiv.org/abs/2508.15487). All evaluation settings follow the configurations in the [Dream](https://github.com/DreamLM/Dream) repository, with minor adjustments.
 
-|                 | MMLU | ARC&#8209;C | ARC&#8209;E | Hellaswag | WinoGrande | PIQA | GSM8K | Math | GPQA | HumanEval | MBPP | RACE |
-|:----------------|:-------:|:-------:|:-----:|:-----------:|:------------:|:----:|:-----:|:----:|:----:|:-----------:|:----:|:------:|
-| [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) (reported) | 69.5 | 59.9 | 83.9 | 73.3 | 74.8 | 75.8 | 77.2 | 39.6 | 36.6 | 57.9 | 56.2 | 44.7 | 
-| [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) (evaluated) | 70.0 | 59.2 | 83.8 | 72.6 | 74.5 | 72.3 | 77.1 | 42.4 | 34.6 | 56.7 | 56.0 | 44.2 | 
+|                 | MMLU | ARC&#8209;C | ARC&#8209;E | Hellaswag | WinoGrande | PIQA | GSM8K | Math | BBH | GPQA | HumanEval | MBPP | RACE |
+|:----------------|:-------:|:-------:|:-----:|:-----------:|:------------:|:----:|:-----:|:----:|:-----:|:----:|:-----------:|:----:|:------:|
+| [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) (Official) | 69.5 | 59.9 | 83.9 | 73.3 | 74.8 | 75.8 | 77.2 | 39.6 | 57.9 | 36.6 | 57.9 | 56.2 | 44.7 |
+| [`Dream-v0-Base-7B`](https://huggingface.co/Dream-org/Dream-v0-Base-7B) (Reproduced) | 70.0 | 59.0 | 83.8 | 73.5 | 72.5 | 76.4 | 77.0 | 42.4 | 63.7 | 34.6 | 56.7 | 56.0 | 45.6 | 
 
 
 <p align="center" style="color: #808080; font-size: 0.9em;">
@@ -176,14 +176,15 @@ Table 1. Evaluation results of
 </a>.
 </p>
 
-|  | MMLU | MMLU-Pro | GSM8K | Math | GPQA | HumanEval | MBPP | IFEval |
-|:----------------|:----:|:---------:|:-----:|:----:|:----:|:-----------:|:----:|:----:|
-| [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B)(reported)  | 67.0 | 43.3 | 81.0 | 39.2 | 33.0 | 55.5 | 58.8 | 62.5 |
-| [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B)(evaluated) | 69.8 | 49.6 | 82.0 | 48.6 | 31.5 | 57.9 | 58.2 | 59.7 |
+|  | MMLU | MMLU&#8209;Pro | ARC&#8209;C | Hellaswag | GSM8K | Math | GPQA | HumanEval | MBPP | IFEval |
+|:----------------|:----:|:---------:|:-----:|:-----------:|:-----:|:----:|:----:|:-----------:|:----:|:----:|
+| [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B) (Official) | 67.0 | 43.3 | — | — | 81.0 | 39.2 | 33.0 | 55.5 | 58.8 | 62.5 |
+| [`Dream-v0-Instruct-7B`](https://huggingface.co/Dream-org/Dream-v0-Instruct-7B) (Reproduced) | 69.8 | 45.5 | 61.4 | 71.8 | 82.0 | 48.6 | 31.5 | 57.9 | 58.2 | 59.7 |
 
 <p align="center" style="color: #808080; font-size: 0.9em;">
 Table 2. Evaluation results of 
 <a href="https://huggingface.co/Dream-org/Dream-v0-Instruct-7B" style="color: #808080; text-decoration: none;">
 <code>Dream-v0-Instruct-7B</code>
 </a>.
+<strong>—</strong> indicates that the metric is not reported in the official paper.
 </p>

@@ -3,6 +3,7 @@ from .models.modeling_dream import DreamModel
 from .models.tokenization_dream import DreamTokenizer
 from .sampler import DreamSampler, DreamSamplerConfig
 from .trainer import DreamTrainer
+from . import utils
 
 __all__ = [
     "DreamConfig",

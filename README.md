@@ -25,6 +25,8 @@ Simple Diffusion Language Modeling
 
 
 ## News
+**[2026/02] ⚡[`Fast-dLLM`](https://github.com/NVlabs/Fast-dLLM)**: We support accelerated inference and evaluation of  [LLaDA](https://arxiv.org/abs/2502.09992) and [Dream](https://arxiv.org/abs/2508.15487) with [Fast-dLLM](https://arxiv.org/abs/2505.22618) (cache, confidence-threshold decoding, and beyond). See [`examples/fastdllm`](/examples/fastdllm) for inference / evaluation instructions.
+
 **[2025/12] 🤗[`Tiny-A2D`](https://huggingface.co/collections/dllm-collection/tiny-a2d)**: We released a collection of **SOTA** small (0.5B/0.6B) diffusion models adapted from AR models, with fully open recipes for converting **ANY** AR model (e.g., Qwen, LLaMA, and GPT-2) into a diffusion model. See [`examples/a2d`](/examples/a2d) for training / inference / evaluation instructions.
 
 **[2025/11] 🤗[`BERT-Chat`](https://huggingface.co/collections/dllm-collection/bert-chat)**: We released a collection of BERTs finetuned to chat with diffusion, with open recipes for turning **ANY** BERT encoder (e.g., BERT, RoBERTa, ModernBERT) into a diffusion model. See [`examples/bert`](/examples/bert) for training / inference / evaluation instructions.
@@ -41,8 +43,8 @@ Simple Diffusion Language Modeling
 
 
 ## Features
-- [`examples/llada`](/examples/llada): Pretraining, finetuning and evaluating LLaDA [LLaDA](https://arxiv.org/abs/2502.09992) / [LLaDA-MoE](https://arxiv.org/abs/2509.24389).
-- [`examples/dream`](/examples/dream): Pretraining, finetuning and evaluating Dream [Dream](https://arxiv.org/abs/2508.15487).
+- [`examples/llada`](/examples/llada): Pretraining, finetuning and evaluating [LLaDA](https://arxiv.org/abs/2502.09992) / [LLaDA-MoE](https://arxiv.org/abs/2509.24389).
+- [`examples/dream`](/examples/dream): Pretraining, finetuning and evaluating [Dream](https://arxiv.org/abs/2508.15487).
 - [`examples/a2d`](/examples/a2d): Finetuning any autoregressive model to generate text with [masked diffusion](https://arxiv.org/abs/2406.07524) / [block diffusion](https://arxiv.org/abs/2503.09573).
 - [`examples/bert`](/examples/bert): Finetuning any [BERT](https://arxiv.org/abs/1810.04805) to be lightweight Chatbots.
     <!-- <details>
@@ -67,6 +69,7 @@ Simple Diffusion Language Modeling
    <p align="center"><em>EditFlow performing insertion (blue), substitution from mask tokens (black), substitution from non-mask tokens (red), and deletion (strikethrough → removed) during sampling.</em></p>
 
    </details> -->
+- [`examples/fastdllm`](/examples/fastdllm): Inferencing and evaluating [LLaDA](https://arxiv.org/abs/2502.09992) and [Dream](https://arxiv.org/abs/2508.15487) with [Fast-dLLM](https://arxiv.org/abs/2505.22618) (cache, confidence-threshold decoding, and beyond).
 - More upcoming.
 
 
@@ -122,6 +125,7 @@ dllm
 |   ├── bert
 │   ├── dream
 │   ├── editflow
+│   ├── fastdllm
 │   └── llada
 │       ├── models         # Model architecture and configs 
 │       ├── sampler.py     # Inference module
@@ -135,6 +139,7 @@ examples
 ├── bert
 ├── dream
 ├── editflow
+├── fastdllm
 └── llada
     ├── chat.py            # Interactive inference example
     ├── sample.py          # Inference example
@@ -285,6 +290,11 @@ You can also try interactive chat script (for example, [`examples/llada/chat.py`
 python -u examples/llada/chat.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct"
 ```
 
+You can accelerate inference of [LLaDA](https://arxiv.org/abs/2502.09992) and [Dream](https://arxiv.org/abs/2508.15487) with [Fast-dLLM](https://arxiv.org/abs/2505.22618).
+```shell
+python examples/fastdllm/llada/sample.py --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct" --use_cache prefix --threshold 0.9
+```
+
 <p align="center">
     <img src="/assets/chat.gif" alt="chat" width="80%">
 </p>
@@ -309,6 +319,12 @@ For example, you can run [`examples/llada/eval.sh`](/examples/llada/eval.sh) dir
 ```shell
 bash examples/llada/eval.sh --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct" --instruct True
 bash examples/llada/eval.sh --model_name_or_path "GSAI-ML/LLaDA-8B-Base" --instruct False
+```
+
+We provide scripts to evaluate [LLaDA](https://arxiv.org/abs/2502.09992) and [Dream](https://arxiv.org/abs/2508.15487) using [Fast-dLLM](https://arxiv.org/abs/2505.22618):
+```shell
+bash examples/fastdllm/llada/eval.sh --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct" --instruct True --num_gpu 1
+bash examples/fastdllm/dream/eval.sh --model_name_or_path "Dream-org/Dream-v0-Base-7B" --instruct False --num_gpu 1
 ```
 
 

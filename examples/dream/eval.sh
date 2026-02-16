@@ -43,19 +43,19 @@ if [ "$instruct" = "True" ]; then
     # Instruct Tasks
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks mmlu_generative_dream --num_fewshot 4 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},max_new_tokens=128,steps=128,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False,escape_until=False"
+        --model_args "pretrained=${model_name_or_path},max_new_tokens=128,steps=128,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False"
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks mmlu_pro --num_fewshot 4 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},max_new_tokens=128,steps=128,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False,escape_until=False"
+        --model_args "pretrained=${model_name_or_path},max_new_tokens=128,steps=128,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False"
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks gsm8k_cot --num_fewshot 0 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False,escape_until=False"
+        --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False"
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks minerva_math --num_fewshot 0 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},max_new_tokens=512,steps=512,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False,escape_until=False"
+        --model_args "pretrained=${model_name_or_path},max_new_tokens=512,steps=512,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False"
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks gpqa_main_n_shot --num_fewshot 5 ${common_args} \
@@ -63,41 +63,41 @@ if [ "$instruct" = "True" ]; then
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks humaneval_instruct_dream --num_fewshot 0 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},max_new_tokens=768,steps=768,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False,escape_until=False" \
+        --model_args "pretrained=${model_name_or_path},max_new_tokens=768,steps=768,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False" \
         --confirm_run_unsafe_code
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks mbpp_instruct_dream --num_fewshot 0 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},max_new_tokens=1024,steps=1024,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False,escape_until=False" \
+        --model_args "pretrained=${model_name_or_path},max_new_tokens=1024,steps=1024,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False" \
         --confirm_run_unsafe_code
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks ifeval --num_fewshot 0 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},max_new_tokens=1280,steps=1280,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False,escape_until=False"
+        --model_args "pretrained=${model_name_or_path},max_new_tokens=1280,steps=1280,temperature=0.1,top_p=0.9,alg=entropy,dtype=bfloat16,add_bos_token=False"
 
 else
     # Base Tasks
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks humaneval_instruct --num_fewshot 0 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},max_new_tokens=512,steps=512,temperature=0.2,top_p=0.95,add_bos_token=True,escape_until=False" \
+        --model_args "pretrained=${model_name_or_path},max_new_tokens=512,steps=512,temperature=0.2,top_p=0.95,add_bos_token=True" \
         --confirm_run_unsafe_code
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks gsm8k_cot --num_fewshot 8 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,temperature=0.0,top_p=0.95,add_bos_token=True,escape_until=False"
+        --model_args "pretrained=${model_name_or_path},max_new_tokens=256,steps=256,temperature=0.0,top_p=0.95,add_bos_token=True"
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks mbpp --num_fewshot 3 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},max_new_tokens=512,steps=512,temperature=0.2,top_p=0.95,add_bos_token=True,escape_until=False" \
+        --model_args "pretrained=${model_name_or_path},max_new_tokens=512,steps=512,temperature=0.2,top_p=0.95,add_bos_token=True" \
         --confirm_run_unsafe_code
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks minerva_math --num_fewshot 4 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},max_new_tokens=512,steps=512,temperature=0.0,top_p=0.95,add_bos_token=True,escape_until=False"
+        --model_args "pretrained=${model_name_or_path},max_new_tokens=512,steps=512,temperature=0.0,top_p=0.95,add_bos_token=True"
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks bbh --num_fewshot 3 ${common_args} \
-        --model_args "pretrained=${model_name_or_path},max_new_tokens=512,steps=512,temperature=0.0,top_p=0.95,add_bos_token=True,escape_until=False"
+        --model_args "pretrained=${model_name_or_path},max_new_tokens=512,steps=512,temperature=0.0,top_p=0.95,add_bos_token=True"
 
     accelerate launch --num_processes "${num_gpu}" dllm/pipelines/dream/eval.py \
         --tasks mmlu --num_fewshot 5 ${common_args} \

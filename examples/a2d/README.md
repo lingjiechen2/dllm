@@ -331,11 +331,11 @@ bash examples/a2d/bd3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B
     <tr style="border-bottom: 3px solid #333;">
       <th style="padding: 8px; text-align: left;">Model                        </th>
       <th style="padding: 8px;">GSM8K</th>
-      <th style="padding: 8px;">MATH</th>
       <th style="padding: 8px;">BBH</th>
+      <th style="padding: 8px;">MATH</th>
+      <th style="padding: 8px;">MMLU</th>
       <th style="padding: 8px;">MMLU&#8209;Pro</th>
       <th style="padding: 8px;">Hellaswag</th>
-      <th style="padding: 8px;">MMLU</th>
       <th style="padding: 8px;">HumanEval</th>
       <th style="padding: 8px;">MBPP</th>
     </tr>
@@ -344,20 +344,20 @@ bash examples/a2d/bd3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B
   <!-- mdlm v0.1 -->
   <tr>
     <td style="padding: 8px;">
-      <a href="https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1"><code>Qwen3-0.6B-diffusion-mdlm-v0.1</code></a> (evaluated)
+      <a href="https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-mdlm-v0.1"><code>Qwen3-0.6B-diffusion-mdlm-v0.1</code></a> (Reproduced)
     </td>
-    <td>29.3</td><td>8.7</td><td>26.6</td>
-    <td>17.3</td><td>42.1</td><td>40.0</td>
+    <td>29.3</td><td>26.7</td><td>8.7</td>
+    <td>40.0</td><td>17.3</td><td>42.1</td>
     <td>30.5</td><td>29.2</td>
   </tr>
 
   <!-- bd3lm v0.1 -->
   <tr>
     <td style="padding: 8px;">
-      <a href="https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-bd3lm-v0.1"><code>Qwen3-0.6B-diffusion-bd3lm-v0.1</code></a> (evaluated)
+      <a href="https://huggingface.co/dllm-collection/Qwen3-0.6B-diffusion-bd3lm-v0.1"><code>Qwen3-0.6B-diffusion-bd3lm-v0.1</code></a> (Reproduced)
     </td>
-    <td>46.3</td><td>12.9</td><td>26.6</td>
-    <td>13.8</td><td>39.3</td><td>39.1</td>
+    <td>46.3</td><td>26.6</td><td>12.9</td>
+    <td>39.1</td><td>13.8</td><td>39.3</td>
     <td>46.3</td><td>38.2</td>
   </tr>
 
@@ -368,16 +368,16 @@ bash examples/a2d/bd3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B
 
   <!-- AR model -->
   <tr>
-    <td style="padding: 8px;"><i><a href="https://huggingface.co/Qwen/Qwen2.5-0.5B"><code>Qwen2.5-0.5B</code></a> (reported)</i></td>
-    <td><i>41.6</i></td><td><i>19.5</i></td><td><i>20.3</i></td><td><i>15.7</i></td><td><i>52.1</i></td><td><i>47.5</i></td><td><i>30.5</i></td><td><i>39.3</i></td>
+    <td style="padding: 8px;"><i><a href="https://huggingface.co/Qwen/Qwen2.5-0.5B"><code>Qwen2.5-0.5B</code></a> (Official)</i></td>
+    <td><i>41.6</i></td><td><i>20.3</i></td><td><i>19.5</i></td><td><i>47.5</i></td><td><i>15.7</i></td><td><i>52.1</i></td><td><i>30.5</i></td><td><i>39.3</i></td>
   </tr>
 
   <tr>
     <td style="padding: 8px;"><i>
-      <a href="https://huggingface.co/Qwen/Qwen3-0.6B-Base"><code>Qwen3-0.6B-Base</code></a> (reported)
+      <a href="https://huggingface.co/Qwen/Qwen3-0.6B-Base"><code>Qwen3-0.6B-Base</code></a> (Official)
     </i></td>
-    <td><i>59.6</i></td><td><i>32.4</i></td><td><i>41.5</i></td>
-    <td><i>24.7</i></td><td><i>47.4</i></td><td><i>52.8</i></td>
+    <td><i>59.6</i></td><td><i>41.5</i></td><td><i>32.4</i></td>
+    <td><i>52.8</i></td><td><i>24.7</i></td><td><i>47.4</i></td>
     <td><i>32.3</i></td><td><i>36.6</i></td>
   </tr>
 
@@ -397,7 +397,7 @@ bash examples/a2d/bd3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B
   <!-- mdlm v0.1  -->
   <tr>
     <td style="padding: 8px;">
-      <a href="https://huggingface.co/dllm-collection/Qwen2.5-Coder-0.5B-Instruct-diffusion-mdlm-v0.1"><code>Qwen2.5-Coder-0.5B-Instruct-diffusion-mdlm-v0.1</code></a> (evaluated)
+      <a href="https://huggingface.co/dllm-collection/Qwen2.5-Coder-0.5B-Instruct-diffusion-mdlm-v0.1"><code>Qwen2.5-Coder-0.5B-Instruct-diffusion-mdlm-v0.1</code></a> (Reproduced)
     </td>
     <td>28.1</td>
     <td>23.0</td>
@@ -406,7 +406,7 @@ bash examples/a2d/bd3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B
   <!-- bd3lm v0.1  -->
   <tr>
     <td style="padding: 8px;">
-      <a href="https://huggingface.co/dllm-collection/Qwen2.5-Coder-0.5B-Instruct-diffusion-bd3lm-v0.1"><code>Qwen2.5-Coder-0.5B-Instruct-diffusion-bd3lm-v0.1</code></a> (evaluated)
+      <a href="https://huggingface.co/dllm-collection/Qwen2.5-Coder-0.5B-Instruct-diffusion-bd3lm-v0.1"><code>Qwen2.5-Coder-0.5B-Instruct-diffusion-bd3lm-v0.1</code></a> (Reproduced)
     </td>
     <td>39.0</td>
     <td>33.2</td>
@@ -415,7 +415,7 @@ bash examples/a2d/bd3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B
   <!-- open-dcoder -->
   <tr>
     <td style="padding: 8px;">
-      <a href="https://huggingface.co/fredzzp/open-dcoder-0.5B"><code>open-dcoder-0.5B</code></a> (reported)
+      <a href="https://huggingface.co/fredzzp/open-dcoder-0.5B"><code>open-dcoder-0.5B</code></a> (Official)
     </td>
     <td>20.8</td>
     <td>35.2</td>
@@ -429,7 +429,7 @@ bash examples/a2d/bd3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B
   <!-- AR model-->
   <tr>
     <td style="padding: 8px;"><i>
-      <a href="https://huggingface.co/Qwen/Qwen2.5-Coder-0.5B-Instruct"><code>Qwen2.5-Coder-0.5B-Instruct</code></a> (reported)
+      <a href="https://huggingface.co/Qwen/Qwen2.5-Coder-0.5B-Instruct"><code>Qwen2.5-Coder-0.5B-Instruct</code></a> (Official)
     </i></td>
     <td><i>28.0</i></td>
     <td><i>52.9</i></td>
@@ -438,7 +438,7 @@ bash examples/a2d/bd3lm/eval.sh --model_name_or_path "dllm-collection/Qwen3-0.6B
 </table>
 
 <p align="left" style="color: #808080; font-size: 0.9em;">
-Table 1. Results (evaluated) are obtained using our framework, while results (reported) come from the 
+Table 1. Results (Reproduced) are obtained using our framework, while results (Official) come from the 
 <a href="https://arxiv.org/pdf/2505.09388" style="color: #808080; text-decoration: none;">Qwen3 Technical Report</a>, 
 <a href="https://arxiv.org/pdf/2409.12186" style="color: #808080; text-decoration: none;">Qwen2.5-Coder Technical Report</a>, 
 <a href="https://qwenlm.github.io/blog/qwen2.5-llm/" style="color: #808080; text-decoration: none;">Qwen2.5 Blog</a>, and 

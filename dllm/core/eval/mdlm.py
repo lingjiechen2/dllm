@@ -80,7 +80,9 @@ class MDLMEvalHarness(BaseEvalHarness):
         self.mask_id = self.tokenizer.mask_token_id
         self.max_length = int(kwargs.get("max_length", eval_config.max_length))
         self.mc_num = int(kwargs.get("mc_num", eval_config.mc_num))
-        self.is_check_greedy = kwargs.get("is_check_greedy", eval_config.is_check_greedy)
+        self.is_check_greedy = kwargs.get(
+            "is_check_greedy", eval_config.is_check_greedy
+        )
 
         assert self.mc_num % self.batch_size == 0
 
@@ -209,9 +211,7 @@ class MDLMEvalHarness(BaseEvalHarness):
                 f"{len(context_enc)} + {len(continuation_enc)}"
             )
 
-            context = torch.tensor(
-                context_enc, device=self.device, dtype=torch.long
-            )
+            context = torch.tensor(context_enc, device=self.device, dtype=torch.long)
             continuation = torch.tensor(
                 continuation_enc, device=self.device, dtype=torch.long
             )
