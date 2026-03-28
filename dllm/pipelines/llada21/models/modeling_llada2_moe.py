@@ -863,16 +863,27 @@ class LLaDA2MoeModel(LLaDA2MoePreTrainedModel):
                 device=inputs_embeds.device,
             )
             position_ids = position_ids.unsqueeze(0)
-        if attention_mask.size() == (batch_size, 1, seq_length, seq_length):
-            attention_mask = _prepare_4d_causal_attention_mask_for_sdpa(
-                attention_mask,
-                (batch_size, seq_length),
-                inputs_embeds,
-                past_seen_tokens,
-            )
+        # BD3LMTrainer passes a broadcast 4D bool mask with shape [1, 1, seq_len, seq_len].
+        # Accept both [batch, 1, seq, seq] and the broadcast [1, 1, seq, seq] variants.
+        expected_shape = (batch_size, 1, seq_length, seq_length)
+        broadcast_shape = (1, 1, seq_length, seq_length)
+        if attention_mask.size() in (expected_shape, broadcast_shape):
+            if attention_mask.dtype == torch.bool:
+                # Pre-built bool mask (e.g., block diffusion): convert to additive float mask.
+                min_val = torch.finfo(inputs_embeds.dtype).min
+                attention_mask = torch.zeros_like(
+                    attention_mask, dtype=inputs_embeds.dtype
+                ).masked_fill_(~attention_mask, min_val)
+            else:
+                attention_mask = _prepare_4d_causal_attention_mask_for_sdpa(
+                    attention_mask,
+                    (batch_size, seq_length),
+                    inputs_embeds,
+                    past_seen_tokens,
+                )
         else:
             raise ValueError(
-                f"LLaDA2.0 only support block attention mask with shape: {(batch_size, 1, seq_length, seq_length)}, the input attention with shape {attention_mask.size()=}!"
+                f"LLaDA2.0 only support block attention mask with shape: {expected_shape}, the input attention with shape {attention_mask.size()=}!"
             )
         # embed positions
         hidden_states = inputs_embeds
@@ -1364,7 +1375,6 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
                     cur_x,
                     attention_mask=cur_attn_mask,
                     position_ids=cur_position_ids,
-                    output_attentions=True,
                 )
                 logits = outputs.logits
 
