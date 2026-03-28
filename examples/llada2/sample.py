@@ -24,7 +24,7 @@ class ScriptArguments:
 @dataclass
 class SamplerConfig(dllm.pipelines.llada2.LLaDA2SamplerConfig):
     steps_per_block: int = 32
-    max_new_tokens: int = 128
+    max_new_tokens: int = 512
     block_size: int = 32
     temperature: float = 0.0
     top_p: float | None = None
@@ -47,7 +47,7 @@ messages = [
     [
         {
             "role": "user",
-            "content": "Give a concise summary of diffusion-based text generation.",
+            "content": "Why does Camus think that Sisyphus is happy?",
         }
     ],
 ]
@@ -64,8 +64,10 @@ sequences = dllm.utils.sample_trim(tokenizer, outputs.sequences.tolist(), inputs
 print("\n" + "=" * 80)
 print("TEST: llada2_moe.block_diffusion_generate()".center(80))
 print("=" * 80)
-for i, s in enumerate(sequences):
-    print(f"\n[Case {i}]")
+for iter, s in enumerate(sequences):
+    print("\n" + "-" * 80)
+    print(f"[Case {iter}]")
+    print("-" * 80)
     print(s.strip() if s.strip() else "<empty>")
 print("\n" + "=" * 80 + "\n")
 
