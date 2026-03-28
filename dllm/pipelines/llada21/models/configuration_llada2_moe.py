@@ -4,7 +4,7 @@ from transformers.configuration_utils import PretrainedConfig
 
 
 class LLaDA2MoeConfig(PretrainedConfig):
-    model_type = "llada2_moe"
+    model_type = "llada21_moe"
 
     def __init__(
         self,
