@@ -887,12 +887,21 @@ class LLaDA2MoeModel(LLaDA2MoePreTrainedModel):
         elif self._use_sdpa and not output_attentions:
             # output_attentions=True can not be supported when using SDPA, and we fall back on
             # the manual implementation that requires a 4D causal mask in all cases.
-            attention_mask = _prepare_4d_causal_attention_mask_for_sdpa(
-                attention_mask,
-                (batch_size, seq_length),
-                inputs_embeds,
-                past_seen_tokens,
-            )
+            if attention_mask is not None and attention_mask.dim() == 4:
+                # Pre-built 4D mask (e.g., block diffusion training mask from BD3LMTrainer).
+                # Convert bool → additive float mask so SDPA can consume it.
+                if attention_mask.dtype == torch.bool:
+                    min_val = torch.finfo(inputs_embeds.dtype).min
+                    attention_mask = torch.zeros_like(
+                        attention_mask, dtype=inputs_embeds.dtype
+                    ).masked_fill_(~attention_mask, min_val)
+            else:
+                attention_mask = _prepare_4d_causal_attention_mask_for_sdpa(
+                    attention_mask,
+                    (batch_size, seq_length),
+                    inputs_embeds,
+                    past_seen_tokens,
+                )
         else:
             # 4d mask is passed through the layers
             attention_mask = _prepare_4d_causal_attention_mask(
@@ -1238,7 +1247,14 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
         orig_shape = logits.shape[:-1]
         vocab_size = logits.shape[-1]
         logits = logits.reshape(-1, vocab_size)
-        if temperature > 0 and temperature != 1.0:
+        if temperature == 0.0:
+            logits = self._top_k_logits(logits, top_k)
+            logits = self._top_p_logits(logits, top_p)
+            probs = F.softmax(logits, dim=-1)
+            token = torch.argmax(probs, dim=-1, keepdim=True)
+            token_prob = torch.gather(probs, -1, token)
+            return token.view(*orig_shape), token_prob.view(*orig_shape)
+        if temperature != 1.0:
             logits = logits / temperature
         logits = self._top_k_logits(logits, top_k)
         logits = self._top_p_logits(logits, top_p)
@@ -1407,8 +1423,7 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
                     if len(eos_pos_in_x[0]) > 0:
                         eos_pos = eos_pos_in_x[0][0].item()
                         if (cur_x[0, prompt_length:eos_pos] != mask_id).all():
-                            final_x = x[:, :total_length][:, : eos_pos + 1]
-                            return final_x
+                            return x[:, prompt_length : eos_pos + 1]
 
             x[:, :current_window_end] = cur_x
             if (
