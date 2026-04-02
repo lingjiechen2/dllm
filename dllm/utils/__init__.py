@@ -1,4 +1,4 @@
-from . import chat, collators, configs, data, models, sampling, utils, visualizers
+from . import chat, collators, configs, data, models, reward_funcs, sampling, utils, visualizers
 from .chat import (
     banner_line,
     boxed,
@@ -27,6 +27,19 @@ from .data import (
     tokenize_and_group,
 )
 from .models import get_model, get_tokenizer
+from .reward_funcs import (
+    boxed_and_answer_tags_format_reward,
+    coding_reward_func,
+    correctness_reward_func,
+    correctness_reward_func_math,
+    countdown_reward_func,
+    int_reward_func,
+    reward_len,
+    soft_format_reward_func,
+    strict_format_reward_func,
+    sudoku_reward_func,
+    xmlcount_reward_func,
+)
 from .sampling import infill_trim, sample_trim
 from .utils import (
     disable_caching_allocator_warmup,
@@ -51,6 +64,7 @@ __all__ = [
     "configs",
     "data",
     "models",
+    "reward_funcs",
     "sampling",
     "utils",
     "visualizers",
@@ -84,6 +98,19 @@ __all__ = [
     # models
     "get_model",
     "get_tokenizer",
+    # reward_funcs
+    "reward_funcs",
+    "boxed_and_answer_tags_format_reward",
+    "coding_reward_func",
+    "correctness_reward_func",
+    "correctness_reward_func_math",
+    "countdown_reward_func",
+    "int_reward_func",
+    "reward_len",
+    "soft_format_reward_func",
+    "strict_format_reward_func",
+    "sudoku_reward_func",
+    "xmlcount_reward_func",
     # sampling
     "infill_trim",
     "sample_trim",
