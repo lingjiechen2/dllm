@@ -1,4 +1,4 @@
-"""LLaDA2 MoE model configuration"""
+"""LLaDA2.1 MoE model configuration"""
 
 from transformers.configuration_utils import PretrainedConfig
 

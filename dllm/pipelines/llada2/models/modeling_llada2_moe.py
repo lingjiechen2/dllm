@@ -54,7 +54,6 @@ from transformers.utils.import_utils import is_torch_fx_available
 from .configuration_llada2_moe import LLaDA2MoeConfig
 from transformers.generation.utils import GenerationMixin
 
-
 # This makes `_prepare_4d_causal_attention_mask` a leaf function in the FX graph.
 # It means that the function will not be traced through and simply appear as a node in the graph.
 if is_torch_fx_available():
@@ -73,9 +72,7 @@ def _get_unpad_data(attention_mask):
     seqlens_in_batch = attention_mask.sum(dim=-1, dtype=torch.int32)
     indices = torch.nonzero(attention_mask.flatten(), as_tuple=False).flatten()
     max_seqlen_in_batch = seqlens_in_batch.max().item()
-    cu_seqlens = F.pad(
-        torch.cumsum(seqlens_in_batch, dim=0, dtype=torch.int32), (1, 0)
-    )
+    cu_seqlens = F.pad(torch.cumsum(seqlens_in_batch, dim=0, dtype=torch.int32), (1, 0))
     return (
         indices,
         cu_seqlens,
@@ -1054,7 +1051,7 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
         ```python
         >>> from transformers import AutoTokenizer
 
-        >>> model = LLaDA2MoeForCausalLM.from_pretrained(PATH_TO_CONVERTED_WEIGHTS)
+        >>> model = LLaDA2MoeModelLM.from_pretrained(PATH_TO_CONVERTED_WEIGHTS)
         >>> tokenizer = AutoTokenizer.from_pretrained(PATH_TO_CONVERTED_TOKENIZER)
 
         >>> prompt = "Hey, are you conscious? Can you talk to me?"
@@ -1248,13 +1245,11 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
         vocab_size = logits.shape[-1]
         logits = logits.reshape(-1, vocab_size)
         if temperature == 0.0:
-            logits = self._top_k_logits(logits, top_k)
-            logits = self._top_p_logits(logits, top_p)
             probs = F.softmax(logits, dim=-1)
             token = torch.argmax(probs, dim=-1, keepdim=True)
             token_prob = torch.gather(probs, -1, token)
             return token.view(*orig_shape), token_prob.view(*orig_shape)
-        if temperature != 1.0:
+        if temperature > 0 and temperature != 1.0:
             logits = logits / temperature
         logits = self._top_k_logits(logits, top_k)
         logits = self._top_p_logits(logits, top_p)
@@ -1277,11 +1272,11 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
     def generate(
         self,
         inputs: Optional[torch.Tensor] = None,
-        temperature: int = 0.0,
+        temperature: float = 0.0,
         block_length: int = 32,
         steps: int = 32,
         gen_length: int = 2048,
-        top_p: Optional[int] = None,
+        top_p: Optional[float] = None,
         top_k: Optional[int] = None,
         eos_early_stop: bool = False,
         minimal_topk: int = 1,
@@ -1434,13 +1429,13 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
 
         generated_answer = x[:, : prompt_length + gen_length]
 
-        mask_positions = (generated_answer[0][input_ids.shape[1] :] == eos_id).nonzero(
+        eos_positions = (generated_answer[0][input_ids.shape[1] :] == eos_id).nonzero(
             as_tuple=True
         )[0]
-        if len(mask_positions) > 0:
-            first_mask_position = mask_positions[0].item()
+        if len(eos_positions) > 0:
+            first_eos_position = eos_positions[0].item()
         else:
-            first_mask_position = gen_length
+            first_eos_position = gen_length
         return generated_answer[
-            :, input_ids.shape[1] : input_ids.shape[1] + first_mask_position + 1
+            :, input_ids.shape[1] : input_ids.shape[1] + first_eos_position + 1
         ]

@@ -48,9 +48,8 @@ from transformers.utils import (
     logging,
     replace_return_docstrings,
 )
-from .configuration_llada2_moe import LLaDA2MoeConfig
+from .configuration_llada21_moe import LLaDA2MoeConfig
 from transformers.generation.utils import GenerationMixin
-
 
 logger = logging.get_logger(__name__)
 
@@ -61,9 +60,7 @@ def _get_unpad_data(attention_mask):
     seqlens_in_batch = attention_mask.sum(dim=-1, dtype=torch.int32)
     indices = torch.nonzero(attention_mask.flatten(), as_tuple=False).flatten()
     max_seqlen_in_batch = seqlens_in_batch.max().item()
-    cu_seqlens = F.pad(
-        torch.cumsum(seqlens_in_batch, dim=0, dtype=torch.torch.int32), (1, 0)
-    )
+    cu_seqlens = F.pad(torch.cumsum(seqlens_in_batch, dim=0, dtype=torch.int32), (1, 0))
     return (
         indices,
         cu_seqlens,
@@ -842,7 +839,7 @@ class LLaDA2MoeModel(LLaDA2MoePreTrainedModel):
         if self.gradient_checkpointing and self.training:
             if use_cache:
                 logger.warning_once(
-                    "`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`transformers."
+                    "`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`."
                 )
                 use_cache = False
 
@@ -883,7 +880,7 @@ class LLaDA2MoeModel(LLaDA2MoePreTrainedModel):
                 )
         else:
             raise ValueError(
-                f"LLaDA2.0 only support block attention mask with shape: {expected_shape}, the input attention with shape {attention_mask.size()=}!"
+                f"LLaDA2.1 only support block attention mask with shape: {expected_shape}, the input attention with shape {attention_mask.size()=}!"
             )
         # embed positions
         hidden_states = inputs_embeds
@@ -1028,7 +1025,7 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
         ```python
         >>> from transformers import AutoTokenizer
 
-        >>> model = LLaDA2MoeForCausalLM.from_pretrained(PATH_TO_CONVERTED_WEIGHTS)
+        >>> model = LLaDA2MoeModelLM.from_pretrained(PATH_TO_CONVERTED_WEIGHTS)
         >>> tokenizer = AutoTokenizer.from_pretrained(PATH_TO_CONVERTED_TOKENIZER)
 
         >>> prompt = "Hey, are you conscious? Can you talk to me?"
@@ -1080,7 +1077,7 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
         logits = logits.float()
 
         if labels is not None:
-            # LLaDA2.0 will use same label position logits
+            # LLaDA2.1 will use same label position logits
             shift_logits = logits
             shift_labels = labels
             # Flatten the tokens
@@ -1305,7 +1302,7 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
                 The confidence probability threshold for accepting a sampled token. During each refinement step, a
                 sampled token is only kept if its probability is above this threshold. If not enough tokens meet the
                 threshold, the ones with the highest confidence are chosen.
-            editing_threshold (`float`, *optional*, defaults to 0.5):
+            editing_threshold (`float`, *optional*, defaults to 0.9):
                 The confidence threshold for **editing**. Existing tokens (non-masked) are replaced by newly
                 sampled tokens if the model's confidence in the new token exceeds this threshold and the token has changed.
             max_post_steps (`int`, *optional*, defaults to 16):
@@ -1431,14 +1428,14 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
                         break
 
         generated_answer = x[:, : prompt_length + gen_length]
-        mask_positions = (generated_answer[0][input_ids.shape[1] :] == eos_id).nonzero(
+        eos_positions = (generated_answer[0][input_ids.shape[1] :] == eos_id).nonzero(
             as_tuple=True
         )[0]
-        if len(mask_positions) > 0:
-            first_mask_position = mask_positions[0].item()
+        if len(eos_positions) > 0:
+            first_eos_position = eos_positions[0].item()
         else:
-            first_mask_position = gen_length
+            first_eos_position = gen_length
 
         return generated_answer[
-            :, input_ids.shape[1] : input_ids.shape[1] + first_mask_position + 1
+            :, input_ids.shape[1] : input_ids.shape[1] + first_eos_position + 1
         ]
