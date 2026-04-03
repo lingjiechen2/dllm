@@ -7,26 +7,24 @@ References:
 """
 
 from contextlib import nullcontext
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Callable, Optional, Union
 
-import numpy as np
 import torch
 import torch.nn.functional as F
 from accelerate.utils import set_seed
 from datasets import Dataset, IterableDataset
-from torch import nn
 from torch.distributed.fsdp import FullyShardedDataParallel as FSDP
 from trl import GRPOConfig
 from trl.data_utils import is_conversational, maybe_apply_chat_template
 from trl.extras.profiling import profiling_decorator
 from trl.models import unwrap_model_for_generation
 from trl.trainer.grpo_trainer import GRPOTrainer
-from trl.trainer.utils import pad
 from transformers import PreTrainedModel, PreTrainedTokenizerBase, TrainerCallback
 from transformers.utils import is_peft_available
-from trl.import_utils import is_vllm_available
-from transformers.utils import is_rich_available
+
+from dllm.core.samplers import BaseSampler, BaseSamplerConfig, MDLMSampler, MDLMSamplerConfig
+from dllm.core.trainers.utils import GRPOMetrics
 
 if is_peft_available():
     from peft import PeftConfig
@@ -40,30 +38,11 @@ class DiffuGRPOConfig(GRPOConfig):
     Configuration for DiffuGRPOTrainer, extending GRPOConfig with diffusion-specific parameters.
     """
 
-    block_length: Optional[int] = field(
-        default=64,
-        metadata={"help": "Block length for block-wise diffusion generation."},
-    )
-    diffusion_steps: Optional[int] = field(
-        default=64,
-        metadata={"help": "Number of diffusion denoising steps per generation."},
-    )
-    cfg_scale: Optional[float] = field(
-        default=0.0,
-        metadata={"help": "Classifier-free guidance scale. 0.0 disables CFG."},
-    )
-    remasking: Optional[str] = field(
-        default="low_confidence",
-        metadata={"help": "Remasking strategy: 'low_confidence' or 'random'."},
-    )
-    p_mask_prompt: float = field(
-        default=0.3,
-        metadata={"help": "Probability of masking each prompt token in the forward process."},
-    )
-    mask_id: int = field(
-        default=126336,
-        metadata={"help": "Mask token id. Used as fallback if tokenizer has no mask_token_id."},
-    )
+    block_size: int = 64
+    steps: int = 64
+    cfg_scale: float = 0.0
+    remasking: str = "low_confidence"
+    p_mask_prompt: float = 0.3
 
 
 class DiffuGRPOTrainer(GRPOTrainer):
@@ -97,6 +76,8 @@ class DiffuGRPOTrainer(GRPOTrainer):
             None,
         ),
         peft_config: Optional["PeftConfig"] = None,
+        sampler: Optional[BaseSampler] = None,
+        sampler_config: Optional[BaseSamplerConfig] = None,
     ):
         super().__init__(
             model=model,
@@ -110,115 +91,16 @@ class DiffuGRPOTrainer(GRPOTrainer):
             optimizers=optimizers,
             peft_config=peft_config,
         )
-
-    @property
-    def _mask_id(self) -> int:
-        """Resolve mask token id: prefer tokenizer's mask_token_id over config fallback."""
-        if (
-            self.processing_class is not None
-            and hasattr(self.processing_class, "mask_token_id")
-            and self.processing_class.mask_token_id is not None
-        ):
-            return self.processing_class.mask_token_id
-        return self.args.mask_id
-
-    # -----------------------------------------------------------------------
-    # Diffusion generation utilities
-    # -----------------------------------------------------------------------
-
-    def add_gumbel_noise(self, logits, temperature, dtype):
-        """
-        Gumbel-max sampling for diffusion models.
-        Per arXiv:2409.02908, low-precision Gumbel Max improves perplexity but reduces generation quality;
-        we use float64 as in the reference implementation.
-        """
-        if temperature == 0.0:
-            return logits
-        logits = logits.to(dtype)
-        noise = torch.rand_like(logits, dtype=dtype)
-        gumbel_noise = (-torch.log(noise)) ** temperature
-        return logits.exp() / gumbel_noise
-
-    def generate(
-        self,
-        model,
-        prompt,
-        steps=128,
-        gen_length=128,
-        block_length=128,
-        temperature=0.0,
-        cfg_scale=0.0,
-        remasking="low_confidence",
-        mask_id=None,
-    ):
-        """Iterative denoising generation for masked diffusion language models."""
-        if mask_id is None:
-            mask_id = self._mask_id
-
-        with torch.cuda.amp.autocast(enabled=True):
-            bs = prompt.shape[0]
-            dtype = model.dtype
-            x = torch.full((bs, prompt.shape[1] + gen_length), mask_id, dtype=torch.long).to(model.device)
-            x[:, : prompt.shape[1]] = prompt.clone()
-
-            prompt_index = x != mask_id
-
-            assert gen_length % block_length == 0
-            num_blocks = gen_length // block_length
-            steps_per_block = max(1, steps // num_blocks)
-
-            for num_block in range(num_blocks):
-                start_idx = prompt.shape[1] + num_block * block_length
-                end_idx = prompt.shape[1] + (num_block + 1) * block_length
-
-                block_mask_index = x[:, start_idx:end_idx] == mask_id
-                num_transfer_tokens = self._get_num_transfer_tokens(block_mask_index, steps_per_block)
-
-                for i in range(steps_per_block):
-                    torch.cuda.empty_cache()
-                    mask_index = x == mask_id
-
-                    with torch.cuda.amp.autocast(enabled=self.args.fp16):
-                        if cfg_scale > 0.0:
-                            un_x = x.clone()
-                            un_x[prompt_index] = mask_id
-                            x_ = torch.cat([x, un_x], dim=0)
-                            logits = model(x_).logits
-                            logits, un_logits = torch.chunk(logits, 2, dim=0)
-                            logits = un_logits + (cfg_scale + 1) * (logits - un_logits)
-                        else:
-                            logits = model(x).logits
-
-                        logits_with_noise = self.add_gumbel_noise(logits, temperature=temperature, dtype=dtype)
-                        x0 = torch.argmax(logits_with_noise, dim=-1)
-                        del logits_with_noise
-
-                        if remasking == "low_confidence":
-                            p = F.softmax(logits.to(dtype), dim=-1)
-                            x0_p = torch.squeeze(
-                                torch.gather(p, dim=-1, index=torch.unsqueeze(x0, -1)), -1
-                            )
-                        elif remasking == "random":
-                            x0_p = torch.rand((x0.shape[0], x0.shape[1]), device=x0.device)
-                        else:
-                            raise NotImplementedError(remasking)
-
-                        x0_p[:, end_idx:] = -np.inf
-
-                        x0 = torch.where(mask_index, x0, x)
-                        confidence = torch.where(mask_index, x0_p, -np.inf)
-
-                        transfer_index = torch.zeros_like(x0, dtype=torch.bool, device=x0.device)
-                        for j in range(confidence.shape[0]):
-                            num_tokens = num_transfer_tokens[j, i].item()
-                            if num_tokens > 0:
-                                _, select_index = torch.topk(confidence[j], k=num_tokens)
-                                transfer_index[j, select_index] = True
-
-                        x[transfer_index] = x0[transfer_index]
-                        del x0, confidence, transfer_index
-
-            return x
+        self.sampler = sampler or MDLMSampler(model=self.model, tokenizer=self.processing_class)
+        self.sampler_config = sampler_config or MDLMSamplerConfig(
+            steps=self.args.steps,
+            max_new_tokens=self.args.max_completion_length,
+            block_size=self.args.block_size,
+            temperature=self.args.temperature or 0.0,
+            cfg_scale=self.args.cfg_scale,
+            remasking=self.args.remasking,
+        )
+        self.meter = GRPOMetrics(trainer=self)
 
     def _forward_process(self, batch, prompt_index, mask_id, seed=None):
         """
@@ -229,48 +111,9 @@ class DiffuGRPOTrainer(GRPOTrainer):
         """
         if seed is not None:
             set_seed(seed)
-        b, l = batch.shape
-        t_p = torch.ones(b, device=batch.device) * self.args.p_mask_prompt
-
-        random_matrix = torch.rand((b, l), device=batch.device)
-
-        is_mask_prompt = prompt_index & (random_matrix < t_p.unsqueeze(1))
-        is_mask_completion = ~prompt_index
-        is_mask = is_mask_prompt | is_mask_completion
-
-        noisy_batch = torch.where(is_mask, mask_id, batch)
-        return noisy_batch
-
-    def _get_model_logits(self, model, batch, prompt_index, cfg_scale, mask_id):
-        """Forward pass with optional classifier-free guidance."""
-        if cfg_scale > 0.0:
-            assert len(prompt_index) == batch.shape[1]
-            prompt_index_expanded = prompt_index.unsqueeze(0).repeat(batch.shape[0], 1)
-            un_batch = batch.clone()
-            un_batch[prompt_index_expanded] = mask_id
-            batch = torch.cat([batch, un_batch])
-
-        logits = model(batch).logits
-
-        if cfg_scale > 0.0:
-            logits, un_logits = torch.chunk(logits, 2, dim=0)
-            logits = un_logits + (cfg_scale + 1) * (logits - un_logits)
-        return logits
-
-    def _get_num_transfer_tokens(self, mask_index, steps):
-        """Precompute the number of tokens to unmask at each diffusion step."""
-        mask_num = mask_index.sum(dim=1, keepdim=True)
-        base = mask_num // steps
-        remainder = mask_num % steps
-
-        num_transfer_tokens = base.expand(-1, steps).clone()
-
-        if remainder.sum() > 0:
-            indices = torch.arange(steps, device=mask_index.device)
-            mask = indices.unsqueeze(0) < remainder
-            num_transfer_tokens[mask] += 1
-
-        return num_transfer_tokens.to(torch.int64)
+        is_mask_prompt = prompt_index & (torch.rand(batch.shape, device=batch.device) < self.args.p_mask_prompt)
+        noised_input_ids = torch.where(is_mask_prompt | ~prompt_index, mask_id, batch)
+        return noised_input_ids
 
     # -----------------------------------------------------------------------
     # Override: per-token log probabilities (diffusion forward process)
@@ -289,28 +132,32 @@ class DiffuGRPOTrainer(GRPOTrainer):
 
         Replaces TRL's causal log-prob computation with:
         1. Apply random masking (prompt: p_mask_prompt, completion: always masked)
-        2. Single bidirectional forward pass through the diffusion model
+        2. Single bidirectional forward pass through the diffusion model (with optional CFG)
         3. Cross-entropy on completion tokens only → log-prob
         """
         batch_size = batch_size or input_ids.size(0)
-        mask_id = self._mask_id
+        mask_id = self.processing_class.mask_token_id
+        cfg_scale = self.sampler_config.cfg_scale
         seq_len = input_ids.size(1)
         prompt_length = seq_len - logits_to_keep
 
-        prompt_index = torch.zeros(seq_len, dtype=torch.bool, device=input_ids.device)
-        prompt_index[:prompt_length] = True
+        prompt_index = torch.arange(seq_len, device=input_ids.device) < prompt_length
 
         all_logps = []
         for i in range(0, input_ids.size(0), batch_size):
             batch = input_ids[i : i + batch_size]
 
-            # Apply diffusion forward process
-            noisy_batch = self._forward_process(batch, prompt_index, mask_id)
+            noised_input_ids = self._forward_process(batch, prompt_index, mask_id)
 
-            # Bidirectional forward pass (no attention_mask needed for full-sequence models)
-            logits = self._get_model_logits(model, noisy_batch, prompt_index, self.args.cfg_scale, mask_id)
+            if cfg_scale > 0.0:
+                prompt_index_expanded = prompt_index.unsqueeze(0).repeat(noised_input_ids.shape[0], 1)
+                un_batch = noised_input_ids.clone()
+                un_batch[prompt_index_expanded] = mask_id
+                logits, un_logits = torch.chunk(model(torch.cat([noised_input_ids, un_batch])).logits, 2, dim=0)
+                logits = un_logits + (cfg_scale + 1) * (logits - un_logits)
+            else:
+                logits = model(noised_input_ids).logits
 
-            # Compute log-prob for completion tokens only
             completion_logits = logits[:, -logits_to_keep:, :]
             completion_targets = batch[:, -logits_to_keep:]
             loss = F.cross_entropy(
@@ -318,8 +165,7 @@ class DiffuGRPOTrainer(GRPOTrainer):
                 completion_targets.reshape(-1),
                 reduction="none",
             )
-            logps = -loss.view(batch.size(0), logits_to_keep).to(torch.float32)
-            all_logps.append(logps)
+            all_logps.append(-loss.view(batch.size(0), logits_to_keep).to(torch.float32))
 
         return torch.cat(all_logps, dim=0)
 
@@ -360,13 +206,7 @@ class DiffuGRPOTrainer(GRPOTrainer):
                 prompt_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False
             )
 
-        # ---- Diffusion generation (replaces model.generate) ----
-        gen_length = self.args.max_completion_length
-        block_length = self.args.block_length
-        steps = self.args.diffusion_steps
-        temperature = self.args.temperature or 0.0
-        cfg_scale = self.args.cfg_scale
-        mask_id = self._mask_id
+        # ---- Diffusion generation via sampler ----
         generation_batch_size = self.args.generation_batch_size or prompt_ids.size(0)
 
         with unwrap_model_for_generation(
@@ -379,23 +219,12 @@ class DiffuGRPOTrainer(GRPOTrainer):
                 if self.is_fsdp_enabled
                 else nullcontext()
             ):
+                self.sampler.model = unwrapped_model
                 prompt_completion_ids_all = []
                 for i in range(0, prompt_ids.size(0), generation_batch_size):
-                    end_idx = min(i + generation_batch_size, prompt_ids.size(0))
-                    batch_prompt_ids = prompt_ids[i:end_idx]
-                    batch_result = self.generate(
-                        model=unwrapped_model,
-                        prompt=batch_prompt_ids,
-                        steps=steps,
-                        gen_length=gen_length,
-                        block_length=block_length,
-                        temperature=temperature,
-                        cfg_scale=cfg_scale,
-                        remasking=self.args.remasking,
-                        mask_id=mask_id,
-                    )
-                    prompt_completion_ids_all.append(batch_result)
-                    del batch_prompt_ids, batch_result
+                    batch = list(prompt_ids[i:i + generation_batch_size])
+                    out = self.sampler.sample(batch, self.sampler_config)
+                    prompt_completion_ids_all.append(out)
                     torch.cuda.empty_cache()
 
         prompt_completion_ids = torch.cat(prompt_completion_ids_all, dim=0)
@@ -478,42 +307,11 @@ class DiffuGRPOTrainer(GRPOTrainer):
         all_process_advantages = advantages.clone()
         advantages = advantages[process_slice]
 
-        # Logging (matching TRL's metrics)
-        if mode == "train":
-            self.state.num_input_tokens_seen += self.accelerator.gather(attention_mask.sum()).sum().item()
-        self._metrics[mode]["num_tokens"] = [self.state.num_input_tokens_seen]
-
-        from accelerate.utils import gather_object
-        agg_completion_lengths = self.accelerator.gather(completion_lengths)
-        self._metrics[mode]["completions/mean_length"].append(agg_completion_lengths.float().mean().item())
-        self._metrics[mode]["completions/min_length"].append(agg_completion_lengths.float().min().item())
-        self._metrics[mode]["completions/max_length"].append(agg_completion_lengths.float().max().item())
-
-        agg_terminated_with_eos = self.accelerator.gather(is_eos.any(dim=1))
-        term_completion_lengths = agg_completion_lengths[agg_terminated_with_eos]
-        clipped_completions_ratio = 1 - len(term_completion_lengths) / len(agg_completion_lengths)
-        self._metrics[mode]["completions/clipped_ratio"].append(clipped_completions_ratio)
-        if len(term_completion_lengths) == 0:
-            term_completion_lengths = torch.zeros(1, device=device)
-        self._metrics[mode]["completions/mean_terminated_length"].append(term_completion_lengths.float().mean().item())
-        self._metrics[mode]["completions/min_terminated_length"].append(term_completion_lengths.float().min().item())
-        self._metrics[mode]["completions/max_terminated_length"].append(term_completion_lengths.float().max().item())
-
-        for i, reward_func_name in enumerate(self.reward_func_names):
-            mean_rewards = torch.nanmean(rewards_per_func[:, i]).item()
-            self._metrics[mode][f"rewards/{reward_func_name}/mean"].append(mean_rewards)
-            from trl.trainer.grpo_trainer import nanstd
-            std_rewards = nanstd(rewards_per_func[:, i]).item()
-            self._metrics[mode][f"rewards/{reward_func_name}/std"].append(std_rewards)
-        self._metrics[mode]["reward"].append(mean_grouped_rewards.mean().item())
-        self._metrics[mode]["reward_std"].append(std_grouped_rewards.mean().item())
-        self._metrics[mode]["frac_reward_zero_std"].append(is_std_zero.float().mean().item())
-
-        self._textual_logs["prompt"].extend(gather_object(prompts_text))
-        self._textual_logs["completion"].extend(gather_object(completions_text))
-        for i, name in enumerate(self.reward_func_names):
-            self._textual_logs["rewards"][name].extend(rewards_per_func[:, i].tolist())
-        self._textual_logs["advantages"].extend(all_process_advantages.tolist())
+        self.meter.update(
+            mode, attention_mask, completion_lengths, is_eos,
+            rewards_per_func, mean_grouped_rewards, std_grouped_rewards,
+            is_std_zero, prompts_text, completions_text, all_process_advantages,
+        )
 
         return {
             "prompt_ids": prompt_ids,
