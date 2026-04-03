@@ -23,8 +23,10 @@ from trl.trainer.grpo_trainer import GRPOTrainer
 from transformers import PreTrainedModel, PreTrainedTokenizerBase, TrainerCallback
 from transformers.utils import is_peft_available
 
+from accelerate.utils import gather_object
+from trl.trainer.grpo_trainer import nanstd
+
 from dllm.core.samplers import BaseSampler, BaseSamplerConfig, MDLMSampler, MDLMSamplerConfig
-from dllm.core.trainers.utils import GRPOMetrics
 
 if is_peft_available():
     from peft import PeftConfig
@@ -100,7 +102,6 @@ class DiffuGRPOTrainer(GRPOTrainer):
             cfg_scale=self.args.cfg_scale,
             remasking=self.args.remasking,
         )
-        self.meter = GRPOMetrics(trainer=self)
 
     def _forward_process(self, batch, prompt_index, mask_id, seed=None):
         """
@@ -307,11 +308,38 @@ class DiffuGRPOTrainer(GRPOTrainer):
         all_process_advantages = advantages.clone()
         advantages = advantages[process_slice]
 
-        self.meter.update(
-            mode, attention_mask, completion_lengths, is_eos,
-            rewards_per_func, mean_grouped_rewards, std_grouped_rewards,
-            is_std_zero, prompts_text, completions_text, all_process_advantages,
-        )
+        # ---- Metrics & logging ----
+        acc = self.accelerator
+        if mode == "train":
+            self.state.num_input_tokens_seen += acc.gather(attention_mask.sum()).sum().item()
+        self._metrics[mode]["num_tokens"] = [self.state.num_input_tokens_seen]
+
+        agg_completion_lengths = acc.gather(completion_lengths)
+        self._metrics[mode]["completions/mean_length"].append(agg_completion_lengths.float().mean().item())
+        self._metrics[mode]["completions/min_length"].append(agg_completion_lengths.float().min().item())
+        self._metrics[mode]["completions/max_length"].append(agg_completion_lengths.float().max().item())
+
+        agg_terminated_with_eos = acc.gather(is_eos.any(dim=1))
+        term_completion_lengths = agg_completion_lengths[agg_terminated_with_eos]
+        self._metrics[mode]["completions/clipped_ratio"].append(1 - len(term_completion_lengths) / len(agg_completion_lengths))
+        if len(term_completion_lengths) == 0:
+            term_completion_lengths = torch.zeros(1, device=device)
+        self._metrics[mode]["completions/mean_terminated_length"].append(term_completion_lengths.float().mean().item())
+        self._metrics[mode]["completions/min_terminated_length"].append(term_completion_lengths.float().min().item())
+        self._metrics[mode]["completions/max_terminated_length"].append(term_completion_lengths.float().max().item())
+
+        for i, name in enumerate(self.reward_func_names):
+            self._metrics[mode][f"rewards/{name}/mean"].append(torch.nanmean(rewards_per_func[:, i]).item())
+            self._metrics[mode][f"rewards/{name}/std"].append(nanstd(rewards_per_func[:, i]).item())
+        self._metrics[mode]["reward"].append(mean_grouped_rewards.mean().item())
+        self._metrics[mode]["reward_std"].append(std_grouped_rewards.mean().item())
+        self._metrics[mode]["frac_reward_zero_std"].append(is_std_zero.float().mean().item())
+
+        self._textual_logs["prompt"].extend(gather_object(prompts_text))
+        self._textual_logs["completion"].extend(gather_object(completions_text))
+        for i, name in enumerate(self.reward_func_names):
+            self._textual_logs["rewards"][name].extend(rewards_per_func[:, i].tolist())
+        self._textual_logs["advantages"].extend(all_process_advantages.tolist())
 
         return {
             "prompt_ids": prompt_ids,
