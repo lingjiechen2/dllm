@@ -10,8 +10,8 @@ Resources and examples for sampling **LLaDA2.1**.
 dllm/pipelines/llada21
 ├── __init__.py                     # Package initialization
 ├── models/
-│   ├── configuration_llada2_moe.py # LLaDA2.1-MoE model configuration
-│   └── modeling_llada2_moe.py      # LLaDA2.1-MoE model architecture
+│   ├── configuration_llada21_moe.py # LLaDA2.1-MoE model configuration
+│   └── modeling_llada21_moe.py      # LLaDA2.1-MoE model architecture
 └── sampler.py                      # Inference module
 
 # Example entry points for inference

@@ -2,7 +2,7 @@
 Block diffusion-style sampler for LLaDA2.1-MoE.
 
 Mirrors the iterative-refinement generate logic from
-`dllm.pipelines.llada21.models.modeling_llada2_moe`, but as a standalone sampler that follows the
+`dllm.pipelines.llada21.models.modeling_llada21_moe`, but as a standalone sampler that follows the
 BaseSampler interface (similar to llada2/sampler.py).
 
 Key differences from LLaDA2:
@@ -55,9 +55,8 @@ def sample_tokens(
     """
     Sample one token per position; returns sampled ids and their probabilities.
     """
-    if temperature is None or temperature == 0.0:
-        filtered = top_k_top_p(logits, top_k, top_p)
-        probs = F.softmax(filtered, dim=-1)
+    if temperature == 0.0:
+        probs = F.softmax(logits, dim=-1)
         tokens = torch.argmax(probs, dim=-1)
         token_prob = torch.gather(probs, -1, tokens.unsqueeze(-1)).squeeze(-1)
         return tokens, token_prob
@@ -244,7 +243,9 @@ class LLaDA21Sampler(BaseSampler):
                     probs,
                     torch.full_like(probs, -float("inf")),
                 )
-                high_conf_editing = (editing_conf > editing_threshold) & editable_positions
+                high_conf_editing = (
+                    editing_conf > editing_threshold
+                ) & editable_positions
                 token_changed = tokens != old_block_tokens
                 editing_transfer_index = high_conf_editing & token_changed
 

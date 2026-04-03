@@ -1,5 +1,5 @@
-from .models.configuration_llada2_moe import LLaDA2MoeConfig
-from .models.modeling_llada2_moe import LLaDA2MoeModelLM
+from .models.configuration_llada21_moe import LLaDA2MoeConfig
+from .models.modeling_llada21_moe import LLaDA2MoeModelLM
 from .sampler import LLaDA21Sampler, LLaDA21SamplerConfig
 
 __all__ = [

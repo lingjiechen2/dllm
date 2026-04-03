@@ -63,9 +63,8 @@ def sample_tokens(
     """
     Sample one token per position; returns sampled ids and their probabilities.
     """
-    if temperature is None or temperature == 0.0:
-        filtered = top_k_top_p(logits, top_k, top_p)
-        probs = F.softmax(filtered, dim=-1)
+    if temperature == 0.0:
+        probs = F.softmax(logits, dim=-1)
         tokens = torch.argmax(probs, dim=-1)
         token_prob = torch.gather(probs, -1, tokens.unsqueeze(-1)).squeeze(-1)
         return tokens, token_prob

@@ -106,7 +106,7 @@ def get_tokenizer(
     )
     from dllm.pipelines.dream.models.modeling_dream import DreamModel
     from dllm.pipelines.llada2.models import modeling_llada2_moe as llada2_moe_mod
-    from dllm.pipelines.llada21.models import modeling_llada2_moe as llada21_moe_mod
+    from dllm.pipelines.llada21.models import modeling_llada21_moe as llada21_moe_mod
     from dllm.pipelines.llada.models.modeling_llada import LLaDAModelLM
     from dllm.pipelines.llada.models.modeling_lladamoe import LLaDAMoEModelLM
 
