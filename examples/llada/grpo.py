@@ -40,7 +40,6 @@ Comparison with reference trainer (for functional equivalence testing):
         --output_dir /tmp/dllm_grpo
 """
 
-import os
 import random
 from dataclasses import dataclass, field
 from typing import Optional
@@ -56,15 +55,10 @@ import dllm
 from dllm.core.samplers import MDLMSampler, MDLMSamplerConfig
 from dllm.core.trainers import DiffuGRPOConfig, DiffuGRPOTrainer
 from dllm.utils.reward_funcs import (
-    boxed_and_answer_tags_format_reward,
-    coding_reward_func,
     correctness_reward_func,
-    correctness_reward_func_math,
-    countdown_reward_func,
     int_reward_func,
     soft_format_reward_func,
     strict_format_reward_func,
-    sudoku_reward_func,
     xmlcount_reward_func,
 )
 
@@ -84,30 +78,10 @@ Respond in the following format:
 </answer>
 """
 
-SUDOKU_SYSTEM_PROMPT = """
-Please solve the following 4x4 Sudoku puzzle. The puzzle is provided as a 16-character string reading left-to-right, top-to-bottom, where '0' represents empty cells.
-
-Rules:
-- Fill empty cells with digits 1-4
-- Each row must contain digits 1-4 exactly once
-- Each column must contain digits 1-4 exactly once
-- Each 2x2 box must contain digits 1-4 exactly once
-
-Important: Your solution must be a COMPLETE 16-character string with only the digits 1-4, representing your final solved grid.
-
-Respond in this exact format:
-<reasoning>
-Your step-by-step solving process
-</reasoning>
-<answer>
-[16-character solution string with no spaces or separators]
-</answer>
-"""
-
-
 # ---------------------------------------------------------------------------
 # Dataset loaders (matching the reference implementation)
 # ---------------------------------------------------------------------------
+
 
 def _extract_hash_answer(text: str):
     if "####" not in text:
@@ -119,90 +93,10 @@ def get_gsm8k_questions(split="train") -> Dataset:
     data = load_dataset("openai/gsm8k", "main")[split]
     return data.map(
         lambda x: {
-            "prompt": [{"role": "user", "content": SYSTEM_PROMPT + "\n\n" + x["question"]}],
+            "prompt": [
+                {"role": "user", "content": SYSTEM_PROMPT + "\n\n" + x["question"]}
+            ],
             "answer": _extract_hash_answer(x["answer"]),
-        }
-    )
-
-
-def get_countdown_questions(split="train") -> Dataset:
-    data = load_dataset("Jiayi-Pan/Countdown-Tasks-3to4", split=split)
-    data = data.filter(lambda x: len(x["nums"]) == 3)
-    return data.map(
-        lambda x: {
-            "prompt": [
-                {
-                    "role": "user",
-                    "content": (
-                        f"{SYSTEM_PROMPT}\nUsing only the numbers {x['nums']}, create an arithmetic "
-                        f"expression that evaluates to exactly {x['target']}. You must use all numbers "
-                        "from the list, and each number must be used exactly once. You may use the "
-                        "operations +, -, *, and / as needed. After reasoning, provide only your final "
-                        "expression inside <answer></answer> tags without including an equals sign or "
-                        "the target number. For example, if the numbers are [2, 3, 4] and the target "
-                        "is 5, a valid answer is: <answer>\n2*4-3\n</answer>"
-                    ),
-                }
-            ],
-            "target": x["target"],
-            "numbers": x["nums"],
-        }
-    )
-
-
-def get_sudoku_questions() -> Dataset:
-    cur_path = os.path.dirname(os.path.abspath(__file__))
-    sudoku_file_path = os.path.join(cur_path, "../../d1/dataset/4x4_sudoku_unique_puzzles.csv")
-    import pandas as pd
-    df = pd.read_csv(sudoku_file_path, dtype={"Puzzle": str, "Solution": str})
-    data = Dataset.from_pandas(df)
-    return data.map(
-        lambda x: {
-            "prompt": [
-                {
-                    "role": "user",
-                    "content": f"{SUDOKU_SYSTEM_PROMPT}\n\nSolve the following Sudoku puzzle: {x['Puzzle']}\n",
-                }
-            ],
-            "puzzle": x["Puzzle"],
-            "solution": x["Solution"],
-        }
-    )
-
-
-def get_math_questions(split="train") -> Dataset:
-    data = load_dataset("ankner/math-500", split=split)
-    return data.map(
-        lambda x: {
-            "prompt": [
-                {
-                    "role": "user",
-                    "content": (
-                        f"{SYSTEM_PROMPT}\n\nYou are a math expert. You will be given a question to "
-                        f"solve. Solve it step by step. Wrap the final answer in a \\boxed{{}}. \n\n{x['problem']}"
-                    ),
-                }
-            ],
-            "answer": x["solution"],
-        }
-    )
-
-
-def get_code_questions(split="train"):
-    data = load_dataset("KodCode/KodCode-Light-RL-10K", split=split)
-    data = data.train_test_split(test_size=0.1, seed=42)["train"]
-    return data.map(
-        lambda x: {
-            "prompt": [
-                {
-                    "role": "user",
-                    "content": (
-                        f"{SYSTEM_PROMPT}\n\nYou are a coding expert. You will be given a coding problem "
-                        f"to solve. Solve it step by step. \n\n{x['question']}"
-                    ),
-                }
-            ],
-            "answer": {"solution": x["solution"], "tests": x["test"]},
         }
     )
 
@@ -211,12 +105,13 @@ def get_code_questions(split="train"):
 # Config dataclass
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class TrainingArguments(DiffuGRPOConfig):
     output_dir: str = ".models/LLaDA-8B-Instruct/grpo"
     dataset: Optional[str] = field(
         default="gsm8k",
-        metadata={"help": "Dataset to train on: gsm8k, math, countdown, sudoku, code."},
+        metadata={"help": "Dataset to train on."},
     )
     model_path: Optional[str] = field(
         default="GSAI-ML/LLaDA-8B-Instruct",
@@ -227,6 +122,7 @@ class TrainingArguments(DiffuGRPOConfig):
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
+
 
 def set_random_seed(seed: int = 42):
     random.seed(seed)
@@ -245,41 +141,24 @@ def main():
     set_random_seed(training_args.seed)
 
     # ---- Dataset ----------------------------------------------------------------
-    dataset_name = training_args.dataset
-    if dataset_name == "gsm8k":
-        dataset = get_gsm8k_questions("train")
-        reward_functions = [
-            xmlcount_reward_func,
-            soft_format_reward_func,
-            strict_format_reward_func,
-            int_reward_func,
-            correctness_reward_func,
-        ]
-    elif dataset_name == "countdown":
-        dataset = get_countdown_questions("train")
-        reward_functions = [countdown_reward_func]
-    elif dataset_name == "sudoku":
-        dataset = get_sudoku_questions()
-        reward_functions = [sudoku_reward_func]
-    elif dataset_name == "math":
-        dataset = get_math_questions("train")
-        reward_functions = [correctness_reward_func_math, boxed_and_answer_tags_format_reward]
-    elif dataset_name == "code":
-        dataset = get_code_questions()
-        reward_functions = [xmlcount_reward_func, coding_reward_func]
-    else:
-        raise ValueError(f"Unknown dataset: {dataset_name}")
-
-    dataset = dataset.shuffle(seed=training_args.seed)
-    if dataset_name in ["countdown", "sudoku"]:
-        train_set = dataset.select(range(0, len(dataset) - 500))
-    else:
-        train_set = dataset
+    dataset = get_gsm8k_questions("train")
+    reward_functions = [
+        xmlcount_reward_func,
+        soft_format_reward_func,
+        strict_format_reward_func,
+        int_reward_func,
+        correctness_reward_func,
+    ]
+    train_set = dataset.shuffle(seed=training_args.seed)
 
     # ---- Model & Tokenizer ------------------------------------------------------
     model_args = dllm.utils.ModelArguments(
         model_name_or_path=training_args.model_path,
-        load_in_4bit=model_config.load_in_4bit if hasattr(model_config, "load_in_4bit") else False,
+        load_in_4bit=(
+            model_config.load_in_4bit
+            if hasattr(model_config, "load_in_4bit")
+            else False
+        ),
     )
     model = dllm.utils.get_model(model_args=model_args)
     tokenizer = dllm.utils.get_tokenizer(model_args=model_args)
@@ -292,7 +171,15 @@ def main():
         peft_config = LoraConfig(
             r=model_config.lora_r,
             lora_alpha=model_config.lora_alpha,
-            target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "up_proj", "down_proj", "gate_proj"],
+            target_modules=[
+                "q_proj",
+                "k_proj",
+                "v_proj",
+                "o_proj",
+                "up_proj",
+                "down_proj",
+                "gate_proj",
+            ],
             task_type="CAUSAL_LM",
             lora_dropout=model_config.lora_dropout,
         )
@@ -323,6 +210,7 @@ def main():
 
     if training_args.save_steps % training_args.num_iterations != 0:
         import warnings
+
         warnings.warn(
             f"save_steps ({training_args.save_steps}) is not divisible by "
             f"num_iterations ({training_args.num_iterations}). If resuming from a checkpoint, "
