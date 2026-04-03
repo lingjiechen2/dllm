@@ -53,6 +53,7 @@ from peft import LoraConfig
 from trl import ModelConfig, TrlParser
 
 import dllm
+from dllm.core.samplers import MDLMSampler, MDLMSamplerConfig
 from dllm.core.trainers import DiffuGRPOConfig, DiffuGRPOTrainer
 from dllm.utils.reward_funcs import (
     boxed_and_answer_tags_format_reward,
@@ -296,6 +297,17 @@ def main():
             lora_dropout=model_config.lora_dropout,
         )
 
+    # ---- Sampler ----------------------------------------------------------------
+    sampler = MDLMSampler(model=model, tokenizer=tokenizer)
+    sampler_config = MDLMSamplerConfig(
+        steps=training_args.steps,
+        max_new_tokens=training_args.max_completion_length,
+        block_size=training_args.block_size,
+        temperature=training_args.temperature or 0.0,
+        cfg_scale=training_args.cfg_scale,
+        remasking=training_args.remasking,
+    )
+
     # ---- Trainer ----------------------------------------------------------------
     logger.info("Start GRPO training...")
     trainer = DiffuGRPOTrainer(
@@ -305,6 +317,8 @@ def main():
         train_dataset=train_set,
         processing_class=tokenizer,
         peft_config=peft_config,
+        sampler=sampler,
+        sampler_config=sampler_config,
     )
 
     if training_args.save_steps % training_args.num_iterations != 0:
