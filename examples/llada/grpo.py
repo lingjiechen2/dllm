@@ -55,6 +55,7 @@ import dllm
 from dllm.core.samplers import MDLMSampler, MDLMSamplerConfig
 from dllm.core.trainers import DiffuGRPOConfig, DiffuGRPOTrainer
 from dllm.utils.reward_funcs import (
+    coding_reward_func,
     correctness_reward_func,
     int_reward_func,
     soft_format_reward_func,
@@ -101,6 +102,25 @@ def get_gsm8k_questions(split="train") -> Dataset:
     )
 
 
+def get_code_questions(split="train") -> Dataset:
+    data = load_dataset("KodCode/KodCode-Light-RL-10K", split=split)
+    data = data.train_test_split(test_size=0.1, seed=42)["train"]
+    return data.map(
+        lambda x: {
+            "prompt": [
+                {
+                    "role": "user",
+                    "content": (
+                        f"{SYSTEM_PROMPT}\n\nYou are a coding expert. You will be given a coding problem "
+                        f"to solve. Solve it step by step. \n\n{x['question']}"
+                    ),
+                }
+            ],
+            "answer": {"solution": x["solution"], "tests": x["test"]},
+        }
+    )
+
+
 # ---------------------------------------------------------------------------
 # Config dataclass
 # ---------------------------------------------------------------------------
@@ -111,7 +131,7 @@ class TrainingArguments(DiffuGRPOConfig):
     output_dir: str = ".models/LLaDA-8B-Instruct/grpo"
     dataset: Optional[str] = field(
         default="gsm8k",
-        metadata={"help": "Dataset to train on."},
+        metadata={"help": "Dataset to train on: gsm8k, code."},
     )
     model_path: Optional[str] = field(
         default="GSAI-ML/LLaDA-8B-Instruct",
@@ -141,14 +161,21 @@ def main():
     set_random_seed(training_args.seed)
 
     # ---- Dataset ----------------------------------------------------------------
-    dataset = get_gsm8k_questions("train")
-    reward_functions = [
-        xmlcount_reward_func,
-        soft_format_reward_func,
-        strict_format_reward_func,
-        int_reward_func,
-        correctness_reward_func,
-    ]
+    dataset_name = training_args.dataset
+    if dataset_name == "gsm8k":
+        dataset = get_gsm8k_questions("train")
+        reward_functions = [
+            xmlcount_reward_func,
+            soft_format_reward_func,
+            strict_format_reward_func,
+            int_reward_func,
+            correctness_reward_func,
+        ]
+    elif dataset_name == "code":
+        dataset = get_code_questions("train")
+        reward_functions = [xmlcount_reward_func, coding_reward_func]
+    else:
+        raise ValueError(f"Unknown dataset: {dataset_name}")
     train_set = dataset.shuffle(seed=training_args.seed)
 
     # ---- Model & Tokenizer ------------------------------------------------------
