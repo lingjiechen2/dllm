@@ -14,7 +14,6 @@ import time
 
 import numpy as np
 
-
 # ===========================================================================
 # Math utilities (from math500_utils)
 # ===========================================================================
@@ -210,7 +209,9 @@ def extract_hash_answer(text: str) -> str | None:
     return text.split("####")[1].strip()
 
 
-def correctness_reward_func(prompts, completions, answer, step=None, run_name=None, **kwargs) -> list[float]:
+def correctness_reward_func(
+    prompts, completions, answer, step=None, run_name=None, **kwargs
+) -> list[float]:
     responses = [completion[0]["content"] for completion in completions]
     q = prompts[0][-1]["content"]
     extracted_responses = [extract_xml_answer(r) for r in responses]
@@ -302,7 +303,9 @@ def evaluate_equation(equation_str):
         return None
 
 
-def compute_score(solution_str, ground_truth, method="strict", format_score=0.1, score=1.0):
+def compute_score(
+    solution_str, ground_truth, method="strict", format_score=0.1, score=1.0
+):
     target = ground_truth["target"]
     numbers = ground_truth["numbers"]
 
@@ -346,7 +349,9 @@ def compute_score(solution_str, ground_truth, method="strict", format_score=0.1,
         return format_score
 
 
-def countdown_reward_func(prompts, completions, run_name, step=None, rank=None, **kwargs) -> list[float]:
+def countdown_reward_func(
+    prompts, completions, run_name=None, step=None, rank=None, **kwargs
+) -> list[float]:
     if (
         isinstance(completions[0], list)
         and isinstance(completions[0][0], dict)
@@ -384,12 +389,16 @@ def validate_sudoku_solution(solution_str, ground_truth, puzzle):
     empty_indices = [i for i in range(16) if puzzle[i] == "0"]
 
     if empty_indices:
-        correct_cells = sum(1 for i in empty_indices if solution_str[i] == ground_truth[i])
+        correct_cells = sum(
+            1 for i in empty_indices if solution_str[i] == ground_truth[i]
+        )
         return correct_cells / len(empty_indices)
     return 0.0
 
 
-def sudoku_reward_func(prompts, completions, run_name, step=None, rank=None, **kwargs) -> list[float]:
+def sudoku_reward_func(
+    prompts, completions, run_name=None, step=None, rank=None, **kwargs
+) -> list[float]:
     if (
         isinstance(completions[0], list)
         and isinstance(completions[0][0], dict)
@@ -406,13 +415,19 @@ def sudoku_reward_func(prompts, completions, run_name, step=None, rank=None, **k
         ground_truth = kwargs["solution"][i]
         solution = extract_answer_sudoku(response)
 
-        score = 0.0 if solution is None else validate_sudoku_solution(solution, ground_truth, puzzle)
+        score = (
+            0.0
+            if solution is None
+            else validate_sudoku_solution(solution, ground_truth, puzzle)
+        )
         scores.append(score)
 
         if do_print:
             print(f"--------------------------------")
             print(f"Puzzle: {puzzle} (length: {len(puzzle)})")
-            print(f"Extracted solution: {solution}  (length: {len(solution) if solution else 0})")
+            print(
+                f"Extracted solution: {solution}  (length: {len(solution) if solution else 0})"
+            )
             print(f"Ground_truth: {ground_truth}")
             print(f"Score: {score:.4f}")
 
@@ -530,8 +545,12 @@ def time_based_random_string(length=10):
     return "".join(random.choices(string.ascii_letters + string.digits, k=length))
 
 
-def coding_reward_func(prompts, completions, answer, step=None, run_name=None, **kwargs) -> list[float]:
-    execution_cwd = kwargs.get("cwd_path")
+def coding_reward_func(
+    prompts, completions, answer, step=None, run_name=None, **kwargs
+) -> list[float]:
+    execution_cwd = kwargs.get("cwd_path") or os.path.join(
+        os.getcwd(), "temp_coding_reward"
+    )
     if not os.path.exists(execution_cwd):
         os.makedirs(execution_cwd, exist_ok=True)
     programs = []
@@ -581,7 +600,9 @@ def coding_reward_func(prompts, completions, answer, step=None, run_name=None, *
         defined_func = solution_match.group(1)
 
         if defined_func != imported_func:
-            solution = re.sub(rf"\bdef {defined_func}\b", f"def {imported_func}", solution)
+            solution = re.sub(
+                rf"\bdef {defined_func}\b", f"def {imported_func}", solution
+            )
 
         if not is_safe_code(solution):
             rewards.append(0 + is_in_answer_reward)
