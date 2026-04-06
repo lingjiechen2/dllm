@@ -9,7 +9,7 @@ Key differences from LLaDA2:
 - Uses a `while True` loop with post-step counting instead of a fixed step schedule.
 - Adds an editing phase: already-placed non-prompt tokens may be revised when the model's
   confidence in a new token exceeds `editing_threshold` and the token value has changed.
-- Attention mask is NOT log-transformed (raw 0/1 bfloat16), matching the 2.1 forward pass.
+- Attention mask is log-transformed (additive 0/-inf bfloat16), matching the 2.1 forward pass.
 """
 
 from dataclasses import dataclass
@@ -143,6 +143,11 @@ class LLaDA21Sampler(BaseSampler):
 
         prompt_len = prompt_lens[0]
         B = len(inputs)
+        if B != 1:
+            raise ValueError(
+                "LLaDA21Sampler requires batch_size=1 because confidence-based sampling "
+                "causes sequences to diverge across steps."
+            )
 
         if max_new_tokens:
             max_length = max_new_tokens + prompt_len
@@ -153,16 +158,20 @@ class LLaDA21Sampler(BaseSampler):
         total_len = num_blocks * block_size
 
         # Block-causal, bidirectional-within-block attention mask.
-        # LLaDA2.1 does NOT apply log(); raw 0/1 bfloat16 values are passed to the model.
+        # Log-transformed to produce additive mask (0 for attended, -inf for masked).
         block_mask = torch.tril(
             torch.ones(num_blocks, num_blocks, device=self.model.device)
         )
         block_attn = (
-            block_mask.repeat_interleave(block_size, dim=0)
-            .repeat_interleave(block_size, dim=1)
-            .unsqueeze(0)
-            .unsqueeze(0)
-        ).to(torch.bfloat16)
+            (
+                block_mask.repeat_interleave(block_size, dim=0)
+                .repeat_interleave(block_size, dim=1)
+                .unsqueeze(0)
+                .unsqueeze(0)
+            )
+            .log()
+            .to(torch.bfloat16)
+        )
 
         position_ids = torch.arange(total_len, device=self.model.device).unsqueeze(0)
 

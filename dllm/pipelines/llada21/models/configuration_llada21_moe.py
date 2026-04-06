@@ -51,7 +51,9 @@ class LLaDA2MoeConfig(PretrainedConfig):
         self.hidden_size = hidden_size
         self.intermediate_size = intermediate_size
         self.num_attention_heads = num_attention_heads
-        self.num_key_value_heads = num_key_value_heads
+        self.num_key_value_heads = (
+            num_key_value_heads if num_key_value_heads != 0 else num_attention_heads
+        )
         self.hidden_act = hidden_act
         self.use_qkv_bias = use_qkv_bias
         self.use_qk_norm = use_qk_norm

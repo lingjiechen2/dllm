@@ -860,27 +860,20 @@ class LLaDA2MoeModel(LLaDA2MoePreTrainedModel):
                 device=inputs_embeds.device,
             )
             position_ids = position_ids.unsqueeze(0)
-        # BD3LMTrainer passes a broadcast 4D bool mask with shape [1, 1, seq_len, seq_len].
-        # Accept both [batch, 1, seq, seq] and the broadcast [1, 1, seq, seq] variants.
-        expected_shape = (batch_size, 1, seq_length, seq_length)
-        broadcast_shape = (1, 1, seq_length, seq_length)
-        if attention_mask.size() in (expected_shape, broadcast_shape):
+        if attention_mask is not None and attention_mask.dim() == 4:
+            # Pre-built 4D mask (e.g., block diffusion): convert bool → additive float mask.
             if attention_mask.dtype == torch.bool:
-                # Pre-built bool mask (e.g., block diffusion): convert to additive float mask.
                 min_val = torch.finfo(inputs_embeds.dtype).min
                 attention_mask = torch.zeros_like(
                     attention_mask, dtype=inputs_embeds.dtype
                 ).masked_fill_(~attention_mask, min_val)
-            else:
-                attention_mask = _prepare_4d_causal_attention_mask_for_sdpa(
-                    attention_mask,
-                    (batch_size, seq_length),
-                    inputs_embeds,
-                    past_seen_tokens,
-                )
+            # 4D float (additive): pass through as-is
         else:
-            raise ValueError(
-                f"LLaDA2.1 only support block attention mask with shape: {expected_shape}, the input attention with shape {attention_mask.size()=}!"
+            attention_mask = _prepare_4d_causal_attention_mask_for_sdpa(
+                attention_mask,
+                (batch_size, seq_length),
+                inputs_embeds,
+                past_seen_tokens,
             )
         # embed positions
         hidden_states = inputs_embeds
@@ -1326,11 +1319,15 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
 
         block_mask = torch.tril(torch.ones(num_blocks, num_blocks, device=self.device))
         block_diffusion_attention_mask = (
-            block_mask.repeat_interleave(block_length, dim=0)
-            .repeat_interleave(block_length, dim=1)
-            .unsqueeze(0)
-            .unsqueeze(0)
-        ).to(torch.bfloat16)
+            (
+                block_mask.repeat_interleave(block_length, dim=0)
+                .repeat_interleave(block_length, dim=1)
+                .unsqueeze(0)
+                .unsqueeze(0)
+            )
+            .log()
+            .to(torch.bfloat16)
+        )
 
         position_ids = torch.arange(total_length, device=self.device).unsqueeze(0)
         x = torch.full((1, total_length), mask_id, dtype=torch.long, device=self.device)
