@@ -27,7 +27,8 @@ def cart_weight(
     dist_matrix = idx[None, :] - idx[:, None]  # (l, l) signed distance
     geo_matrix = (
         torch.log(torch.tensor(p, device=device))
-        + (dist_matrix.abs() - 1).clamp(min=0) * torch.log(torch.tensor(1 - p, device=device))
+        + (dist_matrix.abs() - 1).clamp(min=0)
+        * torch.log(torch.tensor(1 - p, device=device))
     ).exp() * 0.5
     geo_matrix.masked_fill_(dist_matrix == 0, 0.0)
 
