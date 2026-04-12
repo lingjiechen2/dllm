@@ -169,6 +169,7 @@ class DiffuGRPOTrainer(GRPOTrainer):
         all_logps = []
         for i in range(0, input_ids.size(0), batch_size):
             batch = input_ids[i : i + batch_size]
+            batch_mask = attention_mask[i : i + batch_size]
 
             noised_input_ids = self._forward_process(
                 batch, prompt_index, mask_id, seed=seed
@@ -181,11 +182,16 @@ class DiffuGRPOTrainer(GRPOTrainer):
                 un_batch = noised_input_ids.clone()
                 un_batch[prompt_index_expanded] = mask_id
                 logits, un_logits = torch.chunk(
-                    model(torch.cat([noised_input_ids, un_batch])).logits, 2, dim=0
+                    model(
+                        torch.cat([noised_input_ids, un_batch]),
+                        attention_mask=batch_mask.repeat(2, 1),
+                    ).logits,
+                    2,
+                    dim=0,
                 )
                 logits = un_logits + (cfg_scale + 1) * (logits - un_logits)
             else:
-                logits = model(noised_input_ids).logits
+                logits = model(noised_input_ids, attention_mask=batch_mask).logits
 
             completion_logits = logits[:, -logits_to_keep:, :]
             completion_targets = batch[:, -logits_to_keep:]

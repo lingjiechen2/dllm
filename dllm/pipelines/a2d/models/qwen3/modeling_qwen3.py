@@ -14,8 +14,11 @@ if transformers.utils.is_torch_flex_attn_available():
     from torch.nn.attention.flex_attention import _DEFAULT_SPARSE_BLOCK_SIZE as flex_default_block_size
     from torch.nn.attention.flex_attention import BlockMask, create_block_mask
 else:
-    # Register a fake type to avoid crashing for annotations and `isinstance` checks
-    BlockMask = torch.Tensor
+    # Register a fake type to avoid crashing for annotations and `isinstance` checks.
+    # Must NOT be torch.Tensor — that would make isinstance(any_tensor, BlockMask) always
+    # True and silently break the mask-conversion logic below.
+    class BlockMask:
+        pass
 
 class A2DQwen3Config(transformers.Qwen3Config):
     model_type = "a2d-qwen3"  # <- NEW model_type
@@ -85,8 +88,8 @@ class A2DQwen3Model(transformers.Qwen3Model):
             # 1) If no mask is provided → treat all tokens as valid (no padding)
             if attention_mask is None:
                 attention_mask = torch.ones(
-                    inputs_embeds.shape[:2], 
-                    device=inputs_embeds.device, 
+                    inputs_embeds.shape[:2],
+                    device=inputs_embeds.device,
                     dtype=torch.long
                 )
 
