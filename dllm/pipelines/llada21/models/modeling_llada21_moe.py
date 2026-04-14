@@ -29,7 +29,6 @@ from torch.nn import CrossEntropyLoss
 from transformers.activations import ACT2FN
 from transformers.cache_utils import Cache, DynamicCache
 from transformers.modeling_attn_mask_utils import (
-    _prepare_4d_causal_attention_mask,
     _prepare_4d_causal_attention_mask_for_sdpa,
 )
 from transformers.modeling_outputs import (
@@ -41,7 +40,6 @@ from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS, PreTrainedModel
 from transformers.processing_utils import Unpack
 from transformers.pytorch_utils import (
     ALL_LAYERNORM_LAYERS,
-    is_torch_greater_or_equal_than_1_13,
 )
 from transformers.utils import (
     TransformersKwargs,
@@ -50,18 +48,8 @@ from transformers.utils import (
     logging,
     replace_return_docstrings,
 )
-from transformers.utils.import_utils import is_torch_fx_available
-from .configuration_llada2_moe import LLaDA2MoeConfig
+from .configuration_llada21_moe import LLaDA2MoeConfig
 from transformers.generation.utils import GenerationMixin
-
-# This makes `_prepare_4d_causal_attention_mask` a leaf function in the FX graph.
-# It means that the function will not be traced through and simply appear as a node in the graph.
-if is_torch_fx_available():
-    if not is_torch_greater_or_equal_than_1_13:
-        import torch.fx
-
-    _prepare_4d_causal_attention_mask = torch.fx.wrap(_prepare_4d_causal_attention_mask)
-
 
 logger = logging.get_logger(__name__)
 
@@ -872,42 +860,21 @@ class LLaDA2MoeModel(LLaDA2MoePreTrainedModel):
                 device=inputs_embeds.device,
             )
             position_ids = position_ids.unsqueeze(0)
-
-        if self._use_flex_attention:
-            if attention_mask is not None and isinstance(attention_mask, torch.Tensor):
-                attention_mask = _prepare_4d_causal_attention_mask_for_sdpa(
-                    attention_mask,
-                    (batch_size, seq_length),
-                    inputs_embeds,
-                    past_seen_tokens,
-                )
-        elif self._use_sdpa and not output_attentions:
-            # output_attentions=True can not be supported when using SDPA, and we fall back on
-            # the manual implementation that requires a 4D causal mask in all cases.
-            if attention_mask is not None and attention_mask.dim() == 4:
-                # Pre-built 4D mask (e.g., block diffusion training mask from BD3LMTrainer).
-                # Convert bool → additive float mask so SDPA can consume it.
-                if attention_mask.dtype == torch.bool:
-                    min_val = torch.finfo(inputs_embeds.dtype).min
-                    attention_mask = torch.zeros_like(
-                        attention_mask, dtype=inputs_embeds.dtype
-                    ).masked_fill_(~attention_mask, min_val)
-            else:
-                attention_mask = _prepare_4d_causal_attention_mask_for_sdpa(
-                    attention_mask,
-                    (batch_size, seq_length),
-                    inputs_embeds,
-                    past_seen_tokens,
-                )
+        if attention_mask is not None and attention_mask.dim() == 4:
+            # Pre-built 4D mask (e.g., block diffusion): convert bool → additive float mask.
+            if attention_mask.dtype == torch.bool:
+                min_val = torch.finfo(inputs_embeds.dtype).min
+                attention_mask = torch.zeros_like(
+                    attention_mask, dtype=inputs_embeds.dtype
+                ).masked_fill_(~attention_mask, min_val)
+            # 4D float (additive): pass through as-is
         else:
-            # 4d mask is passed through the layers
-            attention_mask = _prepare_4d_causal_attention_mask(
+            attention_mask = _prepare_4d_causal_attention_mask_for_sdpa(
                 attention_mask,
                 (batch_size, seq_length),
                 inputs_embeds,
                 past_seen_tokens,
             )
-
         # embed positions
         hidden_states = inputs_embeds
 
@@ -1103,7 +1070,7 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
         logits = logits.float()
 
         if labels is not None:
-            # LLaDA2.0 will use same label position logits
+            # LLaDA2.1 will use same label position logits
             shift_logits = logits
             shift_labels = labels
             # Flatten the tokens
@@ -1245,10 +1212,11 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
         vocab_size = logits.shape[-1]
         logits = logits.reshape(-1, vocab_size)
         if temperature == 0.0:
+            token = torch.argmax(logits, dim=-1, keepdim=True)
             probs = F.softmax(logits, dim=-1)
-            token = torch.argmax(probs, dim=-1, keepdim=True)
             token_prob = torch.gather(probs, -1, token)
             return token.view(*orig_shape), token_prob.view(*orig_shape)
+
         if temperature > 0 and temperature != 1.0:
             logits = logits / temperature
         logits = self._top_k_logits(logits, top_k)
@@ -1281,26 +1249,24 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
         eos_early_stop: bool = False,
         minimal_topk: int = 1,
         threshold: float = 0.95,
+        editing_threshold: float = 0.9,
+        max_post_steps: int = 16,
         eos_id: int = 156892,
         mask_id: int = 156895,
+        num_to_transfer: int = 1,
     ):
         r"""
         Generates tokens using a block-wise, iterative refinement strategy.
-
         This method operates differently from standard autoregressive generation. It first creates a template of the
         full desired length, filled with a special `mask_id`. It then processes this template in segments (`blocks`)
         and iteratively "denoises" or "refines" the `mask_id` tokens into actual tokens over a series of `steps` for
         each block. A custom block-diagonal causal attention mask ensures that generation within a block can attend to
         all previous blocks but not future ones.
-
         <Tip warning={true}>
-
         This is a specialized generation method. The quality and speed of the output are highly dependent on the interplay
         between `block_length`, `steps`, and `threshold`. It aims to achieve faster generation through parallel
         decoding within blocks, which is a departure from the token-by-token generation of standard `.generate()` methods.
-
         </Tip>
-
         Parameters:
             inputs (`torch.Tensor`):
                 The token sequence used as a prompt for the generation.
@@ -1329,16 +1295,21 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
                 The confidence probability threshold for accepting a sampled token. During each refinement step, a
                 sampled token is only kept if its probability is above this threshold. If not enough tokens meet the
                 threshold, the ones with the highest confidence are chosen.
+            editing_threshold (`float`, *optional*, defaults to 0.9):
+                The confidence threshold for **editing**. Existing tokens (non-masked) are replaced by newly
+                sampled tokens if the model's confidence in the new token exceeds this threshold and the token has changed.
+            max_post_steps (`int`, *optional*, defaults to 16):
+                Number of global refinement iterations after all mask tokens are resolved.
             eos_id (`int`, *optional*, defaults to 156892):
                 The token ID for the end-of-sequence token. Used for `eos_early_stop`.
             mask_id (`int`, *optional*, defaults to 156895):
                 The token ID used as a placeholder for tokens that are yet to be generated. This is central to the
                 iterative refinement algorithm.
-
         Return:
             `torch.Tensor`: A string containing the generated token IDs, starting
             after the prompt and stopping at the first `eos_id` or `gen_length`.
         """
+
         steps = min(steps, gen_length // minimal_topk)
         input_ids = inputs.to(self.device)
 
@@ -1367,10 +1338,6 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
 
         prefill_blocks = prompt_length // block_length
 
-        denoising_steps_per_block = steps
-        num_transfer_tokens_schedule = self._get_num_transfer_tokens(
-            block_length, denoising_steps_per_block
-        )
         for num_block in range(prefill_blocks, num_blocks):
             current_window_end = (num_block + 1) * block_length
             cur_x = x[:, :current_window_end]
@@ -1379,56 +1346,85 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
             ]
             cur_position_ids = position_ids[:, :current_window_end]
 
-            for step in range(denoising_steps_per_block):
-                active_block_mask = cur_x[:, -block_length:] == mask_id
-                if active_block_mask.sum() == 0:
-                    break
+            block_start_pos = num_block * block_length
 
-                logits = self.forward(
+            post_steps = 0
+            while True:
+                old_block_tokens = cur_x[:, -block_length:].clone()
+                active_block_mask = cur_x[:, -block_length:] == mask_id
+                if torch.any(active_block_mask) == False:
+                    post_steps += 1
+                if post_steps > max_post_steps:
+                    break
+                prompt_mask_in_block = torch.zeros(
+                    block_length, dtype=torch.bool, device=self.device
+                )
+                if block_start_pos < prompt_length:
+                    prompt_end_in_block = min(
+                        prompt_length - block_start_pos, block_length
+                    )
+                    prompt_mask_in_block[:prompt_end_in_block] = True
+
+                outputs = self.forward(
                     cur_x,
                     attention_mask=cur_attn_mask,
                     position_ids=cur_position_ids,
-                ).logits
+                )
+                logits = outputs.logits
 
                 active_logits = logits[:, -block_length:, :]
                 x0, x0_p = self._sample_with_temperature_topk_topp(
                     active_logits, temperature=temperature, top_k=top_k, top_p=top_p
                 )
+                mask_transfer_index = torch.zeros_like(x0, dtype=torch.bool)
+                if active_block_mask.sum() > 0:
+                    mask_confidence = torch.where(active_block_mask, x0_p, -torch.inf)
+                    high_conf_mask = (
+                        mask_confidence[0] > threshold
+                    ) & active_block_mask[0]
+                    num_high_confidence = high_conf_mask.sum().item()
 
-                num_to_transfer = num_transfer_tokens_schedule[step].item()
-                transfer_index = torch.zeros_like(x0, dtype=torch.bool)
+                    if num_high_confidence >= num_to_transfer:
+                        mask_transfer_index[0] = high_conf_mask
+                    else:
+                        num_available = active_block_mask.sum().item()
+                        if num_available > 0:
+                            _, idx = torch.topk(
+                                mask_confidence[0],
+                                k=min(num_to_transfer, num_available),
+                            )
+                            mask_transfer_index[0, idx] = True
 
-                confidence = torch.where(active_block_mask, x0_p, -torch.inf)
-                high_conf_mask = confidence[0] > threshold
-                num_high_confidence = high_conf_mask.sum().item()
+                editing_transfer_index = torch.zeros_like(x0, dtype=torch.bool)
+                non_mask_positions = ~active_block_mask
+                non_prompt_positions = ~prompt_mask_in_block
+                editable_positions = non_mask_positions & non_prompt_positions[None, :]
+                editing_confidence = torch.where(editable_positions, x0_p, -torch.inf)
+                high_conf_editing = (
+                    editing_confidence[0] > editing_threshold
+                ) & editable_positions[0]
 
-                if num_high_confidence >= num_to_transfer:
-                    transfer_index[0] = high_conf_mask
-                else:
-                    _, idx = torch.topk(
-                        confidence[0],
-                        k=min(num_to_transfer, active_block_mask.sum().item()),
-                    )
-                    transfer_index[0, idx] = True
+                token_changed = x0[0] != old_block_tokens[0]
+                editing_transfer_index[0] = high_conf_editing & token_changed
+                final_transfer_index = mask_transfer_index | editing_transfer_index
 
-                if transfer_index.any():
-                    cur_x[:, -block_length:][transfer_index] = x0[transfer_index]
-                if eos_early_stop and (x0[transfer_index] == eos_id).any():
-                    eos_pos_in_x = (cur_x[0] == eos_id).nonzero(as_tuple=True)
-                    if len(eos_pos_in_x[0]) > 0:
-                        eos_pos = eos_pos_in_x[0][0].item()
-                        if (cur_x[0, prompt_length:eos_pos] != mask_id).all():
-                            return x[:, prompt_length : eos_pos + 1]
+                if final_transfer_index.any():
+                    cur_x[:, -block_length:][final_transfer_index] = x0[
+                        final_transfer_index
+                    ]
+
+                if active_block_mask.sum() == 0 and not editing_transfer_index.any():
+                    break
 
             x[:, :current_window_end] = cur_x
-            if (
-                eos_id is not None
-                and (x[0, prompt_length:current_window_end] == eos_id).any()
-            ):
-                break
+            if eos_early_stop:
+                generated_part = x[0, prompt_length:current_window_end]
+                if (generated_part == mask_id).sum() == 0:
+                    eos_positions = (generated_part == eos_id).nonzero(as_tuple=True)[0]
+                    if len(eos_positions) > 0:
+                        break
 
         generated_answer = x[:, : prompt_length + gen_length]
-
         eos_positions = (generated_answer[0][input_ids.shape[1] :] == eos_id).nonzero(
             as_tuple=True
         )[0]
@@ -1436,6 +1432,7 @@ class LLaDA2MoeModelLM(LLaDA2MoePreTrainedModel, GenerationMixin):
             first_eos_position = eos_positions[0].item()
         else:
             first_eos_position = gen_length
+
         return generated_answer[
             :, input_ids.shape[1] : input_ids.shape[1] + first_eos_position + 1
         ]

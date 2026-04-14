@@ -63,9 +63,8 @@ def sample_tokens(
     """
     Sample one token per position; returns sampled ids and their probabilities.
     """
-    if temperature is None or temperature == 0.0:
-        filtered = top_k_top_p(logits, top_k, top_p)
-        probs = F.softmax(filtered, dim=-1)
+    if temperature == 0.0:
+        probs = F.softmax(logits, dim=-1)
         tokens = torch.argmax(probs, dim=-1)
         token_prob = torch.gather(probs, -1, tokens.unsqueeze(-1)).squeeze(-1)
         return tokens, token_prob
@@ -136,6 +135,7 @@ class LLaDA2Sampler(BaseSampler):
             )
 
         prompt_len = prompt_lens[0]
+        B = len(inputs)
         steps_per_block = min(
             steps_per_block,
             max_new_tokens // minimal_topk if minimal_topk > 0 else steps_per_block,
@@ -163,19 +163,16 @@ class LLaDA2Sampler(BaseSampler):
 
         # Canvas initialized with masks, prompts filled at the front
         x = torch.full(
-            (len(inputs), total_len),
+            (B, total_len),
             mask_id,
             dtype=torch.long,
             device=self.model.device,
         )
         for i, p in enumerate(inputs):
-            x[i, : prompt_lens[i]] = p
+            x[i, :prompt_len] = p
 
         prompt_blocks = prompt_len // block_size
-        denoising_steps_per_block = steps_per_block
-        transfer_schedule = even_transfer_schedule(
-            block_size, denoising_steps_per_block
-        )
+        transfer_schedule = even_transfer_schedule(block_size, steps_per_block)
 
         histories = [x.clone()] if return_dict else None
 
@@ -184,7 +181,7 @@ class LLaDA2Sampler(BaseSampler):
             cur_attn = block_attn[:, :, :window_end, :window_end]
             cur_pos = position_ids[:, :window_end]
 
-            for step_idx in range(denoising_steps_per_block):
+            for step_idx in range(steps_per_block):
                 block_slice = x[:, window_end - block_size : window_end]
                 active_mask = block_slice == mask_id
                 if not active_mask.any():
@@ -204,7 +201,7 @@ class LLaDA2Sampler(BaseSampler):
                 num_to_transfer = int(transfer_schedule[step_idx].item())
                 transfer_index = torch.zeros_like(block_slice, dtype=torch.bool)
 
-                for b in range(block_slice.size(0)):
+                for b in range(B):
                     conf = torch.where(
                         active_mask[b],
                         probs[b],
@@ -235,7 +232,7 @@ class LLaDA2Sampler(BaseSampler):
     @torch.no_grad()
     def infill(
         self,
-        inputs: list[torch.Tensor, list],
+        inputs: list[torch.Tensor | list],
         config: LLaDA2SamplerConfig | None = None,
         **kwargs,
     ) -> BaseSamplerOutput:

@@ -1,6 +1,6 @@
 # LLaDA2.0
 
-> 📄 Tech report: [Scaling Up Diffusion Language Models to 100B](https://github.com/inclusionAI/LLaDA2.0/blob/main/tech_report.pdf) | 💻 Code: [github.com/inclusionAI/LLaDA2.0](https://github.com/inclusionAI/LLaDA2.0/tree/main)
+> 📄 Paper: [Scaling Up Diffusion Language Models to 100B](https://arxiv.org/abs/2512.15745) | 💻 Code: [github.com/inclusionAI/LLaDA2.X](https://github.com/inclusionAI/LLaDA2.X)
 
 Resources and examples for sampling **LLaDA2.0**.
 
@@ -24,12 +24,12 @@ examples/llada2
 ## Inference
 Set `--model_name_or_path` to your checkpoint (e.g., `inclusionAI/LLaDA2.0-mini`).
 
-We support inference for standard sampling:
-```shell
-python -u examples/llada2/chat.py --model_name_or_path "inclusionAI/LLaDA2.0-mini"
-```
-
-We also support interactive multi-turn dialogue with visualization:
+We support single-turn sampling with visualization:
 ```shell
 python -u examples/llada2/sample.py --model_name_or_path "inclusionAI/LLaDA2.0-mini"
+```
+
+We also support interactive multi-turn dialogue:
+```shell
+python -u examples/llada2/chat.py --model_name_or_path "inclusionAI/LLaDA2.0-mini"
 ```

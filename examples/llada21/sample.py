@@ -1,5 +1,5 @@
 """
-python -u examples/llada2/sample.py --model_name_or_path "YOUR_MODEL_PATH"
+python -u examples/llada21/sample.py --model_name_or_path "YOUR_MODEL_PATH"
 """
 
 from dataclasses import dataclass
@@ -11,7 +11,7 @@ import dllm
 
 @dataclass
 class ScriptArguments:
-    model_name_or_path: str = "inclusionAI/LLaDA2.0-mini"
+    model_name_or_path: str = "inclusionAI/LLaDA2.1-mini"
     seed: int = 42
     visualize: bool = True
 
@@ -22,14 +22,16 @@ class ScriptArguments:
 
 
 @dataclass
-class SamplerConfig(dllm.pipelines.llada2.LLaDA2SamplerConfig):
-    steps_per_block: int = 32
-    max_new_tokens: int = 512
+class SamplerConfig(dllm.pipelines.llada21.LLaDA21SamplerConfig):
+    max_new_tokens: int = 128
     block_size: int = 32
     temperature: float = 0.0
     top_p: float | None = None
     top_k: int | None = None
     threshold: float = 0.95
+    editing_threshold: float = 0.9
+    max_post_steps: int = 16
+    num_to_transfer: int = 1
 
 
 parser = transformers.HfArgumentParser((ScriptArguments, SamplerConfig))
@@ -39,15 +41,15 @@ transformers.set_seed(script_args.seed)
 # Load model & tokenizer
 model = dllm.utils.get_model(model_args=script_args).eval()
 tokenizer = dllm.utils.get_tokenizer(model_args=script_args)
-sampler = dllm.pipelines.llada2.LLaDA2Sampler(model=model, tokenizer=tokenizer)
+sampler = dllm.pipelines.llada21.LLaDA21Sampler(model=model, tokenizer=tokenizer)
 terminal_visualizer = dllm.utils.TerminalVisualizer(tokenizer=tokenizer)
 
-# Single prompt (BDLM expects equal-length prompts; a single prompt avoids mismatch)
+# Single prompt (batch size must be 1 due to per-sequence confidence-based progress)
 messages = [
     [
         {
             "role": "user",
-            "content": "Why does Camus think that Sisyphus is happy?",
+            "content": "Give a concise summary of diffusion-based text generation.",
         }
     ],
 ]
@@ -62,7 +64,7 @@ outputs = sampler.sample(inputs, sampler_config, return_dict=True)
 sequences = dllm.utils.sample_trim(tokenizer, outputs.sequences.tolist(), inputs)
 
 print("\n" + "=" * 80)
-print("TEST: llada2_moe.block_diffusion_generate()".center(80))
+print("TEST: llada21.block_diffusion_generate()".center(80))
 print("=" * 80)
 for iter, s in enumerate(sequences):
     print("\n" + "-" * 80)

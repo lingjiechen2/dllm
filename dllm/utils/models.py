@@ -105,7 +105,8 @@ def get_tokenizer(
         A2DQwen3LMHeadModel,
     )
     from dllm.pipelines.dream.models.modeling_dream import DreamModel
-    from dllm.pipelines.llada2.models.modeling_llada2_moe import LLaDA2MoeModelLM
+    from dllm.pipelines.llada2.models import modeling_llada2_moe as llada2_moe_mod
+    from dllm.pipelines.llada21.models import modeling_llada21_moe as llada21_moe_mod
     from dllm.pipelines.llada.models.modeling_llada import LLaDAModelLM
     from dllm.pipelines.llada.models.modeling_lladamoe import LLaDAMoEModelLM
 
@@ -153,7 +154,14 @@ def get_tokenizer(
 
 {% endif %}
 """
-    elif issubclass(model_cls, (LLaDAMoEModelLM, LLaDA2MoeModelLM)):
+    elif issubclass(
+        model_cls,
+        (
+            LLaDAMoEModelLM,
+            llada2_moe_mod.LLaDA2MoeModelLM,
+            llada21_moe_mod.LLaDA2MoeModelLM,
+        ),
+    ):
         tokenizer.add_special_tokens({"mask_token": "<|mask|>"})
         tokenizer.eot_token = "<|role_end|>"
         tokenizer.eot_token_id = tokenizer.convert_tokens_to_ids(tokenizer.eot_token)
