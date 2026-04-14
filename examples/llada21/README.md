@@ -1,6 +1,6 @@
 # LLaDA2.1
 
-> 💻 Code: [github.com/inclusionAI/LLaDA2.X](https://github.com/inclusionAI/LLaDA2.X)
+> 📄 Paper: [LLaDA2.1](https://arxiv.org/abs/2602.08676) | 💻 Code: [github.com/inclusionAI/LLaDA2.X](https://github.com/inclusionAI/LLaDA2.X)
 
 Resources and examples for sampling **LLaDA2.1**.
 

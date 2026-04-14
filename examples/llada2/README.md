@@ -1,6 +1,6 @@
 # LLaDA2.0
 
-> 📄 Tech report: [Scaling Up Diffusion Language Models to 100B](https://github.com/inclusionAI/LLaDA2.0/blob/main/tech_report.pdf) | 💻 Code: [github.com/inclusionAI/LLaDA2.X](https://github.com/inclusionAI/LLaDA2.X)
+> 📄 Paper: [Scaling Up Diffusion Language Models to 100B](https://arxiv.org/abs/2512.15745) | 💻 Code: [github.com/inclusionAI/LLaDA2.X](https://github.com/inclusionAI/LLaDA2.X)
 
 Resources and examples for sampling **LLaDA2.0**.
 

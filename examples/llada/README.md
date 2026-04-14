@@ -34,12 +34,13 @@ dllm/pipelines/llada
 │   └── modeling_llada.py           # LLaDA model architecture
 ├── eval.py                         # Evaluation module
 ├── sampler.py                      # Inference module
-└── trainer.py                      # Training module (pretraining and SFT)
+└── trainer.py                      # Training module (pretraining, SFT, and GRPO/RL)
 
 # Example entry points for training / inference / evaluation
 examples/llada
 ├── chat.py                         # Interactive inference example
 ├── eval.sh                         # Automatic evaluation example
+├── grpo.py                         # GRPO/RL training entry point
 ├── sample.py                       # Inference example
 ├── pt.py                           # Pretraining example
 ├── README.md                       # Documentation (you are here)
@@ -129,6 +130,38 @@ sbatch --nodes=24 --gres=gpu:8 scripts/train.slurm.sh \
 ```
 <!-- [TODO] Training curves are on Wandb; checkpoints with evaluation results are available on Hugging Face. See the [Evaluation](#evaluation) section below for evaluation instructions. -->
 
+
+### RL (GRPO)
+
+We adapt [GRPO](https://arxiv.org/abs/2402.03300) (Group Relative Policy Optimization) for masked diffusion language models via `DiffuGRPOTrainer`, which replaces autoregressive generation with iterative denoising. The implementation follows the [d1/diffu-grpo](https://github.com/dllm-reasoning/d1/tree/main/diffu-grpo) reference.
+
+For example, to run GRPO on [`LLaDA-8B-Instruct`](https://huggingface.co/GSAI-ML/LLaDA-8B-Instruct) with `gsm8k` on 1 GPU:
+```shell
+accelerate launch \
+    --config_file scripts/accelerate_configs/ddp.yaml --num_processes 1 \
+    examples/llada/grpo.py \
+    --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct" \
+    --dataset gsm8k \  # supported: gsm8k, countdown, sudoku, math, code
+    --num_train_epochs 1 \
+    --output_dir ".models/LLaDA-8B-Instruct/gsm8k-grpo"
+```
+
+To train with LoRA on 8 GPUs using DeepSpeed ZeRO-2:
+```shell
+accelerate launch \
+    --config_file scripts/accelerate_configs/zero2.yaml \
+    examples/llada/grpo.py \
+    --model_name_or_path "GSAI-ML/LLaDA-8B-Instruct" \
+    --lora_r 128 --lora_alpha 64 \
+    --dataset gsm8k \
+    --num_train_epochs 10 --learning_rate 3e-6 \
+    --num_generations 6 --per_device_train_batch_size 6 \
+    --beta 0.04 --epsilon 0.5 \
+    --output_dir ".models/LLaDA-8B-Instruct/gsm8k-grpo"
+```
+
+Key diffusion-specific arguments: `--block_size`, `--steps`, `--remasking`, `--p_mask_prompt`.
+Key GRPO arguments: `--beta`, `--epsilon`, `--num_generations`, `--num_iterations`.
 
 ### Pretraining
 

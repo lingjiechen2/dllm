@@ -58,6 +58,8 @@ Simple Diffusion Language Modeling
 
 ## Features
 - [`examples/llada`](/examples/llada): Pretraining, finetuning and evaluating [LLaDA](https://arxiv.org/abs/2502.09992) / [LLaDA-MoE](https://arxiv.org/abs/2509.24389).
+- [`examples/llada2`](/examples/llada2): Inference of [LLaDA2.0](https://arxiv.org/abs/2512.15745).
+- [`examples/llada21`](/examples/llada21): Inference of [LLaDA2.1](https://arxiv.org/abs/2602.08676).
 - [`examples/dream`](/examples/dream): Pretraining, finetuning and evaluating [Dream](https://arxiv.org/abs/2508.15487).
 - [`examples/a2d`](/examples/a2d): Finetuning any autoregressive model to generate text with [masked diffusion](https://arxiv.org/abs/2406.07524) / [block diffusion](https://arxiv.org/abs/2503.09573).
 - [`examples/bert`](/examples/bert): Finetuning any [BERT](https://arxiv.org/abs/1810.04805) to be lightweight Chatbots.
@@ -136,15 +138,17 @@ dllm
 │   └── trainers
 ├── data
 ├── pipelines              # Application-specific training & inference pipelines
-|   ├── bert
+│   ├── bert
 │   ├── dream
 │   ├── editflow
 │   ├── fastdllm
-│   └── llada
-│       ├── models         # Model architecture and configs 
-│       ├── sampler.py     # Inference module
-│       ├── trainer.py     # Training module
-│       └── eval.py        # Evaluation module
+│   ├── llada
+│   │   ├── models         # Model architecture and configs 
+│   │   ├── sampler.py     # Inference module
+│   │   ├── trainer.py     # Training module
+│   │   └── eval.py        # Evaluation module
+│   ├── llada2
+│   └── llada21
 ├── tools
 └── utils
 
@@ -154,13 +158,15 @@ examples
 ├── dream
 ├── editflow
 ├── fastdllm
-└── llada
-    ├── chat.py            # Interactive inference example
-    ├── sample.py          # Inference example
-    ├── pt.py              # Pretraining example
-    ├── README.md          # Documentation (you are here)
-    ├── sft.py             # Supervised finetuning example
-    └── eval.sh            # Evaluation script
+├── llada
+│   ├── chat.py            # Interactive inference example
+│   ├── sample.py          # Inference example
+│   ├── pt.py              # Pretraining example
+│   ├── README.md          # Documentation
+│   ├── sft.py             # Supervised finetuning example
+│   └── eval.sh            # Evaluation script
+├── llada2
+└── llada21
 ```
 
 ## Training
